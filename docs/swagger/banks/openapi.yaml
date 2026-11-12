@@ -1,0 +1,800 @@
+openapi: 3.0.3
+info:
+  title: API-Банки
+  version: 1.0.0
+  description: Contract transcribed from the official documentation, not runtime-verified. GET and POST are documented;
+    Query parameters model illustrated GET requests only. POST parameter placement and encoding are unspecified;
+    POST is recorded as non-executable research metadata on each path.
+    No pagination is documented; completeness is unknown. These are retrieval/statistics methods, but usage is tracked
+    and quota effects are unspecified. No error status or payload format is documented. See RESEARCH.md for discrepancies.
+  contact:
+    url: https://analizbankov.ru/api_help.php
+externalDocs:
+  url: https://analizbankov.ru/api_help.php
+servers:
+- url: https://analizbankov.ru
+security:
+- ApiKey: []
+paths:
+  /api/bankdata:
+    get:
+      operationId: get_bankdata
+      summary: Bank indicator value
+      description: Parameters are shown in the query as in GET examples.
+      responses:
+        2XX:
+          description: Success (exact status code not documented).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Amount'
+      parameters:
+      - name: bankregn
+        in: query
+        required: false
+        description: Bank registration number. Requiredness is not explicitly specified.
+        schema:
+          type: integer
+      - name: pokid
+        in: query
+        required: false
+        description: Indicator ID; documentation says pokid or pokname. Behavior when both or neither are supplied
+          is unknown. Requiredness is not explicitly specified.
+        schema:
+          type: integer
+      - name: pokname
+        in: query
+        required: false
+        description: Indicator code; documentation says pokid or pokname. Behavior when both or neither are supplied
+          is unknown. Requiredness is not explicitly specified.
+        schema:
+          type: string
+      - name: date
+        in: query
+        required: false
+        description: Date; examples use YYYY-MM-DD, but accepted format is unspecified. Requiredness is not explicitly
+          specified.
+        schema:
+          type: string
+    x-post-contract:
+      sdk-ready: false
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      operationId: post_bankdata
+      summary: Bank indicator value
+      description: POST is supported, but parameter placement and body encoding are undocumented. Query parameters
+        and query-key security here are placeholders, not a verified POST wire format.
+      responses:
+        2XX:
+          description: Success (exact status code not documented).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Amount'
+      parameters:
+      - name: bankregn
+        in: query
+        required: false
+        description: Bank registration number. Requiredness is not explicitly specified.
+        schema:
+          type: integer
+      - name: pokid
+        in: query
+        required: false
+        description: Indicator ID; documentation says pokid or pokname. Behavior when both or neither are supplied
+          is unknown. Requiredness is not explicitly specified.
+        schema:
+          type: integer
+      - name: pokname
+        in: query
+        required: false
+        description: Indicator code; documentation says pokid or pokname. Behavior when both or neither are supplied
+          is unknown. Requiredness is not explicitly specified.
+        schema:
+          type: string
+      - name: date
+        in: query
+        required: false
+        description: Date; examples use YYYY-MM-DD, but accepted format is unspecified. Requiredness is not explicitly
+          specified.
+        schema:
+          type: string
+  /api/bankinfo:
+    get:
+      operationId: get_bankinfo
+      summary: Bank information
+      description: Parameters are shown in the query as in GET examples.
+      responses:
+        2XX:
+          description: Success (exact status code not documented).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankInfo'
+      parameters:
+      - name: bankregn
+        in: query
+        required: false
+        description: Bank registration number. Requiredness is not explicitly specified.
+        schema:
+          type: integer
+    x-post-contract:
+      sdk-ready: false
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      operationId: post_bankinfo
+      summary: Bank information
+      description: POST is supported, but parameter placement and body encoding are undocumented. Query parameters
+        and query-key security here are placeholders, not a verified POST wire format.
+      responses:
+        2XX:
+          description: Success (exact status code not documented).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankInfo'
+      parameters:
+      - name: bankregn
+        in: query
+        required: false
+        description: Bank registration number. Requiredness is not explicitly specified.
+        schema:
+          type: integer
+  /api/bankaraits:
+    get:
+      operationId: get_bankaraits
+      summary: Bank agency ratings
+      description: Parameters are shown in the query as in GET examples.
+      responses:
+        2XX:
+          description: Success (exact status code not documented).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ratings'
+      parameters:
+      - name: bankregn
+        in: query
+        required: false
+        description: Bank registration number. Requiredness is not explicitly specified.
+        schema:
+          type: integer
+      - name: date
+        in: query
+        required: false
+        description: Date; examples use YYYY-MM-DD, but accepted format is unspecified. Requiredness is not explicitly
+          specified.
+        schema:
+          type: string
+    x-post-contract:
+      sdk-ready: false
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      operationId: post_bankaraits
+      summary: Bank agency ratings
+      description: POST is supported, but parameter placement and body encoding are undocumented. Query parameters
+        and query-key security here are placeholders, not a verified POST wire format.
+      responses:
+        2XX:
+          description: Success (exact status code not documented).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ratings'
+      parameters:
+      - name: bankregn
+        in: query
+        required: false
+        description: Bank registration number. Requiredness is not explicitly specified.
+        schema:
+          type: integer
+      - name: date
+        in: query
+        required: false
+        description: Date; examples use YYYY-MM-DD, but accepted format is unspecified. Requiredness is not explicitly
+          specified.
+        schema:
+          type: string
+  /api/bankbic:
+    get:
+      operationId: get_bankbic
+      summary: Bank BIC information
+      description: Parameters are shown in the query as in GET examples.
+      responses:
+        2XX:
+          description: Success (exact status code not documented).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BicInfo'
+      parameters:
+      - name: bankbic
+        in: query
+        required: false
+        description: BIC, declared integer; example has leading zeroes. Preserve the identifier as text when constructing
+          requests. Requiredness is not explicitly specified.
+        schema:
+          type: string
+    x-post-contract:
+      sdk-ready: false
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      operationId: post_bankbic
+      summary: Bank BIC information
+      description: POST is supported, but parameter placement and body encoding are undocumented. Query parameters
+        and query-key security here are placeholders, not a verified POST wire format.
+      responses:
+        2XX:
+          description: Success (exact status code not documented).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BicInfo'
+      parameters:
+      - name: bankbic
+        in: query
+        required: false
+        description: BIC, declared integer; example has leading zeroes. Preserve the identifier as text when constructing
+          requests. Requiredness is not explicitly specified.
+        schema:
+          type: string
+  /api/bankotch:
+    get:
+      operationId: get_bankotch
+      summary: Bank indicator group values
+      description: Parameters are shown in the query as in GET examples.
+      responses:
+        2XX:
+          description: Success (exact status code not documented).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankReport'
+      parameters:
+      - name: bankregn
+        in: query
+        required: false
+        description: Bank registration number. Requiredness is not explicitly specified.
+        schema:
+          type: integer
+      - name: poktype
+        in: query
+        required: false
+        description: Indicator group code. Requiredness is not explicitly specified.
+        schema:
+          type: string
+      - name: date
+        in: query
+        required: false
+        description: Date; examples use YYYY-MM-DD, but accepted format is unspecified. Requiredness is not explicitly
+          specified.
+        schema:
+          type: string
+    x-post-contract:
+      sdk-ready: false
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      operationId: post_bankotch
+      summary: Bank indicator group values
+      description: POST is supported, but parameter placement and body encoding are undocumented. Query parameters
+        and query-key security here are placeholders, not a verified POST wire format.
+      responses:
+        2XX:
+          description: Success (exact status code not documented).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankReport'
+      parameters:
+      - name: bankregn
+        in: query
+        required: false
+        description: Bank registration number. Requiredness is not explicitly specified.
+        schema:
+          type: integer
+      - name: poktype
+        in: query
+        required: false
+        description: Indicator group code. Requiredness is not explicitly specified.
+        schema:
+          type: string
+      - name: date
+        in: query
+        required: false
+        description: Date; examples use YYYY-MM-DD, but accepted format is unspecified. Requiredness is not explicitly
+          specified.
+        schema:
+          type: string
+  /api/banksrait:
+    get:
+      operationId: get_banksrait
+      summary: Indicator values across banks
+      description: Parameters are shown in the query as in GET examples. Detailed documentation says unsorted; the
+        shorter overview says ascending. Ordering is unresolved.
+      responses:
+        2XX:
+          description: Success (exact status code not documented).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BanksRating'
+      parameters:
+      - name: pokid
+        in: query
+        required: false
+        description: Indicator ID; documentation says pokid or pokname. Behavior when both or neither are supplied
+          is unknown. Requiredness is not explicitly specified.
+        schema:
+          type: integer
+      - name: pokname
+        in: query
+        required: false
+        description: Indicator code; documentation says pokid or pokname. Behavior when both or neither are supplied
+          is unknown. Requiredness is not explicitly specified.
+        schema:
+          type: string
+      - name: date
+        in: query
+        required: false
+        description: Date; examples use YYYY-MM-DD, but accepted format is unspecified. Requiredness is not explicitly
+          specified.
+        schema:
+          type: string
+      - name: cond
+        in: query
+        required: false
+        description: 'Optional condition. List forms: in list (n1,n2,...) or not in list (n1,n2,...). Optional according
+          to the documentation.'
+        schema:
+          type: string
+    x-post-contract:
+      sdk-ready: false
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      operationId: post_banksrait
+      summary: Indicator values across banks
+      description: POST is supported, but parameter placement and body encoding are undocumented. Query parameters
+        and query-key security here are placeholders, not a verified POST wire format. Detailed documentation says
+        unsorted; the shorter overview says ascending. Ordering is unresolved.
+      responses:
+        2XX:
+          description: Success (exact status code not documented).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BanksRating'
+      parameters:
+      - name: pokid
+        in: query
+        required: false
+        description: Indicator ID; documentation says pokid or pokname. Behavior when both or neither are supplied
+          is unknown. Requiredness is not explicitly specified.
+        schema:
+          type: integer
+      - name: pokname
+        in: query
+        required: false
+        description: Indicator code; documentation says pokid or pokname. Behavior when both or neither are supplied
+          is unknown. Requiredness is not explicitly specified.
+        schema:
+          type: string
+      - name: date
+        in: query
+        required: false
+        description: Date; examples use YYYY-MM-DD, but accepted format is unspecified. Requiredness is not explicitly
+          specified.
+        schema:
+          type: string
+      - name: cond
+        in: query
+        required: false
+        description: 'Optional condition. List forms: in list (n1,n2,...) or not in list (n1,n2,...). Optional according
+          to the documentation.'
+        schema:
+          type: string
+  /api/listdata:
+    get:
+      operationId: get_listdata
+      summary: User list aggregate
+      description: Parameters are shown in the query as in GET examples.
+      responses:
+        2XX:
+          description: Success (exact status code not documented).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Amount'
+      parameters:
+      - name: groupid
+        in: query
+        required: false
+        description: User list ID. Requiredness is not explicitly specified.
+        schema:
+          type: integer
+      - name: pokid
+        in: query
+        required: false
+        description: Indicator ID; documentation says pokid or pokname. Behavior when both or neither are supplied
+          is unknown. Requiredness is not explicitly specified.
+        schema:
+          type: integer
+      - name: pokname
+        in: query
+        required: false
+        description: Indicator code; documentation says pokid or pokname. Behavior when both or neither are supplied
+          is unknown. Requiredness is not explicitly specified.
+        schema:
+          type: string
+      - name: date
+        in: query
+        required: false
+        description: Date; examples use YYYY-MM-DD, but accepted format is unspecified. Requiredness is not explicitly
+          specified.
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        description: 'Optional aggregation: sum (documented default), avg, count. Optional according to the documentation.'
+        schema:
+          type: string
+          enum:
+          - sum
+          - avg
+          - count
+          default: sum
+      - name: cond
+        in: query
+        required: false
+        description: 'Optional condition. List forms: in list (n1,n2,...) or not in list (n1,n2,...). Optional according
+          to the documentation. Positive and negative examples both say sum>0; the negative expression is unknown.'
+        schema:
+          type: string
+    x-post-contract:
+      sdk-ready: false
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      operationId: post_listdata
+      summary: User list aggregate
+      description: POST is supported, but parameter placement and body encoding are undocumented. Query parameters
+        and query-key security here are placeholders, not a verified POST wire format.
+      responses:
+        2XX:
+          description: Success (exact status code not documented).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Amount'
+      parameters:
+      - name: groupid
+        in: query
+        required: false
+        description: User list ID. Requiredness is not explicitly specified.
+        schema:
+          type: integer
+      - name: pokid
+        in: query
+        required: false
+        description: Indicator ID; documentation says pokid or pokname. Behavior when both or neither are supplied
+          is unknown. Requiredness is not explicitly specified.
+        schema:
+          type: integer
+      - name: pokname
+        in: query
+        required: false
+        description: Indicator code; documentation says pokid or pokname. Behavior when both or neither are supplied
+          is unknown. Requiredness is not explicitly specified.
+        schema:
+          type: string
+      - name: date
+        in: query
+        required: false
+        description: Date; examples use YYYY-MM-DD, but accepted format is unspecified. Requiredness is not explicitly
+          specified.
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        description: 'Optional aggregation: sum (documented default), avg, count. Optional according to the documentation.'
+        schema:
+          type: string
+          enum:
+          - sum
+          - avg
+          - count
+          default: sum
+      - name: cond
+        in: query
+        required: false
+        description: 'Optional condition. List forms: in list (n1,n2,...) or not in list (n1,n2,...). Optional according
+          to the documentation. Positive and negative examples both say sum>0; the negative expression is unknown.'
+        schema:
+          type: string
+  /api/pokinfo:
+    get:
+      operationId: get_pokinfo
+      summary: Indicator information
+      description: Parameters are shown in the query as in GET examples.
+      responses:
+        2XX:
+          description: Success (exact status code not documented).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IndicatorInfo'
+      parameters:
+      - name: pokid
+        in: query
+        required: false
+        description: Indicator ID; documentation says pokid or pokname. Behavior when both or neither are supplied
+          is unknown. Requiredness is not explicitly specified.
+        schema:
+          type: integer
+      - name: pokname
+        in: query
+        required: false
+        description: Indicator code; documentation says pokid or pokname. Behavior when both or neither are supplied
+          is unknown. Requiredness is not explicitly specified.
+        schema:
+          type: string
+      - name: date
+        in: query
+        required: false
+        description: Date; examples use YYYY-MM-DD, but accepted format is unspecified. Optional according to the
+          documentation.
+        schema:
+          type: string
+    x-post-contract:
+      sdk-ready: false
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      operationId: post_pokinfo
+      summary: Indicator information
+      description: POST is supported, but parameter placement and body encoding are undocumented. Query parameters
+        and query-key security here are placeholders, not a verified POST wire format.
+      responses:
+        2XX:
+          description: Success (exact status code not documented).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IndicatorInfo'
+      parameters:
+      - name: pokid
+        in: query
+        required: false
+        description: Indicator ID; documentation says pokid or pokname. Behavior when both or neither are supplied
+          is unknown. Requiredness is not explicitly specified.
+        schema:
+          type: integer
+      - name: pokname
+        in: query
+        required: false
+        description: Indicator code; documentation says pokid or pokname. Behavior when both or neither are supplied
+          is unknown. Requiredness is not explicitly specified.
+        schema:
+          type: string
+      - name: date
+        in: query
+        required: false
+        description: Date; examples use YYYY-MM-DD, but accepted format is unspecified. Optional according to the
+          documentation.
+        schema:
+          type: string
+  /api/stat:
+    get:
+      operationId: get_stat
+      summary: API key usage statistics
+      description: Parameters are shown in the query as in GET examples.
+      responses:
+        2XX:
+          description: Success (exact status code not documented).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Statistics'
+    x-post-contract:
+      sdk-ready: false
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      operationId: post_stat
+      summary: API key usage statistics
+      description: POST is supported, but parameter placement and body encoding are undocumented. Query parameters
+        and query-key security here are placeholders, not a verified POST wire format.
+      responses:
+        2XX:
+          description: Success (exact status code not documented).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Statistics'
+components:
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      in: query
+      name: key
+      description: GET examples place the key in the query. POST key placement is not documented and POST is not an executable operation in this specification.
+  schemas:
+    Amount:
+      type: object
+      properties:
+        Сумма: &id004
+          oneOf:
+          - type: number
+            format: double
+          - type: string
+          description: Declared double; examples quote the value as a string.
+    BankInfo:
+      type: object
+      properties:
+        РегНом: &id002
+          oneOf:
+          - type: integer
+          - type: string
+          description: Declared integer; examples quote the value as a string.
+        Банк:
+          type: string
+        КраткНаим:
+          type: string
+        ПолнНаим:
+          type: string
+        Тип:
+          type: string
+        ОПФ:
+          type: string
+        ДатаРег:
+          type: string
+          description: Described as DD.MM.YYYY.
+        ТипЛиц:
+          type: string
+          description: 'Documented statuses: empty, АНН, ОТЗ, ПРС, САН.'
+        Адрес:
+          type: string
+        Телефоны:
+          type: string
+        АСВ:
+          type: string
+          description: 'Described values: Да or Нет.'
+        ОГРН:
+          type: string
+        Лицензия:
+          type: array
+          items: {}
+    Ratings:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              Название: &id001
+                oneOf:
+                - type: integer
+                - type: string
+                description: Declared integer; prose or example uses a string.
+              Агентство: *id001
+              Тип: &id003
+                type: string
+              Значение:
+                oneOf:
+                - type: number
+                  format: double
+                - type: string
+                description: Declared double; example includes textual ratings and outlooks.
+    BicInfo:
+      type: object
+      properties:
+        БИК: *id002
+        Наименование:
+          type: string
+        ЛатНаим:
+          type: string
+        РегНом:
+          type: string
+        Адрес:
+          type: string
+        ДатаВвода:
+          type: string
+        ТипУчастника:
+          type: string
+        SWIFT:
+          type: string
+        СчетНомер:
+          type: string
+        СчетЦБНаим:
+          type: string
+        URRS:
+          type: string
+          description: Date, if any, according to the documentation.
+        LWRS:
+          type: string
+          description: Date, if any, according to the documentation.
+        LMRS:
+          type: string
+          description: Date, if any, according to the documentation.
+        CLRS:
+          type: string
+          description: Date, if any, according to the documentation.
+        СчетСтатус:
+          oneOf:
+          - type: array
+            items: {}
+          - type: string
+          description: Declared array; example is a string.
+    BankReport:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              pokid: *id002
+              pokname: *id001
+              Название: *id003
+              Сумма: *id004
+              parent_pokid:
+                type: string
+                description: Opaque parent identifier; example is symbolic.
+    BanksRating:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              РегНом: *id002
+              Банк: *id003
+              Сумма: *id004
+    IndicatorInfo:
+      type: object
+      properties:
+        pokid: *id002
+        pokname: *id001
+        ПолнНаим:
+          type: string
+        Размерность:
+          type: string
+          description: Described units include thousands of rubles, percent and fractions; the table and example
+            differ on Cyrillic Т versus Latin T.
+        Комментарий:
+          type: string
+        poktype:
+          type: string
+        ДатаВвода:
+          type: string
+          description: Described as DD.MM.YYYY.
+        parent_pokid:
+          type: string
+        Формула:
+          type: string
+    Statistics:
+      type: object
+      properties:
+        ДатаНач: *id003
+        ДатаОконч: *id003
+        Методы:
+          oneOf:
+          - type: array
+            items: {}
+          - type: object
+            additionalProperties:
+              type: object
+              properties:
+                Лимит: &id005
+                  type: string
+                Истрачено: *id005
+          description: Declared array; example is an object keyed by method. Coverage is unknown.

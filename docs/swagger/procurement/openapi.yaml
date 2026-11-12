@@ -1,0 +1,1422 @@
+openapi: 3.0.3
+info:
+  title: API-Закупки
+  version: 1.0.0
+  description: 'Источник: https://damia.ru/apizakupki. Иллюстративные схемы components не подключены к ответам: вложенность предположительна по плоским таблицам; заполненные
+    JSON-примеры отсутствуют. Точный статус, HTTP Content-Type, обязательность, nullability и ошибки не установлены.
+    2XX — обобщённая группа успешных ответов, не конкретный подтверждённый код; application/json отражает описанный формат
+    JSON, а не доказанный заголовок Content-Type.'
+servers:
+- url: https://api.damia.ru/zakupki
+security:
+- ApiKey: []
+paths:
+  /zakupka:
+    get:
+      operationId: zakupka
+      summary: Извещение
+      description: 'Дополнительные объекты, условия и документы описаны только при actual=1. Файлы представлены метаданными и ссылками, а не телом ответа. Пример шаблона: GET /zakupki/zakupka?regn={notice-number}&actual=1&key={api-key}. Источник: https://damia.ru/apizakupki'
+      externalDocs:
+        url: https://damia.ru/apizakupki
+      parameters:
+      - &id001
+        name: regn
+        in: query
+        description: Номер реестровой записи.
+        schema:
+          type: string
+      - name: actual
+        in: query
+        description: 0 — данные предыдущего дня; 1 — актуальные данные.
+        schema:
+          type: integer
+          default: 0
+      responses:
+        2XX:
+          description: Документированный содержательный ответ; 2XX — обобщённая группа успеха, точный код и HTTP Content-Type
+            не подтверждены. JSON описан источником; application/json — обозначение формата, а не доказанный заголовок.
+            Вложенность предположительна.
+          content:
+            application/json:
+              schema: {}
+  /contract:
+    get:
+      operationId: contract
+      summary: Контракт или договор
+      description: 'В тексте ответа 444-ФЗ — опечатка; в описании метода указан 44-ФЗ. Источник: https://damia.ru/apizakupki'
+      externalDocs:
+        url: https://damia.ru/apizakupki
+      parameters:
+      - *id001
+      responses:
+        2XX:
+          description: Документированный содержательный ответ; 2XX — обобщённая группа успеха, точный код и HTTP Content-Type
+            не подтверждены. JSON описан источником; application/json — обозначение формата, а не доказанный заголовок.
+            Вложенность предположительна.
+          content:
+            application/json:
+              schema: {}
+  /zakupki:
+    get:
+      operationId: zakupki
+      summary: Сводка участия в закупках
+      description: 'В формате 1 для роли 0 описаны Заказчики, для роли 1 — Участники; в формате 2 используется НачЦена.
+        API-Старт: до 10 контрагентов и 10 номеров. Пример шаблона: GET /zakupki/zakupki?inn={organization-inn}&format=2&page=1&key={api-key}. Источник: https://damia.ru/apizakupki'
+      externalDocs:
+        url: https://damia.ru/apizakupki
+      parameters:
+      - &id003
+        name: inn
+        in: query
+        description: ИНН.
+        schema:
+          type: string
+      - &id004
+        name: fz
+        in: query
+        description: 'Федеральный закон: 44, 223 или 615.'
+        schema:
+          type: string
+      - &id005
+        name: role
+        in: query
+        description: 0 — участник/поставщик, 1 — заказчик.
+        schema:
+          type: string
+          default: '0'
+      - &id006
+        name: from_date
+        in: query
+        description: Начало периода публикации, yyyy-mm-dd; включительность не указана.
+        schema:
+          type: string
+      - &id007
+        name: to_date
+        in: query
+        description: Конец периода публикации, yyyy-mm-dd; включительность не указана.
+        schema:
+          type: string
+      - &id008
+        name: format
+        in: query
+        description: 1 — группировка, 2 — плоские записи.
+        schema:
+          type: integer
+          default: 1
+      - &id009
+        name: page
+        in: query
+        description: Только format=2; до 100 записей на странице.
+        schema:
+          type: integer
+          default: 1
+      responses:
+        2XX:
+          description: Документированный содержательный ответ; 2XX — обобщённая группа успеха, точный код и HTTP Content-Type
+            не подтверждены. JSON описан источником; application/json — обозначение формата, а не доказанный заголовок.
+            Вложенность предположительна.
+          content:
+            application/json:
+              schema: {}
+  /contracts:
+    get:
+      operationId: contracts
+      summary: Сводка контрактов
+      description: 'Фильтры дат относятся к публикации контракта; роль 0 — поставщик, роль 1 — заказчик. Для роли 1 описаны
+        Поставщики; в формате 2 используется Цена. API-Старт: до 10 контрагентов и 10 номеров. Источник: https://damia.ru/apizakupki'
+      externalDocs:
+        url: https://damia.ru/apizakupki
+      parameters:
+      - *id003
+      - *id004
+      - *id005
+      - *id006
+      - *id007
+      - *id008
+      - *id009
+      responses:
+        2XX:
+          description: Документированный содержательный ответ; 2XX — обобщённая группа успеха, точный код и HTTP Content-Type
+            не подтверждены. JSON описан источником; application/json — обозначение формата, а не доказанный заголовок.
+            Вложенность предположительна.
+          content:
+            application/json:
+              schema: {}
+  /zsearch:
+    get:
+      operationId: zsearch
+      summary: Поиск закупок
+      description: 'Не более 100 результатов на закон на странице. Источник: https://damia.ru/apizakupki'
+      externalDocs:
+        url: https://damia.ru/apizakupki
+      parameters:
+      - name: q
+        in: query
+        description: Слова и фразы через запятую.
+        schema:
+          type: string
+      - name: from_date
+        in: query
+        description: Начало периода публикации, yyyy-mm-dd.
+        schema:
+          type: string
+      - name: to_date
+        in: query
+        description: Конец периода публикации, yyyy-mm-dd.
+        schema:
+          type: string
+      - name: region
+        in: query
+        description: Коды регионов поставки через запятую.
+        schema:
+          type: string
+      - name: okpd
+        in: query
+        description: ОКПД2; для 223-ФЗ также ОКДП.
+        schema:
+          type: string
+      - name: status
+        in: query
+        description: 1 — подача заявок, 2 — работа комиссии, 3 — завершено, 4 — отменено.
+        schema:
+          type: string
+      - name: cust_inn
+        in: query
+        description: ИНН заказчика.
+        schema:
+          type: string
+      - name: placing
+        in: query
+        description: 'Через запятую: 1 аукцион, 2 котировки, 3 конкурс, 4 единственный поставщик, 5 предложения, 99 прочие.'
+        schema:
+          type: string
+      - name: etp
+        in: query
+        description: 'Коды через запятую: 1 Сбербанк-АСТ, 2 РТС-тендер, 3 ЕЭТП, 4 ZakazRF, 5 ЭТП НЭП, 6 РАД, 7 B2B-Center,
+          8 Фабрикант, 9 ЭТП ГПБ, 10 OTC.RU, 11 ТЭК-Торг, 12 ЭТПРФ, 13 Газнефтеторг, 14 Тендер.Про, 15 Аукционный Конкурсный
+          Дом, 16 ПолюсГолд, 99 прочие.'
+        schema:
+          type: string
+      - name: min_price
+        in: query
+        description: Минимальная начальная цена закупки в рублях.
+        schema:
+          type: integer
+      - name: max_price
+        in: query
+        description: Максимальная начальная цена закупки в рублях.
+        schema:
+          type: integer
+      - name: smp
+        in: query
+        description: 1 СМП/СОНО; 2 остальные.
+        schema:
+          type: integer
+      - name: fz
+        in: query
+        description: Федеральный закон 44, 223 или 615.
+        schema:
+          type: integer
+      - name: page
+        in: query
+        description: До 100 записей на закон на странице.
+        schema:
+          type: integer
+          default: 1
+      responses:
+        2XX:
+          description: Документированный содержательный ответ; 2XX — обобщённая группа успеха, точный код и HTTP Content-Type
+            не подтверждены. JSON описан источником; application/json — обозначение формата, а не доказанный заголовок.
+            Вложенность предположительна.
+          content:
+            application/json:
+              schema: {}
+  /customer:
+    get:
+      operationId: customer
+      summary: Реестр заказчиков
+      description: 'Родительские связи полей предположительны. Источник: https://damia.ru/apizakupki'
+      externalDocs:
+        url: https://damia.ru/apizakupki
+      parameters:
+      - &id010
+        name: req
+        in: query
+        description: ИНН или ОГРН; для ЕРУЗ также ИП или физическое лицо.
+        schema:
+          type: string
+      responses:
+        2XX:
+          description: Документированный содержательный ответ; 2XX — обобщённая группа успеха, точный код и HTTP Content-Type
+            не подтверждены. JSON описан источником; application/json — обозначение формата, а не доказанный заголовок.
+            Вложенность предположительна.
+          content:
+            application/json:
+              schema: {}
+  /eruz:
+    get:
+      operationId: eruz
+      summary: Единый реестр участников
+      description: 'Ключи и вложенность не подтверждены заполненным ответом. Источник: https://damia.ru/apizakupki'
+      externalDocs:
+        url: https://damia.ru/apizakupki
+      parameters:
+      - *id010
+      responses:
+        2XX:
+          description: Документированный содержательный ответ; 2XX — обобщённая группа успеха, точный код и HTTP Content-Type
+            не подтверждены. JSON описан источником; application/json — обозначение формата, а не доказанный заголовок.
+            Вложенность предположительна.
+          content:
+            application/json:
+              schema: {}
+  /zfas:
+    get:
+      operationId: zfas
+      summary: Жалобы и проверки ФАС
+      description: 'Таблица запроса содержит inn, пример использует req и format=2. Неизвестно, какой идентификатор корректен
+        и каков формат по умолчанию. Файлы описаны метаданными и ссылками, не содержимым ответа. Источник: https://damia.ru/apizakupki'
+      externalDocs:
+        url: https://damia.ru/apizakupki
+      parameters:
+      - *id003
+      - name: page
+        in: query
+        description: Для format=2; по умолчанию 1.
+        schema:
+          type: integer
+          default: 1
+      - name: req
+        in: query
+        description: Встречается только в примере вместо inn; поддержка не подтверждена.
+        schema:
+          type: string
+      - name: format
+        in: query
+        description: Встречается в примере как 2 и в описании форматов, отсутствует в таблице запроса; тип и поддержка
+          не подтверждены.
+        schema: {}
+      responses:
+        2XX:
+          description: Документированный содержательный ответ; 2XX — обобщённая группа успеха, точный код и HTTP Content-Type
+            не подтверждены. JSON описан источником; application/json — обозначение формата, а не доказанный заголовок.
+            Вложенность предположительна.
+          content:
+            application/json:
+              schema: {}
+  /rnp:
+    get:
+      operationId: rnp
+      summary: Реестр недобросовестных поставщиков
+      description: 'Вложенность карты предположительна. Источник: https://damia.ru/apizakupki'
+      externalDocs:
+        url: https://damia.ru/apizakupki
+      parameters:
+      - *id003
+      responses:
+        2XX:
+          description: Документированный содержательный ответ; 2XX — обобщённая группа успеха, точный код и HTTP Content-Type
+            не подтверждены. JSON описан источником; application/json — обозначение формата, а не доказанный заголовок.
+            Вложенность предположительна.
+          content:
+            application/json:
+              schema: {}
+  /sro:
+    get:
+      operationId: sro
+      summary: СРО и членство
+      description: 'Сведения СРО и участия условны. Источник: https://damia.ru/apizakupki'
+      externalDocs:
+        url: https://damia.ru/apizakupki
+      parameters:
+      - name: req
+        in: query
+        description: ИНН/ОГРН юридического лица или ИННФЛ/ОГРНИП индивидуального предпринимателя.
+        schema:
+          type: string
+      responses:
+        2XX:
+          description: Документированный содержательный ответ; 2XX — обобщённая группа успеха, точный код и HTTP Content-Type
+            не подтверждены. JSON описан источником; application/json — обозначение формата, а не доказанный заголовок.
+            Вложенность предположительна.
+          content:
+            application/json:
+              schema: {}
+  /ktru:
+    get:
+      operationId: ktru
+      summary: Каталог товаров, работ и услуг
+      description: 'Источник описывает next_page как boolean-индикатор наличия записей на следующей странице. Тип count в источнике указан как count, не JSON-тип. Источник: https://damia.ru/apizakupki'
+      externalDocs:
+        url: https://damia.ru/apizakupki
+      parameters:
+      - name: q
+        in: query
+        description: Слова через запятую.
+        schema:
+          type: string
+      - name: ktru
+        in: query
+        description: Код КТРУ.
+        schema:
+          type: string
+      - name: okpd2
+        in: query
+        description: Код ОКПД2.
+        schema:
+          type: string
+      - name: nkmi
+        in: query
+        description: Код НКМИ.
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Строка по таблице; до 100 результатов на странице.
+        schema:
+          type: string
+          default: '1'
+      responses:
+        2XX:
+          description: Документированный содержательный ответ; 2XX — обобщённая группа успеха, точный код и HTTP Content-Type
+            не подтверждены. JSON описан источником; application/json — обозначение формата, а не доказанный заголовок.
+            Вложенность предположительна.
+          content:
+            application/json:
+              schema: {}
+  /zmon:
+    get:
+      operationId: zmon
+      summary: Мониторинг закупок и контрактов
+      description: 'ВНИМАНИЕ: GET изменяет подписки и может менять email. Ответ подписки/отписки — текст об успехе; схемы
+        списка и смены email неизвестны. Пример смены email не содержит a. Отключайте предзагрузку, обычное GET-кеширование и автоматические повторы для вызовов с возможными изменениями; тестирование изменений требует отдельного разрешения. Шаблон списка: GET /zakupki/zmon?a=list&key={api-key}. Шаблон изменения адреса (изменяет состояние, не выполнять для проверки чтения): GET /zakupki/zmon?email={address}&key={api-key}. Письмо уведомления не является примером HTTP-ответа.
+        Источник: https://damia.ru/apizakupki'
+      externalDocs:
+        url: https://damia.ru/apizakupki
+      parameters:
+      - name: a
+        in: query
+        description: subscrz, subscrc — подписка; unsubscrz, unsubscrc — отписка; list — список.
+        schema:
+          type: string
+      - *id001
+      - name: email
+        in: query
+        description: Необязательно; по умолчанию зарегистрированный адрес.
+        schema:
+          type: string
+      responses:
+        2XX:
+          description: Документированный содержательный ответ; 2XX — обобщённая группа успеха, точный код и HTTP Content-Type
+            не подтверждены. Текст успеха подписки/отписки; ответ списка и смены email неизвестен. */* не подтверждает
+            медиатип.
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: Текст успеха подписки или отписки; источник не подтверждает HTTP Content-Type.
+            '*/*':
+              schema:
+                description: Ответы списка и смены email не определены; для смены email показан текст успеха.
+components:
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      in: query
+      name: key
+      description: Ключ доступа; не публиковать и не включать в журналы.
+  schemas:
+    Organization:
+      type: object
+      properties:
+        ОГРН:
+          type: string
+        ИНН:
+          type: string
+        НаимПолн:
+          type: string
+        НаимСокр:
+          type: string
+        АдресПолн:
+          type: string
+        РукФИО:
+          type: string
+        РукИННФЛ:
+          type: string
+      x-source-name: Организация
+    OrganizationContact:
+      type: object
+      properties:
+        ОГРН:
+          type: string
+        ИНН:
+          type: string
+        НаимПолн:
+          type: string
+        НаимСокр:
+          type: string
+        АдресПолн:
+          type: string
+        РукФИО:
+          type: string
+        РукИННФЛ:
+          type: string
+        Телефон:
+          type: string
+        Email:
+          type: string
+      x-source-name: ОрганизацияКонтакты
+    Price:
+      type: object
+      properties:
+        Сумма:
+          type: number
+          format: double
+        ВалютаКод:
+          type: string
+        ВалютаНаим:
+          type: string
+      x-source-name: Цена
+    Product:
+      type: object
+      properties:
+        ОКПД:
+          type: string
+        Название:
+          type: string
+      x-source-name: Продукт
+    Status:
+      type: object
+      properties:
+        Статус:
+          type: string
+        Причина:
+          type: string
+        Дата:
+          type: string
+      x-source-name: Статус
+    Security:
+      type: object
+      properties:
+        Сумма:
+          type: number
+          format: double
+        Доля:
+          type: number
+          format: double
+        Банк:
+          type: string
+        БИК:
+          type: string
+        РасчСчет:
+          type: string
+        ЛицСчет:
+          type: string
+      x-source-name: Обеспечение
+    Suppliers:
+      type: object
+      properties:
+        ЮЛ:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizationContact'
+        ИП:
+          type: array
+          items:
+            type: object
+            properties:
+              ОГРНИП:
+                type: string
+              ИННФЛ:
+                type: string
+              ФИО:
+                type: string
+              АдресПолн:
+                type: string
+              Телефон:
+                type: string
+              Email:
+                type: string
+        ФЛ:
+          type: array
+          items:
+            type: object
+            properties:
+              ИННФЛ:
+                type: string
+              ФИО:
+                type: string
+              АдресПолн:
+                type: string
+              Телефон:
+                type: string
+              Email:
+                type: string
+        Наименования:
+          type: array
+          items: {}
+      x-source-name: Поставщики
+    File:
+      type: object
+      properties:
+        Название:
+          type: string
+        Url:
+          type: string
+      x-source-name: Файл
+    FasFile:
+      type: object
+      properties:
+        Описание:
+          type: string
+        Url:
+          type: string
+      x-source-name: ФайлФАС
+    NoticeContract:
+      type: object
+      properties:
+        Номер:
+          type: string
+        ДатаПодп:
+          type: string
+        Лот:
+          type: integer
+        Цена:
+          $ref: '#/components/schemas/Price'
+        Поставщики:
+          $ref: '#/components/schemas/Suppliers'
+      x-source-name: КонтрактИзвещения
+    Application:
+      type: object
+      properties:
+        Номер:
+          type: string
+        НаимПолн:
+          type: string
+        НаимСокр:
+          type: string
+        АдресПолн:
+          type: string
+        РукФИО:
+          type: string
+        РукИННФЛ:
+          type: string
+        Телефон:
+          type: string
+        Email:
+          type: string
+        Результат:
+          type: string
+        Причина:
+          type: string
+        ДопИнфо:
+          type: string
+        ТипУч:
+          type: object
+          properties: &id011 {}
+        Сумма:
+          type: number
+          format: double
+      description: Источник также указывает альтернативы ОГРН / ОГРНИП и ИНН / ИННФЛ; буквальные имена не подтверждены.
+      x-source-name: Заявка
+    Notice:
+      type: object
+      properties:
+        Регион:
+          type: string
+        ДатаПубл:
+          type: string
+        ДатаНач:
+          type: string
+        ДатаОконч:
+          type: string
+        ВремяОконч:
+          type: string
+        ДатаРассм:
+          type: string
+        ДатаАукц:
+          type: string
+        ВремяАукц:
+          type: string
+        СпособРазм:
+          type: string
+        РазмРоль:
+          type: string
+        ФЗ:
+          type: integer
+        ЭТП:
+          type: object
+          properties:
+            Код:
+              type: string
+            Наименование:
+              type: string
+            Url:
+              type: string
+        Заказчик:
+          type: array
+          items:
+            $ref: '#/components/schemas/Organization'
+        РазмОрг:
+          $ref: '#/components/schemas/Organization'
+        Контакты:
+          type: object
+          properties:
+            ОтвЛицо:
+              type: string
+            Телефон:
+              type: string
+            Email:
+              type: string
+        НачЦена:
+          $ref: '#/components/schemas/Price'
+        ОбеспУчаст:
+          $ref: '#/components/schemas/Security'
+        ОбеспИсп:
+          $ref: '#/components/schemas/Security'
+        ОбеспГарант:
+          $ref: '#/components/schemas/Security'
+        Продукт:
+          $ref: '#/components/schemas/Product'
+        ОбъектыЗак:
+          type: array
+          items:
+            type: object
+            properties:
+              ОКПД:
+                type: string
+              ЛекФорма:
+                type: string
+              ЕдИзм:
+                type: string
+              ДопИнфо:
+                type: string
+              Количество:
+                type: number
+                format: float
+              ЦенаЕд:
+                type: number
+                format: float
+              Стоимость:
+                type: number
+                format: float
+            description: Источник указывает альтернативу Наименование / МНН; буквальное имя не подтверждено.
+          description: Только actual=1.
+        Условия:
+          type: object
+          properties:
+            Преимущества:
+              type: array
+              items:
+                type: object
+                properties:
+                  Описание:
+                    type: string
+                  Значение:
+                    type: number
+                    format: float
+            Требования:
+              type: array
+              items:
+                type: object
+                properties:
+                  Описание:
+                    type: string
+                  ДопИнфо:
+                    type: string
+            Ограничения:
+              type: array
+              items:
+                type: object
+                properties:
+                  Описание:
+                    type: string
+                  ДопИнфо:
+                    type: string
+            ДопИнфо:
+              type: string
+          description: Только actual=1.
+        МестоПостав:
+          type: string
+          description: Только actual=1; источник дважды использует имя для места и срока поставки.
+        Протокол:
+          type: object
+          properties:
+            Тип:
+              type: string
+            Номер:
+              type: string
+            Дата:
+              type: string
+            Url:
+              type: string
+            Заявки:
+              type: array
+              items:
+                $ref: '#/components/schemas/Application'
+        Контракты:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/NoticeContract'
+          description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+        Документы:
+          type: array
+          items:
+            type: object
+            properties:
+              Название:
+                type: string
+              ДатаРазм:
+                type: string
+              Редакция:
+                type: string
+              Файлы:
+                type: array
+                items:
+                  $ref: '#/components/schemas/File'
+          description: Только actual=1.
+        Статус:
+          $ref: '#/components/schemas/Status'
+      x-source-name: Извещение
+    NoticeResponse:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/Notice'
+      description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+      x-source-name: ОтветИзвещение
+    Contract:
+      type: object
+      properties:
+        Номер:
+          type: string
+        Регион:
+          type: string
+        ДатаПубл:
+          type: string
+        ДатаПодп:
+          type: string
+        ДатаОконч:
+          type: string
+        ФЗ:
+          type: integer
+        Заказчик:
+          $ref: '#/components/schemas/Organization'
+        Закупка:
+          type: object
+          properties:
+            НомерИзвещения:
+              type: string
+            СпособРазм:
+              type: string
+            ЕдПоставщикПричина:
+              type: string
+            Лот:
+              type: integer
+        Цена:
+          $ref: '#/components/schemas/Price'
+        Продукт:
+          $ref: '#/components/schemas/Product'
+        Поставщики:
+          $ref: '#/components/schemas/Suppliers'
+        Статус:
+          $ref: '#/components/schemas/Status'
+      x-source-name: Контракт
+    ContractResponse:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/Contract'
+      description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+      x-source-name: ОтветКонтракт
+    CurrencyAggregate:
+      type: object
+      properties:
+        Сумма:
+          type: number
+          format: double
+        Количество:
+          type: integer
+      x-source-name: АгрегатВалюты
+    Counterparty:
+      type: object
+      properties:
+        ОГРН:
+          type: string
+        ИНН:
+          type: string
+        НаимПолн:
+          type: string
+        НаимСокр:
+          type: string
+        АдресПолн:
+          type: string
+        РукФИО:
+          type: string
+        РукИННФЛ:
+          type: string
+        Телефон:
+          type: string
+        Email:
+          type: string
+        Цена:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/CurrencyAggregate'
+          description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+        РегНомера:
+          type: array
+          items:
+            type: string
+      description: Контакты описаны для участников и поставщиков; ОГРН может означать ОГРНИП и отсутствовать у физлица.
+      x-source-name: Контрагент
+    StatusGroup:
+      type: object
+      properties:
+        Цена:
+          type: array
+          items:
+            type: object
+            properties:
+              Количество:
+                type: integer
+              Сумма:
+                type: number
+                format: double
+              ВалютаКод:
+                type: string
+              ВалютаНаим:
+                type: string
+        Заказчики:
+          type: array
+          items:
+            $ref: '#/components/schemas/Counterparty'
+        Участники:
+          type: array
+          items:
+            $ref: '#/components/schemas/Counterparty'
+        Поставщики:
+          type: array
+          items:
+            $ref: '#/components/schemas/Counterparty'
+      x-source-name: ГруппаСтатуса
+    GroupedSummary:
+      type: object
+      additionalProperties:
+        type: object
+        additionalProperties:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/StatusGroup'
+          description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+        description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+      description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+      x-source-name: СводкаГруппы
+    SummaryRecord:
+      type: object
+      properties:
+        ДатаПубл:
+          type: string
+        ЗаказчикИНН:
+          type: object
+          properties: *id011
+        НачЦена:
+          $ref: '#/components/schemas/Price'
+        Цена:
+          $ref: '#/components/schemas/Price'
+        Продукт:
+          $ref: '#/components/schemas/Product'
+        Статус:
+          $ref: '#/components/schemas/Status'
+      x-source-name: СводкаЗапись
+    FlatSummary:
+      type: object
+      additionalProperties:
+        type: object
+        additionalProperties:
+          $ref: '#/components/schemas/SummaryRecord'
+        description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+      description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+      x-source-name: СводкаПлоская
+    SummaryResponse:
+      description: 'Формат 1: группировка; формат 2: плоские записи. Иерархия предположительная.'
+      anyOf:
+      - $ref: '#/components/schemas/GroupedSummary'
+      - $ref: '#/components/schemas/FlatSummary'
+      x-source-name: ОтветСводка
+    SearchResponse:
+      type: object
+      additionalProperties:
+        type: object
+        additionalProperties:
+          type: object
+          properties:
+            Продукт:
+              type: string
+            ДатаПубл:
+              type: string
+        description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+      description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+      x-source-name: ОтветПоиск
+    OrganizationCodes:
+      type: object
+      properties:
+        ОКФС:
+          type: string
+        ОКОПФ:
+          type: string
+        ОКАТО:
+          type: string
+        ОКТМО:
+          type: string
+        ОКПО:
+          type: string
+      x-source-name: Коды
+    CustomerResponse:
+      type: object
+      additionalProperties:
+        type: object
+        properties:
+          Заказчик44:
+            type: object
+            properties:
+              ИКУ:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    РегНомер:
+                      type: string
+                    ДатаИКУ:
+                      type: string
+                    КПП:
+                      type: string
+              Коды:
+                $ref: '#/components/schemas/OrganizationCodes'
+              Роль:
+                type: string
+              РольДатаНач:
+                type: string
+              РольДатаКон:
+                type: string
+          Заказчик223:
+            type: object
+            properties:
+              ИКО:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    ДатаИКО:
+                      type: string
+                    КПП:
+                      type: string
+                    Сайт:
+                      type: string
+              ОбособлПодр: &id012
+                type: boolean
+              Контакты:
+                type: string
+                description: Источник указывает строку; положение последующих контактных полей неясно.
+              ОтвЛицо:
+                type: string
+              Телефон:
+                type: string
+              Email:
+                type: string
+              ВидЮЛ:
+                type: string
+              Статус:
+                type: string
+              Коды:
+                $ref: '#/components/schemas/OrganizationCodes'
+              Полномочия:
+                type: array
+                items: {}
+              ППО:
+                type: object
+                properties:
+                  Код:
+                    type: string
+                  Наименование:
+                    type: string
+      description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+      x-source-name: ОтветЗаказчик
+    EruzResponse:
+      type: object
+      additionalProperties:
+        type: object
+        properties:
+          ИНН:
+            type: string
+          ОГРН:
+            type: string
+          КПП:
+            type: string
+          Наименование:
+            type: string
+          Тип:
+            type: string
+          ДатаАккр:
+            type: string
+          ДатаИскл:
+            type: string
+          СМСП: *id012
+          Исключен: *id012
+      description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+      x-source-name: ОтветЕРУЗ
+    FasProcurement:
+      type: object
+      properties:
+        НомерИзвещения:
+          type: string
+        Продукт:
+          type: string
+        ПриостановлДата:
+          type: string
+        Приостановл: *id012
+      x-source-name: ЗакупкаФАС
+    FasResult:
+      type: object
+      properties:
+        Дата:
+          type: string
+        Результат:
+          type: string
+        РешениеРНП:
+          type: string
+        НомерРешения:
+          type: string
+        ДатаРешения:
+          type: string
+        НомерПредп:
+          type: string
+        ДатаПредп:
+          type: string
+        Отмена:
+          type: object
+          properties:
+            Текст:
+              type: string
+            Дата:
+              type: string
+        Файлы:
+          type: array
+          items:
+            $ref: '#/components/schemas/FasFile'
+      x-source-name: РезультатФАС
+    FasComplaint:
+      type: object
+      properties:
+        ДатаПубл:
+          type: string
+        КонтрОргИНН:
+          type: string
+        УчастникИНН:
+          type: string
+        УчастникНаим:
+          type: string
+        Текст:
+          type: string
+        ДатаРассм:
+          type: string
+        ВремяРассм:
+          type: string
+        Закупка:
+          $ref: '#/components/schemas/FasProcurement'
+        Результат:
+          $ref: '#/components/schemas/FasResult'
+        Отказ:
+          type: object
+          properties:
+            Текст:
+              type: string
+            Дата:
+              type: string
+        Отзыв:
+          type: object
+          properties:
+            Текст:
+              type: string
+            ОргНаим:
+              type: string
+            Дата:
+              type: string
+        Файлы:
+          type: array
+          items:
+            $ref: '#/components/schemas/FasFile'
+      x-source-name: ЖалобаФАС
+    FasInspection:
+      type: object
+      properties:
+        ДатаПубл:
+          type: string
+        ДатаПроверки:
+          type: string
+        ВремяПроверки:
+          type: string
+        ПериодНач:
+          type: string
+        ПериодКон:
+          type: string
+        МестоПроверки:
+          type: string
+        ИнспекторИНН:
+          type: string
+        Основание:
+          type: string
+        ОснованиеТекст:
+          type: string
+        Закупка:
+          $ref: '#/components/schemas/FasProcurement'
+        Результат:
+          $ref: '#/components/schemas/FasResult'
+        Отмена:
+          description: Источник указывает строку, но далее перечисляет Текст и Дата; тип неизвестен.
+        Файлы:
+          type: array
+          items:
+            $ref: '#/components/schemas/FasFile'
+      x-source-name: ПроверкаФАС
+    FasResponse:
+      description: Группированный либо плоский вид; форма карт и элементов массивов не подтверждена.
+      anyOf:
+      - type: object
+        additionalProperties:
+          type: object
+          properties:
+            Жалобы:
+              type: object
+              additionalProperties:
+                type: object
+                additionalProperties:
+                  type: object
+                  properties:
+                    Количество:
+                      type: integer
+                    РегНомера:
+                      type: array
+                      items:
+                        type: string
+                description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+              description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+            ПоданныеЖалобы:
+              type: object
+              additionalProperties:
+                type: object
+                additionalProperties:
+                  type: object
+                  properties:
+                    Количество:
+                      type: integer
+                    РегНомера:
+                      type: array
+                      items:
+                        type: string
+                description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+              description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+            ВнеплПроверки:
+              type: object
+              additionalProperties:
+                type: object
+                additionalProperties:
+                  type: object
+                  properties:
+                    Количество:
+                      type: integer
+                    РегНомера:
+                      type: array
+                      items:
+                        type: string
+                description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+              description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+        description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+      - type: object
+        additionalProperties:
+          type: object
+          properties:
+            Жалобы:
+              type: array
+              items:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/FasComplaint'
+                description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+            ПоданныеЖалобы:
+              type: array
+              items:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/FasComplaint'
+                description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+            ВнеплПроверки:
+              type: array
+              items:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/FasInspection'
+                description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+        description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+      x-source-name: ОтветФАС
+    RnpResponse:
+      type: object
+      additionalProperties:
+        type: object
+        additionalProperties:
+          type: object
+          properties:
+            Регион:
+              type: string
+            ДатаПубл:
+              type: string
+            ПричинаВкл:
+              type: string
+            ОснованиеВкл:
+              type: string
+            ДатаВкл:
+              type: string
+            Статус:
+              type: string
+            ПричинаИскл:
+              type: string
+            ДатаИскл:
+              type: string
+            ФЗ:
+              type: integer
+            Заказчик:
+              $ref: '#/components/schemas/Organization'
+            Закупка:
+              type: object
+              properties:
+                НомерИзвещения:
+                  type: string
+                Продукт:
+                  type: string
+                Лот:
+                  type: integer
+            Цена:
+              $ref: '#/components/schemas/Price'
+            Продукт:
+              $ref: '#/components/schemas/Product'
+        description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+      description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+      x-source-name: ОтветРНП
+    SroInfo:
+      type: object
+      properties:
+        ОГРН:
+          type: string
+        ИНН:
+          type: string
+        НаимПолн:
+          type: string
+        НаимСокр:
+          type: string
+        АдресПолн:
+          type: string
+        РукФИО:
+          type: string
+        РукИННФЛ:
+          type: string
+        Телефон:
+          type: string
+        Email:
+          type: string
+        Сайт:
+          type: string
+      x-source-name: ИнфоСРО
+    Sro:
+      type: object
+      properties:
+        Реестр:
+          type: string
+        РегНомер:
+          type: string
+        Статус:
+          type: string
+        Комментарий:
+          type: string
+        Дата:
+          type: string
+      x-source-name: СРО
+    SroResponse:
+      type: object
+      additionalProperties:
+        type: object
+        properties:
+          Инфо:
+            $ref: '#/components/schemas/SroInfo'
+          СРО:
+            $ref: '#/components/schemas/Sro'
+          Участия:
+            type: array
+            items:
+              type: object
+              properties:
+                РегНомер:
+                  type: string
+                ДатаРег:
+                  type: string
+                ДатаПрекр:
+                  type: string
+                ОбоснПрекр:
+                  type: string
+                Статус:
+                  type: string
+                Дата:
+                  type: string
+                Инфо:
+                  $ref: '#/components/schemas/SroInfo'
+                СРО:
+                  $ref: '#/components/schemas/Sro'
+        description: СРО присутствует для СРО; Участия — при наличии членства.
+      description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+      x-source-name: ОтветСРО
+    KtruResponse:
+      type: object
+      properties:
+        result:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              Название:
+                type: string
+              ЕдИзм:
+                type: string
+              ДатаНач:
+                type: string
+              ДатаОкон:
+                type: string
+              Описание:
+                type: string
+              Статус:
+                type: string
+              ДатаИскл:
+                type: string
+              ПричинаИскл:
+                type: string
+              ДатаОбновл:
+                type: string
+              ОКПД2:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    Код:
+                      type: string
+                    Название:
+                      type: string
+              НКМИ:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    Код:
+                      type: string
+                    Название:
+                      type: string
+          description: Предполагаемая карта с динамическими ключами; форма ответа не подтверждена.
+        next_page: *id012
+        count:
+          description: Общее число найденных; в источнике тип буквально count, JSON-тип неизвестен.
+      x-source-name: ОтветКТРУ

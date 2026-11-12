@@ -1,0 +1,4318 @@
+openapi: 3.0.3
+info:
+  title: API-ФНС
+  version: 1.0.0
+  description: Публичная справка; схема не подтверждена живыми запросами. POST-транспорт и HTTP-коды не установлены.
+servers:
+- url: https://api-fns.ru/api
+paths:
+  /search:
+    get:
+      operationId: get_search
+      summary: Поиск компаний
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: Таблица путает типы nextpage/filter и описания полного/краткого названия; filter_any_count
+        упоминает req=any вместо q=any.
+      parameters:
+      - name: q
+        in: query
+        required: false
+        description: Поисковая строка; q=any — поиск по фильтру.
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Страница, обычно 100 результатов; зарегистрированные сегодня — до 5.
+        schema:
+          type: integer
+      - name: filter
+        in: query
+        required: false
+        description: 'Фильтры через +: active, onlyul, onlyip, okved, okvedgroup, region, vyruchka, sotrudnikov,
+          datereg, reestrmsp, reestrmsp1/2/3, withphone, withemail. Для зарегистрированных сегодня нужны region
+          и onlyul или onlyip.'
+        schema:
+          type: string
+      responses:
+        2XX:
+          description: Документированный успешный результат JSON; media type — допущение для совместимости, фактический
+            заголовок не документирован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/searchResponse'
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names:
+      - q
+      - page
+      - filter
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+  /ac:
+    get:
+      operationId: get_ac
+      summary: Автодополнение
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: Таблица путает описания полного и краткого названия.
+      parameters:
+      - name: q
+        in: query
+        required: false
+        description: Начало названия, полное название или ФИО ИП, либо цифры ИНН.
+        schema:
+          type: string
+      - name: filter
+        in: query
+        required: false
+        description: Фильтры active, onlyul, onlyip.
+        schema:
+          type: string
+      responses:
+        2XX:
+          description: Документированный успешный результат JSON; media type — допущение для совместимости, фактический
+            заголовок не документирован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/acResponse'
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names:
+      - q
+      - filter
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+  /egr:
+    get:
+      operationId: get_egr
+      summary: Данные ЕГРЮЛ и ЕГРИП
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: 'Схема открыта; поля могут отсутствовать, НР и ИН могут присутствовать одновременно. Подробные
+        таблицы: снимок строк 617–1590.'
+      parameters:
+      - name: req
+        in: query
+        required: false
+        description: ИНН или ОГРН.
+        schema:
+          type: string
+      responses:
+        2XX:
+          description: Документированный успешный результат JSON; media type — допущение для совместимости, фактический
+            заголовок не документирован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/egrResponse'
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names:
+      - req
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+  /multinfo:
+    get:
+      operationId: get_multinfo
+      summary: Реквизиты группы
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: HTTP-коды, исчерпывающая обязательность и фактический Content-Type не установлены.
+      parameters:
+      - name: req
+        in: query
+        required: false
+        description: ИНН или ОГРН через запятую, либо req[]; не более 100 компаний.
+        schema:
+          type: string
+      - name: req[]
+        in: query
+        required: false
+        description: Повторяемый параметр ИНН или ОГРН, альтернатива req; не более 100 компаний.
+        schema:
+          type: array
+          items:
+            type: string
+          maxItems: 100
+        style: form
+        explode: true
+      responses:
+        2XX:
+          description: Документированный успешный результат JSON; media type — допущение для совместимости, фактический
+            заголовок не документирован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/multinfoResponse'
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names:
+      - req
+      - req[]
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+  /multcheck:
+    get:
+      operationId: get_multcheck
+      summary: 'Проверка группы: только проблемные компании'
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: Возвращаются только проблемные компании; отсутствие не доказывает полноценной проверки.
+      parameters:
+      - name: req
+        in: query
+        required: false
+        description: ИНН или ОГРН через запятую, либо req[]; не более 100 компаний.
+        schema:
+          type: string
+      - name: req[]
+        in: query
+        required: false
+        description: Повторяемый параметр, альтернатива req; не более 100 компаний.
+        schema:
+          type: array
+          items:
+            type: string
+          maxItems: 100
+        style: form
+        explode: true
+      responses:
+        2XX:
+          description: Документированный успешный результат JSON; media type — допущение для совместимости, фактический
+            заголовок не документирован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/multcheckResponse'
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names:
+      - req
+      - req[]
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+  /check:
+    get:
+      operationId: get_check
+      summary: Проверка контрагента
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: Некоторые факторы доступны только платно; подробные поля снимок 2806–3016.
+      parameters:
+      - name: req
+        in: query
+        required: false
+        description: ИНН или ОГРН.
+        schema:
+          type: string
+      responses:
+        2XX:
+          description: Документированный успешный результат JSON; media type — допущение для совместимости, фактический
+            заголовок не документирован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/checkResponse'
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names:
+      - req
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+  /nalogbi:
+    get:
+      operationId: get_nalogbi
+      summary: Блокировки счета
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: Поля блокировок доступны платно.
+      parameters:
+      - name: inn
+        in: query
+        required: false
+        description: ИНН ЮЛ, ИП или физлица.
+        schema:
+          type: string
+      responses:
+        2XX:
+          description: Документированный успешный результат JSON; media type — допущение для совместимости, фактический
+            заголовок не документирован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/nalogbiResponse'
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names:
+      - inn
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+  /nalogbi_file:
+    get:
+      operationId: get_nalogbi_file
+      summary: Файл блокировок счета
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: HTTP-коды, исчерпывающая обязательность и фактический Content-Type не установлены.
+      parameters:
+      - name: inn
+        in: query
+        required: false
+        description: ИНН.
+        schema:
+          type: string
+      - name: bik
+        in: query
+        required: false
+        description: БИК; необязательно.
+        schema:
+          type: string
+      responses:
+        2XX:
+          description: Документ ZIP с PDF и SIG. Media type — допущение для совместимости; фактический заголовок
+            не документирован.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names:
+      - inn
+      - bik
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+  /changes:
+    get:
+      operationId: get_changes
+      summary: Изменения компании
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: Изменения названы массивом, пример — карта дат; заявления платные.
+      parameters:
+      - name: req
+        in: query
+        required: false
+        description: ИНН или ОГРН.
+        schema:
+          type: string
+      - name: dat
+        in: query
+        required: false
+        description: Дата YYYY-MM-DD; без нее все изменения.
+        schema:
+          type: string
+      responses:
+        2XX:
+          description: Документированный успешный результат JSON; media type — допущение для совместимости, фактический
+            заголовок не документирован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/changesResponse'
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names:
+      - req
+      - dat
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+  /mon:
+    get:
+      operationId: get_mon
+      summary: Мониторинг; add и del изменяют список даже через GET
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: 'add/del меняют данные через GET: не предзагружать, не кэшировать и не повторять автоматически.
+        page/year описаны в тексте команд, не в таблице.'
+      parameters:
+      - name: cmd
+        in: query
+        required: false
+        description: add, del, list, chbo или chd.
+        schema:
+          type: string
+          enum:
+          - add
+          - del
+          - list
+          - chbo
+          - chd
+      - name: req
+        in: query
+        required: false
+        description: Для add/del ИНН или ОГРН через запятую.
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Для list; 1000 организаций на страницу.
+        schema:
+          type: integer
+      - name: year
+        in: query
+        required: false
+        description: Для chbo год отчетности.
+        schema:
+          type: integer
+      - name: dat
+        in: query
+        required: false
+        description: Для chd дата DD.MM.YYYY или YYYY-MM-DD, позже постановки на мониторинг.
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        description: 'Для chd фильтр типов изменений через запятую: Заявление, СвНаимЮЛ, СвАдресЮЛ, СвРегОрг, СвУчетНО,
+          СвРегПФ, СвРегФСС, СвУстКап, СведДолжнФЛ, СвНедДанДолжнФЛ, СвУчредит, СвНедДанУчр, СвОКВЭДОсн, СвОКВЭДДоп,
+          СвЗапЕГРЮЛ, СвЛицензия, СвФЛ, СвАдрМЖ, СвЗапЕГРИП, СвСтатус.'
+        schema:
+          type: string
+      responses:
+        2XX:
+          description: Документированный успешный результат JSON; media type — допущение для совместимости, фактический
+            заголовок не документирован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/monResponse'
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names:
+      - cmd
+      - req
+      - page
+      - year
+      - dat
+      - type
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+  /vyp:
+    get:
+      operationId: get_vyp
+      summary: Выписка ЕГРЮЛ/ЕГРИП
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: HTTP-коды, исчерпывающая обязательность и фактический Content-Type не установлены.
+      parameters:
+      - name: req
+        in: query
+        required: false
+        description: ИНН или ОГРН.
+        schema:
+          type: string
+      responses:
+        2XX:
+          description: Документ PDF. Media type — допущение для совместимости; фактический заголовок не документирован.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names:
+      - req
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+  /mspinfo_file:
+    get:
+      operationId: get_mspinfo_file
+      summary: Выписка МСП
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: HTTP-коды, исчерпывающая обязательность и фактический Content-Type не установлены.
+      parameters:
+      - name: req
+        in: query
+        required: false
+        description: ИНН или ОГРН.
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        description: report, periods, pp-report; по умолчанию report.
+        schema:
+          type: string
+          enum:
+          - report
+          - periods
+          - pp-report
+          default: report
+      responses:
+        2XX:
+          description: Документ PDF. Media type — допущение для совместимости; фактический заголовок не документирован.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names:
+      - req
+      - type
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+  /bo:
+    get:
+      operationId: get_bo
+      summary: Бухгалтерская отчетность
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: Текст говорит с 2019 года, пример включает 2017 и 2018.
+      parameters:
+      - name: req
+        in: query
+        required: false
+        description: ИНН или ОГРН ЮЛ.
+        schema:
+          type: string
+      responses:
+        2XX:
+          description: Документированный успешный результат JSON; media type — допущение для совместимости, фактический
+            заголовок не документирован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/boResponse'
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names:
+      - req
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+  /bo_file:
+    get:
+      operationId: get_bo_file
+      summary: Файл бухгалтерской отчетности
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: Наличие xls выбирает архив; множество значений не установлено.
+      parameters:
+      - name: req
+        in: query
+        required: false
+        description: ИНН или ОГРН ЮЛ.
+        schema:
+          type: string
+      - name: year
+        in: query
+        required: false
+        description: Год отчетности.
+        schema:
+          type: integer
+      - name: xls
+        in: query
+        required: false
+        description: При наличии ZIP с XLS, иначе подписанный PDF; допустимые значения не уточнены.
+        schema:
+          type: integer
+      responses:
+        2XX:
+          description: Документ PDF либо ZIP с XLS и возможными приложениями PDF. Media type — допущение для совместимости;
+            фактический заголовок не документирован.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names:
+      - req
+      - year
+      - xls
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+  /innfl:
+    get:
+      operationId: get_innfl
+      summary: ИНН по паспортным данным
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: Вторичный обзор говорит ФИО или паспорт, первичное описание — паспортные данные.
+      parameters:
+      - name: fam
+        in: query
+        required: false
+        description: Фамилия.
+        schema:
+          type: string
+      - name: nam
+        in: query
+        required: false
+        description: Имя.
+        schema:
+          type: string
+      - name: otch
+        in: query
+        required: false
+        description: Отчество; при отсутствии укажите нет.
+        schema:
+          type: string
+      - name: bdate
+        in: query
+        required: false
+        description: Дата рождения DD.MM.YYYY.
+        schema:
+          type: string
+      - name: doctype
+        in: query
+        required: false
+        description: Код документа; по умолчанию 21.
+        schema:
+          type: string
+          enum:
+          - '01'
+          - '03'
+          - '10'
+          - '12'
+          - '15'
+          - '19'
+          - '21'
+          - '23'
+          default: '21'
+      - name: docno
+        in: query
+        required: false
+        description: Серия и номер документа с пробелами или без.
+        schema:
+          type: string
+      responses:
+        2XX:
+          description: Документированный успешный результат JSON; media type — допущение для совместимости, фактический
+            заголовок не документирован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/innflResponse'
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names:
+      - fam
+      - nam
+      - otch
+      - bdate
+      - doctype
+      - docno
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+  /mvdpass:
+    get:
+      operationId: get_mvdpass
+      summary: Проверка паспорта
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: Актуальность базы указана как август 2023.
+      parameters:
+      - name: docno
+        in: query
+        required: false
+        description: Серия и номер с пробелами или без.
+        schema:
+          type: string
+      responses:
+        2XX:
+          description: Документированный успешный результат JSON; media type — допущение для совместимости, фактический
+            заголовок не документирован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mvdpassResponse'
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names:
+      - docno
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+  /mvdinfo:
+    get:
+      operationId: get_mvdinfo
+      summary: Причина недействительности паспорта
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: Отдельная дата актуальности не указана.
+      parameters:
+      - name: docno
+        in: query
+        required: false
+        description: Серия и номер с пробелами или без.
+        schema:
+          type: string
+      responses:
+        2XX:
+          description: Документированный успешный результат JSON; media type — допущение для совместимости, фактический
+            заголовок не документирован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mvdinfoResponse'
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names:
+      - docno
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+  /fl_status:
+    get:
+      operationId: get_fl_status
+      summary: Статусы физического лица
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: Часть данных платная, null может означать ошибку.
+      parameters:
+      - name: inn
+        in: query
+        required: false
+        description: ИНН физического лица.
+        schema:
+          type: string
+      - name: dat
+        in: query
+        required: false
+        description: Дата проверки самозанятости; по умолчанию текущая дата.
+        schema:
+          type: string
+      responses:
+        2XX:
+          description: Документированный успешный результат JSON; media type — допущение для совместимости, фактический
+            заголовок не документирован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/fl_statusResponse'
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names:
+      - inn
+      - dat
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+  /fsrar:
+    get:
+      operationId: get_fsrar
+      summary: Лицензии ФСРАР
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: В таблице пример status ошибочно подписан nam; пример запроса использует status.
+      parameters:
+      - name: inn
+        in: query
+        required: false
+        description: ИНН.
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        description: 'Необязательно: действующая, аннулирована, срок действия истек, прекращена, переоформлена,
+          приостановлена, истекла.'
+        schema:
+          type: string
+      - name: kpp
+        in: query
+        required: false
+        description: КПП; необязательно.
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Страница; 1000 записей.
+        schema:
+          type: integer
+      responses:
+        2XX:
+          description: Документированный успешный результат JSON; media type — допущение для совместимости, фактический
+            заголовок не документирован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/fsrarResponse'
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names:
+      - inn
+      - status
+      - kpp
+      - page
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+  /zsk:
+    get:
+      operationId: get_zsk
+      summary: Уровень риска ЗСК
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: Таблица типов строковая, пример числовой. Период и предел опроса не указаны.
+      parameters:
+      - name: inn
+        in: query
+        required: false
+        description: ИНН ЮЛ или ИП.
+        schema:
+          type: string
+      responses:
+        2XX:
+          description: Документированный успешный результат JSON; media type — допущение для совместимости, фактический
+            заголовок не документирован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/zskResponse'
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names:
+      - inn
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+  /rom:
+    get:
+      operationId: get_rom
+      summary: Реестр обеспечительных мер
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: Номер в таблице строка, в примере число.
+      parameters:
+      - name: inn
+        in: query
+        required: false
+        description: ИНН ЮЛ или физлица.
+        schema:
+          type: string
+      responses:
+        2XX:
+          description: Документированный успешный результат JSON; media type — допущение для совместимости, фактический
+            заголовок не документирован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/romResponse'
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names:
+      - inn
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+  /fias_info:
+    get:
+      operationId: get_fias_info
+      summary: Адрес по идентификатору ФИАС
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: Типы идентификатора, региона, адреса и активности в таблице и примере различаются.
+      parameters:
+      - name: object_id
+        in: query
+        required: false
+        description: Десятичный или шестнадцатеричный идентификатор.
+        schema:
+          type: string
+      responses:
+        2XX:
+          description: Документированный успешный результат JSON; media type — допущение для совместимости, фактический
+            заголовок не документирован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/fias_infoResponse'
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names:
+      - object_id
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+  /fias_search:
+    get:
+      operationId: get_fias_search
+      summary: Поиск адреса ФИАС
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: Таблица полей пуста; свойства взяты из примера.
+      parameters:
+      - name: q
+        in: query
+        required: false
+        description: Строка адреса.
+        schema:
+          type: string
+      responses:
+        2XX:
+          description: Документированный успешный результат JSON; media type — допущение для совместимости, фактический
+            заголовок не документирован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/fias_searchResponse'
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names:
+      - q
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+  /stat:
+    get:
+      operationId: get_stat
+      summary: Статистика использования ключа
+      description: 'Источник: https://api-fns.ru/api_help. Необязательность параметров, кроме явно отмеченных в
+        справке, не установлена.'
+      externalDocs:
+        url: https://api-fns.ru/api_help
+      x-research-notes: Таблица называет Методы и записи массивами, пример показывает объекты.
+      parameters: []
+      responses:
+        2XX:
+          description: Документированный успешный результат JSON; media type — допущение для совместимости, фактический
+            заголовок не документирован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/statResponse'
+      security:
+      - ApiKey: []
+    x-post-contract:
+      documented: true
+      sdk-ready: false
+      source: https://api-fns.ru/api_help
+      parameter-names: []
+      key-required: true
+      parameter-placement: unverified
+      key-placement: unverified
+      body-encoding: unverified
+      note: POST исключён из операций OpenAPI до подтверждения транспорта; не генерировать SDK-вызов.
+components:
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      in: query
+      name: key
+      description: Размещение в query подтверждено GET-примерами; для POST транспорт ключа не установлен.
+  schemas:
+    searchResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              ЮЛ: &id004
+                type: object
+                properties:
+                  ИНН:
+                    type: string
+                  ИННФЛ:
+                    type: string
+                  КПП:
+                    type: string
+                  ОГРН:
+                    type: string
+                  ОГРНИП:
+                    type: string
+                  НаимСокрЮЛ:
+                    type: string
+                  НаимПолнЮЛ:
+                    type: string
+                  ФИОПолн:
+                    type: string
+                  ФИОПолнЗАГС:
+                    type: string
+                  ДатаОГРН:
+                    type: string
+                  ДатаРег:
+                    type: string
+                  ВидИП:
+                    type: string
+                  Пол:
+                    type: string
+                  ВидГражд:
+                    type: string
+                  ОКСМ:
+                    type: string
+                  Статус:
+                    type: string
+                  СтатусДата:
+                    type: string
+                  ДатаПрекр:
+                    type: string
+                  АдресПолн:
+                    type: string
+                  ГдеНайдено:
+                    type: string
+                  Адрес:
+                    type: object
+                    properties:
+                      КодРегион:
+                        type: string
+                      Индекс:
+                        type: string
+                      АдресПолн:
+                        type: string
+                      Дата:
+                        type: string
+                      E-mail:
+                        type: string
+                      ИдНомФИАС:
+                        type: string
+                      АдресДетали:
+                        type: object
+                        properties: &id002 {}
+                        additionalProperties: true
+                    additionalProperties: true
+                  НО:
+                    type: object
+                    properties:
+                      Рег:
+                        type: string
+                      РегДата:
+                        type: string
+                      Учет:
+                        type: string
+                      УчетДата:
+                        type: string
+                    additionalProperties: true
+                  ПФ:
+                    type: object
+                    properties:
+                      РегНомПФ:
+                        type: string
+                      ДатаРегПФ:
+                        type: string
+                      КодПФ:
+                        type: string
+                    additionalProperties: true
+                  ФСС:
+                    type: object
+                    properties:
+                      РегНомФСС:
+                        type: string
+                      ДатаРегФСС:
+                        type: string
+                      КодФСС:
+                        type: string
+                    additionalProperties: true
+                  КодыСтат:
+                    type: object
+                    properties:
+                      ОКПО:
+                        type: string
+                      ОКТМО:
+                        type: string
+                      ОКФС:
+                        type: string
+                      ОКОГУ:
+                        type: string
+                    additionalProperties: true
+                  Капитал: &id017
+                    type: object
+                    properties:
+                      ВидКап:
+                        type: string
+                      СумКап:
+                        type: string
+                    additionalProperties: true
+                  Руководитель: &id001
+                    type: object
+                    properties:
+                      Должн:
+                        type: string
+                      ФИОПолн:
+                        type: string
+                      ИННФЛ:
+                        type: string
+                      Дата:
+                        type: string
+                      ДатаНачДискв:
+                        type: string
+                      ДатаОкончДискв:
+                        type: string
+                    additionalProperties: true
+                  ИныеРуководители:
+                    type: array
+                    items: *id001
+                  Учредители:
+                    type: array
+                    items:
+                      type: object
+                      properties: &id016
+                        УчрЮЛ:
+                          type: object
+                          properties:
+                            ОГРН:
+                              type: string
+                            ИНН:
+                              type: string
+                            НаимСокрЮЛ:
+                              type: string
+                            Статус:
+                              type: string
+                          additionalProperties: true
+                        УчрИН:
+                          type: object
+                          properties: *id002
+                          additionalProperties: true
+                        УчрФЛ:
+                          type: object
+                          properties:
+                            ФИОПолн:
+                              type: string
+                            ИННФЛ:
+                              type: string
+                          additionalProperties: true
+                        УчрРФСубМО:
+                          type: string
+                        УчрПИФ:
+                          type: object
+                          properties: *id002
+                          additionalProperties: true
+                        СуммаУК:
+                          type: string
+                        Процент:
+                          type: string
+                        Дата:
+                          type: string
+                      additionalProperties: true
+                  Контакты:
+                    type: object
+                    properties: *id002
+                    additionalProperties: true
+                  ОснВидДеят:
+                    anyOf:
+                    - type: string
+                    - &id003
+                      type: object
+                      properties:
+                        Код:
+                          type: string
+                        Текст:
+                          type: string
+                      additionalProperties: true
+                  ДопВидДеят:
+                    type: array
+                    items: *id003
+                  СПВЗ:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        Дата:
+                          type: string
+                        Текст:
+                          type: string
+                      additionalProperties: true
+                  Филиалы:
+                    type: array
+                    items:
+                      type: object
+                      properties: *id002
+                      additionalProperties: true
+                  ОткрСведения:
+                    type: array
+                    items:
+                      type: object
+                      properties: *id002
+                      additionalProperties: true
+                  Лицензии:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        НомерЛиц:
+                          type: string
+                        ВидДеятельности:
+                          type: string
+                        ДатаНачала:
+                          type: string
+                        ДатаОконч:
+                          type: string
+                        МестоДейств:
+                          type: string
+                      additionalProperties: true
+                  Участия:
+                    type: array
+                    items:
+                      type: object
+                      properties: *id002
+                      additionalProperties: true
+                  История:
+                    type: object
+                    properties: *id002
+                    additionalProperties: true
+                  Позитив:
+                    type: object
+                    properties:
+                      Лицензии:
+                        type: string
+                      РеестрМСП:
+                        type: string
+                      ДатаВклМСП:
+                        type: string
+                      КатСубМСП:
+                        type: string
+                      ПризНовМСП:
+                        type: string
+                      СведСоцПред:
+                        type: string
+                      ССЧР:
+                        type: string
+                      ДатаСост:
+                        type: string
+                      АдресМСП:
+                        type: string
+                      Текст:
+                        type: string
+                      ПоддержкаМСП:
+                        type: array
+                        items: &id020
+                          type: object
+                          properties:
+                            ФормПод:
+                              type: string
+                            ВидПод:
+                              type: string
+                            РазмПодСум:
+                              type: string
+                            РазмПодСр:
+                              type: string
+                            СрокПодМакс:
+                              type: string
+                            НарушПоддержкаМСП:
+                              type: string
+                          additionalProperties: true
+                      Филиалы:
+                        type: string
+                      КапБолее50тыс:
+                        type: string
+                    additionalProperties: true
+                  Негатив:
+                    type: object
+                    properties:
+                      Статус:
+                        type: string
+                      Текст:
+                        type: string
+                      БлокСчета:
+                        type: string
+                      БлокСчетаИнфо:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            БИК:
+                              type: string
+                            Банк:
+                              type: string
+                            НомерРеш:
+                              type: string
+                            ДатаРеш:
+                              type: string
+                            ДатаНач:
+                              type: string
+                            КодНО:
+                              type: string
+                            ВремяИнф:
+                              type: string
+                            КодОснов:
+                              type: string
+                            СальдоЕНС:
+                              type: string
+                          additionalProperties: true
+                      ИсклИзРеестраМСП:
+                        type: string
+                      РегНедавно:
+                        type: string
+                      ДисквРук:
+                        type: string
+                      ДисквРукДр:
+                        type: string
+                      ДисквРукДрБезИНН:
+                        type: string
+                      РеестрМассАдрес:
+                        type: string
+                      МассАдрес:
+                        type: string
+                      РешИзмАдрес:
+                        type: string
+                      НедостоверАдрес:
+                        type: string
+                      СменаРег:
+                        type: string
+                      РеестрМассРук:
+                        type: string
+                      МассРук:
+                        type: string
+                      МассРукБезИНН:
+                        type: string
+                      РукЛиквКомп:
+                        type: string
+                      РукЛиквКомпБезИНН:
+                        type: string
+                      НедостоверРук:
+                        type: string
+                      РеестрМассУчр:
+                        type: string
+                      РеестрМассРукУчр:
+                        type: string
+                      ДисквУчрДр:
+                        type: string
+                      ДисквУчрДрБезИНН:
+                        type: string
+                      УчрЛиквКомп:
+                        type: string
+                      УчрЛиквКомпБезИНН:
+                        type: string
+                      ОдноврСменаРукУчр:
+                        type: string
+                      СменаРукГод:
+                        type: string
+                      РукУчр1Комп:
+                        type: string
+                      НедостоверУчр:
+                        type: string
+                      Обременения:
+                        type: string
+                      НеПредостОтч:
+                        type: string
+                      ЗадолжНалог:
+                        type: string
+                      РешУмКап:
+                        type: string
+                      КолРаб:
+                        type: string
+                      Банкрот:
+                        type: string
+                      БанкротНамерение:
+                        type: string
+                      РискНалогПроверки:
+                        type: string
+                      НедоимкаНалог:
+                        type: string
+                    additionalProperties: true
+                additionalProperties: true
+              ИП: *id004
+              НР: *id004
+            additionalProperties: true
+        Count:
+          type: integer
+        nextpage:
+          description: 'Таблица: object; описание: Boolean.'
+          anyOf:
+          - type: boolean
+          - type: object
+            properties: *id002
+            additionalProperties: true
+        filter:
+          description: 'Таблица: object; текст и пример: string.'
+          anyOf:
+          - type: string
+          - type: object
+            properties: *id002
+            additionalProperties: true
+        filter_any_count:
+          type: integer
+      additionalProperties: true
+    acResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              ЮЛ: *id004
+              ИП: *id004
+              НР: *id004
+            additionalProperties: true
+        Count:
+          type: integer
+      additionalProperties: true
+    egrResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              ЮЛ:
+                type: object
+                properties:
+                  ИНН:
+                    type: string
+                  ИННФЛ:
+                    type: string
+                  КПП:
+                    type: string
+                  ОГРН:
+                    type: string
+                  ОГРНИП:
+                    type: string
+                  НаимСокрЮЛ:
+                    type: string
+                  НаимПолнЮЛ:
+                    type: string
+                  ФИОПолн:
+                    type: string
+                  ФИОПолнЗАГС:
+                    type: string
+                  ДатаОГРН:
+                    type: string
+                  ДатаРег:
+                    type: string
+                  ВидИП:
+                    type: string
+                  Пол:
+                    type: string
+                  ВидГражд:
+                    type: string
+                  ОКСМ:
+                    type: string
+                  Статус:
+                    type: string
+                  СтатусДата:
+                    type: string
+                  ДатаПрекр:
+                    type: string
+                  АдресПолн:
+                    type: string
+                  ГдеНайдено:
+                    type: string
+                  Адрес:
+                    type: object
+                    properties:
+                      ПризнНедАдресЮЛ:
+                        $ref: "#/components/schemas/RiskDetails"
+                      РешИзмАдрес:
+                        type: object
+                        properties:
+                          НовыйАдрес:
+                            type: string
+                          ДатаРеш:
+                            type: string
+                        additionalProperties: true
+                      КодРегион:
+                        type: string
+                      Индекс:
+                        type: string
+                      АдресПолн:
+                        type: string
+                      Дата:
+                        type: string
+                      E-mail:
+                        type: string
+                      ИдНомФИАС:
+                        type: string
+                      АдресДетали:
+                        type: object
+                        properties: {}
+                        additionalProperties: true
+                    additionalProperties: true
+                  НО:
+                    type: object
+                    properties:
+                      Рег:
+                        type: string
+                      РегДата:
+                        type: string
+                      Учет:
+                        type: string
+                      УчетДата:
+                        type: string
+                    additionalProperties: true
+                  ПФ:
+                    type: object
+                    properties:
+                      РегНомПФ:
+                        type: string
+                      ДатаРегПФ:
+                        type: string
+                      КодПФ:
+                        type: string
+                    additionalProperties: true
+                  ФСС:
+                    type: object
+                    properties:
+                      РегНомФСС:
+                        type: string
+                      ДатаРегФСС:
+                        type: string
+                      КодФСС:
+                        type: string
+                    additionalProperties: true
+                  КодыСтат:
+                    type: object
+                    properties:
+                      ОКПО:
+                        type: string
+                      ОКТМО:
+                        type: string
+                      ОКФС:
+                        type: string
+                      ОКОГУ:
+                        type: string
+                    additionalProperties: true
+                  Капитал:
+                    type: object
+                    properties:
+                      ВидКап:
+                        type: string
+                      СумКап:
+                        type: string
+                    additionalProperties: true
+                  Руководитель: &id005
+                    type: object
+                    properties:
+                      ПризнНедДанДолжнФЛ:
+                        $ref: "#/components/schemas/RiskDetails"
+                      Должн:
+                        type: string
+                      ФИОПолн:
+                        type: string
+                      ИННФЛ:
+                        type: string
+                      Дата:
+                        type: string
+                      ДатаНачДискв:
+                        type: string
+                      ДатаОкончДискв:
+                        type: string
+                    additionalProperties: true
+                  ИныеРуководители:
+                    type: array
+                    items: *id005
+                  Учредители:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        УчрЮЛ:
+                          type: object
+                          properties:
+                            ОГРН:
+                              type: string
+                            ИНН:
+                              type: string
+                            НаимСокрЮЛ:
+                              type: string
+                            Статус:
+                              type: string
+                          additionalProperties: true
+                        УчрИН:
+                          type: object
+                          properties:
+                            НаимПолнЮЛ:
+                              type: string
+                            ОКСМ:
+                              type: string
+                            РегНомер:
+                              type: string
+                            ДатаРег:
+                              type: string
+                            АдресПолн:
+                              type: string
+                          additionalProperties: true
+                        УчрФЛ:
+                          type: object
+                          properties:
+                            ФИОПолн:
+                              type: string
+                            ИННФЛ:
+                              type: string
+                          additionalProperties: true
+                        УчрРФСубМО:
+                          type: string
+                        УчрПИФ:
+                          type: object
+                          properties:
+                            ОГРН:
+                              type: string
+                            ИНН:
+                              type: string
+                            НаимСокрЮЛ:
+                              type: string
+                            Статус:
+                              type: string
+                          additionalProperties: true
+                        СуммаУК:
+                          type: string
+                        Процент:
+                          type: string
+                        Дата:
+                          type: string
+                        Залогодержатели:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              ОГРН:
+                                type: string
+                              ИНН:
+                                type: string
+                              НаимСокрЮЛ:
+                                type: string
+                              Статус:
+                                type: string
+                              ФИОПолн:
+                                type: string
+                              ИННФЛ:
+                                type: string
+                              НаимПолнЮЛ:
+                                type: string
+                              ОКСМ:
+                                type: string
+                              РегНомер:
+                                type: string
+                              ДатаРег:
+                                type: string
+                              АдресПолн:
+                                type: string
+                              ВидОбременения:
+                                type: string
+                              СрокОбременения:
+                                type: string
+                              Дата:
+                                type: string
+                            additionalProperties: true
+                        СвОргОсущПр:
+                          type: object
+                          properties:
+                            УчрЮЛ:
+                              type: object
+                              properties:
+                                ОГРН:
+                                  type: string
+                                ИНН:
+                                  type: string
+                                НаимСокрЮЛ:
+                                  type: string
+                                Статус:
+                                  type: string
+                                Дата:
+                                  type: string
+                              additionalProperties: true
+                          additionalProperties: true
+                      additionalProperties: true
+                  Контакты:
+                    type: object
+                    properties:
+                      Телефон:
+                        type: array
+                        items:
+                          type: string
+                      e-mail:
+                        type: array
+                        items:
+                          type: string
+                      Сайт:
+                        type: array
+                        items:
+                          type: string
+                    additionalProperties: true
+                  ОснВидДеят:
+                    anyOf:
+                    - type: string
+                    - &id006
+                      type: object
+                      properties:
+                        Код:
+                          type: string
+                        Текст:
+                          type: string
+                      additionalProperties: true
+                  ДопВидДеят:
+                    type: array
+                    items: *id006
+                  СПВЗ:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        Дата:
+                          type: string
+                        Текст:
+                          type: string
+                      additionalProperties: true
+                  Филиалы:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        КПП:
+                          type: string
+                        ДатаПостУч:
+                          type: string
+                        Наименование:
+                          type: string
+                        Тип:
+                          type: string
+                        Индекс:
+                          type: string
+                        Адрес:
+                          type: string
+                        ИдНомФИАС:
+                          type: string
+                        ИдНомФИАС16:
+                          type: string
+                        КодКЛАДР:
+                          type: string
+                      additionalProperties: true
+                  ОткрСведения:
+                    description: Таблица указывает массив, текущий пример показывает объект; исторический пример
+                      — массив.
+                    anyOf:
+                    - type: object
+                      properties:
+                        КолРаб:
+                          type: string
+                        СведСНР:
+                          type: string
+                        ПризнУчКГН:
+                          type: string
+                        СумДоход:
+                          type: string
+                        СумРасход:
+                          type: string
+                        Дата:
+                          type: string
+                        Налоги:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              НаимНалог:
+                                type: string
+                              СумУплНал:
+                                type: string
+                              СумНедНалог:
+                                type: string
+                              СумПени:
+                                type: string
+                              СумШтраф:
+                                type: string
+                              ОбщСумНедоим:
+                                type: string
+                            additionalProperties: true
+                        ОтраслевыеПок:
+                          type: object
+                          properties:
+                            НалогНагрузка:
+                              description: Таблица указывает object, пример строку.
+                              anyOf:
+                              - type: string
+                              - type: object
+                                properties: {}
+                                additionalProperties: true
+                            Рентабельность:
+                              description: Таблица указывает object, пример строку.
+                              anyOf:
+                              - type: string
+                              - type: object
+                                properties: {}
+                                additionalProperties: true
+                          additionalProperties: true
+                      additionalProperties: true
+                    - type: array
+                      items:
+                        type: object
+                        properties:
+                          КолРаб:
+                            type: string
+                          СведСНР:
+                            type: string
+                          ПризнУчКГН:
+                            type: string
+                          СумДоход:
+                            type: string
+                          СумРасход:
+                            type: string
+                          Дата:
+                            type: string
+                          Налоги:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                НаимНалог:
+                                  type: string
+                                СумУплНал:
+                                  type: string
+                                СумНедНалог:
+                                  type: string
+                                СумПени:
+                                  type: string
+                                СумШтраф:
+                                  type: string
+                                ОбщСумНедоим:
+                                  type: string
+                              additionalProperties: true
+                          ОтраслевыеПок:
+                            type: object
+                            properties:
+                              НалогНагрузка:
+                                description: Таблица указывает object, пример строку.
+                                anyOf:
+                                - type: string
+                                - type: object
+                                  properties: {}
+                                  additionalProperties: true
+                              Рентабельность:
+                                description: Таблица указывает object, пример строку.
+                                anyOf:
+                                - type: string
+                                - type: object
+                                  properties: {}
+                                  additionalProperties: true
+                            additionalProperties: true
+                        additionalProperties: true
+                  Лицензии:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        НомерЛиц:
+                          type: string
+                        ВидДеятельности:
+                          type: string
+                        ДатаНачала:
+                          type: string
+                        ДатаОконч:
+                          type: string
+                        МестоДейств:
+                          type: string
+                      additionalProperties: true
+                  Участия:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ОГРН:
+                          type: string
+                        ИНН:
+                          type: string
+                        НаимСокрЮЛ:
+                          type: string
+                        Статус:
+                          type: string
+                        Процент:
+                          type: string
+                        СуммаУК:
+                          type: string
+                      additionalProperties: true
+                  История:
+                    type: object
+                    properties:
+                      ОткрСведения:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            КолРаб:
+                              type: string
+                            СведСНР:
+                              type: string
+                            ПризнУчКГН:
+                              type: string
+                            СумДоход:
+                              type: string
+                            СумРасход:
+                              type: string
+                            Дата:
+                              type: string
+                            Налоги:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  НаимНалог:
+                                    type: string
+                                  СумУплНал:
+                                    type: string
+                                  СумНедНалог:
+                                    type: string
+                                  СумПени:
+                                    type: string
+                                  СумШтраф:
+                                    type: string
+                                  ОбщСумНедоим:
+                                    type: string
+                                additionalProperties: true
+                            ОтраслевыеПок:
+                              type: object
+                              properties:
+                                НалогНагрузка:
+                                  description: Таблица указывает object, пример строку.
+                                  anyOf:
+                                  - type: string
+                                  - type: object
+                                    properties: {}
+                                    additionalProperties: true
+                                Рентабельность:
+                                  description: Таблица указывает object, пример строку.
+                                  anyOf:
+                                  - type: string
+                                  - type: object
+                                    properties: {}
+                                    additionalProperties: true
+                              additionalProperties: true
+                          additionalProperties: true
+                      Предшественники:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            ОГРН:
+                              type: string
+                            ИНН:
+                              type: string
+                            НаимСокрЮЛ:
+                              type: string
+                            Статус:
+                              type: string
+                            Дата:
+                              type: string
+                            ДатаОконч:
+                              type: string
+                          additionalProperties: true
+                      Преемники:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            ОГРН:
+                              type: string
+                            ИНН:
+                              type: string
+                            НаимСокрЮЛ:
+                              type: string
+                            Статус:
+                              type: string
+                            Дата:
+                              type: string
+                            ДатаОконч:
+                              type: string
+                          additionalProperties: true
+                      УправлОрг:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            ОГРН:
+                              type: string
+                            ИНН:
+                              type: string
+                            НаимСокрЮЛ:
+                              type: string
+                            Статус:
+                              type: string
+                            Дата:
+                              type: string
+                            ДатаОконч:
+                              type: string
+                          additionalProperties: true
+                      ДержРеестрАО:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            ОГРН:
+                              type: string
+                            ИНН:
+                              type: string
+                            НаимСокрЮЛ:
+                              type: string
+                            Статус:
+                              type: string
+                            Дата:
+                              type: string
+                            ДатаОконч:
+                              type: string
+                          additionalProperties: true
+                      Участники в реорганизации:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            ОГРН:
+                              type: string
+                            ИНН:
+                              type: string
+                            НаимСокрЮЛ:
+                              type: string
+                            Статус:
+                              type: string
+                            Дата:
+                              type: string
+                            ДатаОконч:
+                              type: string
+                          additionalProperties: true
+                      Учредители:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            УчрЮЛ:
+                              type: object
+                              properties:
+                                ОГРН:
+                                  type: string
+                                ИНН:
+                                  type: string
+                                НаимСокрЮЛ:
+                                  type: string
+                                Статус:
+                                  type: string
+                              additionalProperties: true
+                            УчрИН:
+                              type: object
+                              properties:
+                                НаимПолнЮЛ:
+                                  type: string
+                                ОКСМ:
+                                  type: string
+                                РегНомер:
+                                  type: string
+                                ДатаРег:
+                                  type: string
+                                АдресПолн:
+                                  type: string
+                              additionalProperties: true
+                            УчрФЛ:
+                              type: object
+                              properties:
+                                ФИОПолн:
+                                  type: string
+                                ИННФЛ:
+                                  type: string
+                              additionalProperties: true
+                            УчрРФСубМО:
+                              type: string
+                            УчрПИФ:
+                              type: object
+                              properties:
+                                ОГРН:
+                                  type: string
+                                ИНН:
+                                  type: string
+                                НаимСокрЮЛ:
+                                  type: string
+                                Статус:
+                                  type: string
+                              additionalProperties: true
+                            СуммаУК:
+                              type: string
+                            Процент:
+                              type: string
+                            Дата:
+                              type: string
+                            Залогодержатели:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  ОГРН:
+                                    type: string
+                                  ИНН:
+                                    type: string
+                                  НаимСокрЮЛ:
+                                    type: string
+                                  Статус:
+                                    type: string
+                                  ФИОПолн:
+                                    type: string
+                                  ИННФЛ:
+                                    type: string
+                                  НаимПолнЮЛ:
+                                    type: string
+                                  ОКСМ:
+                                    type: string
+                                  РегНомер:
+                                    type: string
+                                  ДатаРег:
+                                    type: string
+                                  АдресПолн:
+                                    type: string
+                                  ВидОбременения:
+                                    type: string
+                                  СрокОбременения:
+                                    type: string
+                                  Дата:
+                                    type: string
+                                additionalProperties: true
+                            СвОргОсущПр:
+                              type: object
+                              properties:
+                                УчрЮЛ:
+                                  type: object
+                                  properties:
+                                    ОГРН:
+                                      type: string
+                                    ИНН:
+                                      type: string
+                                    НаимСокрЮЛ:
+                                      type: string
+                                    Статус:
+                                      type: string
+                                    Дата:
+                                      type: string
+                                  additionalProperties: true
+                              additionalProperties: true
+                          additionalProperties: true
+                      Капитал:
+                        description: Исторические сведения; таблица и пример используют противоречивые формы периодов.
+                      НаимЮЛПолн:
+                        description: Исторические сведения; таблица и пример используют противоречивые формы периодов.
+                      НаимЮЛСокр:
+                        description: Исторические сведения; таблица и пример используют противоречивые формы периодов.
+                      Статус:
+                        description: Исторические сведения; таблица и пример используют противоречивые формы периодов.
+                      Адрес:
+                        description: Исторические сведения; таблица и пример используют противоречивые формы периодов.
+                      Руководитель:
+                        description: Исторические сведения; таблица и пример используют противоречивые формы периодов.
+                      НомТел:
+                        description: Исторические сведения; таблица и пример используют противоречивые формы периодов.
+                      E-mail:
+                        description: Исторические сведения; таблица и пример используют противоречивые формы периодов.
+                      ИныеРуководители:
+                        description: Исторические сведения; таблица и пример используют противоречивые формы периодов.
+                    additionalProperties: true
+                  Позитив:
+                    type: object
+                    properties:
+                      Лицензии:
+                        type: string
+                      РеестрМСП:
+                        type: string
+                      ДатаВклМСП:
+                        type: string
+                      КатСубМСП:
+                        type: string
+                      ПризНовМСП:
+                        type: string
+                      СведСоцПред:
+                        type: string
+                      ССЧР:
+                        type: string
+                      ДатаСост:
+                        type: string
+                      АдресМСП:
+                        type: string
+                      Текст:
+                        type: string
+                      ПоддержкаМСП:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            ФормПод:
+                              type: string
+                            ВидПод:
+                              type: string
+                            РазмПодСум:
+                              type: string
+                            РазмПодСр:
+                              type: string
+                            СрокПодМакс:
+                              type: string
+                            НарушПоддержкаМСП:
+                              type: string
+                          additionalProperties: true
+                      Филиалы:
+                        type: string
+                      КапБолее50тыс:
+                        type: string
+                    additionalProperties: true
+                  Негатив:
+                    type: object
+                    properties:
+                      Статус:
+                        type: string
+                      Текст:
+                        type: string
+                      БлокСчета:
+                        type: string
+                      БлокСчетаИнфо:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            БИК:
+                              type: string
+                            Банк:
+                              type: string
+                            НомерРеш:
+                              type: string
+                            ДатаРеш:
+                              type: string
+                            ДатаНач:
+                              type: string
+                            КодНО:
+                              type: string
+                            ВремяИнф:
+                              type: string
+                            КодОснов:
+                              type: string
+                            СальдоЕНС:
+                              type: string
+                          additionalProperties: true
+                      ИсклИзРеестраМСП:
+                        type: string
+                      РегНедавно:
+                        type: string
+                      ДисквРук:
+                        type: string
+                      ДисквРукДр:
+                        type: string
+                      ДисквРукДрБезИНН:
+                        type: string
+                      РеестрМассАдрес:
+                        type: string
+                      МассАдрес:
+                        type: string
+                      РешИзмАдрес:
+                        type: string
+                      НедостоверАдрес:
+                        type: string
+                      СменаРег:
+                        type: string
+                      РеестрМассРук:
+                        type: string
+                      МассРук:
+                        type: string
+                      МассРукБезИНН:
+                        type: string
+                      РукЛиквКомп:
+                        type: string
+                      РукЛиквКомпБезИНН:
+                        type: string
+                      НедостоверРук:
+                        type: string
+                      РеестрМассУчр:
+                        type: string
+                      РеестрМассРукУчр:
+                        type: string
+                      ДисквУчрДр:
+                        type: string
+                      ДисквУчрДрБезИНН:
+                        type: string
+                      УчрЛиквКомп:
+                        type: string
+                      УчрЛиквКомпБезИНН:
+                        type: string
+                      ОдноврСменаРукУчр:
+                        type: string
+                      СменаРукГод:
+                        type: string
+                      РукУчр1Комп:
+                        type: string
+                      НедостоверУчр:
+                        type: string
+                      Обременения:
+                        type: string
+                      НеПредостОтч:
+                        type: string
+                      ЗадолжНалог:
+                        type: string
+                      РешУмКап:
+                        type: string
+                      КолРаб:
+                        type: string
+                      Банкрот:
+                        type: string
+                      БанкротНамерение:
+                        type: string
+                      РискНалогПроверки:
+                        type: string
+                      НедоимкаНалог:
+                        type: string
+                    additionalProperties: true
+                  Предшественники:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ОГРН:
+                          type: string
+                        ИНН:
+                          type: string
+                        НаимСокрЮЛ:
+                          type: string
+                        Статус:
+                          type: string
+                        Дата:
+                          type: string
+                      additionalProperties: true
+                  Преемники:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ОГРН:
+                          type: string
+                        ИНН:
+                          type: string
+                        НаимСокрЮЛ:
+                          type: string
+                        Статус:
+                          type: string
+                        Дата:
+                          type: string
+                      additionalProperties: true
+                  УправлОрг:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ОГРН:
+                          type: string
+                        ИНН:
+                          type: string
+                        НаимСокрЮЛ:
+                          type: string
+                        Статус:
+                          type: string
+                        Дата:
+                          type: string
+                      additionalProperties: true
+                  ДержРеестрАО:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ОГРН:
+                          type: string
+                        ИНН:
+                          type: string
+                        НаимСокрЮЛ:
+                          type: string
+                        Статус:
+                          type: string
+                        Дата:
+                          type: string
+                      additionalProperties: true
+                  Участники в реорганизации:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ОГРН:
+                          type: string
+                        ИНН:
+                          type: string
+                        НаимСокрЮЛ:
+                          type: string
+                        Статус:
+                          type: string
+                        Дата:
+                          type: string
+                      additionalProperties: true
+                additionalProperties: true
+              ИП:
+                type: object
+                properties:
+                  ИНН:
+                    type: string
+                  ИННФЛ:
+                    type: string
+                  КПП:
+                    type: string
+                  ОГРН:
+                    type: string
+                  ОГРНИП:
+                    type: string
+                  НаимСокрЮЛ:
+                    type: string
+                  НаимПолнЮЛ:
+                    type: string
+                  ФИОПолн:
+                    type: string
+                  ФИОПолнЗАГС:
+                    type: string
+                  ДатаОГРН:
+                    type: string
+                  ДатаРег:
+                    type: string
+                  ВидИП:
+                    type: string
+                  Пол:
+                    type: string
+                  ВидГражд:
+                    type: string
+                  ОКСМ:
+                    type: string
+                  Статус:
+                    type: string
+                  СтатусДата:
+                    type: string
+                  ДатаПрекр:
+                    type: string
+                  АдресПолн:
+                    type: string
+                  ГдеНайдено:
+                    type: string
+                  Адрес:
+                    type: object
+                    properties:
+                      КодРегион:
+                        type: string
+                      Индекс:
+                        type: string
+                      АдресПолн:
+                        type: string
+                      Дата:
+                        type: string
+                      E-mail:
+                        type: string
+                      ИдНомФИАС:
+                        type: string
+                      АдресДетали:
+                        type: object
+                        properties: &id008 {}
+                        additionalProperties: true
+                    additionalProperties: true
+                  НО:
+                    type: object
+                    properties:
+                      Рег:
+                        type: string
+                      РегДата:
+                        type: string
+                      Учет:
+                        type: string
+                      УчетДата:
+                        type: string
+                    additionalProperties: true
+                  ПФ:
+                    type: object
+                    properties:
+                      РегНомПФ:
+                        type: string
+                      ДатаРегПФ:
+                        type: string
+                      КодПФ:
+                        type: string
+                    additionalProperties: true
+                  ФСС:
+                    type: object
+                    properties:
+                      РегНомФСС:
+                        type: string
+                      ДатаРегФСС:
+                        type: string
+                      КодФСС:
+                        type: string
+                    additionalProperties: true
+                  КодыСтат:
+                    type: object
+                    properties:
+                      ОКПО:
+                        type: string
+                      ОКТМО:
+                        type: string
+                      ОКФС:
+                        type: string
+                      ОКОГУ:
+                        type: string
+                    additionalProperties: true
+                  Капитал:
+                    type: object
+                    properties:
+                      ВидКап:
+                        type: string
+                      СумКап:
+                        type: string
+                    additionalProperties: true
+                  Руководитель: &id007
+                    type: object
+                    properties:
+                      Должн:
+                        type: string
+                      ФИОПолн:
+                        type: string
+                      ИННФЛ:
+                        type: string
+                      Дата:
+                        type: string
+                      ДатаНачДискв:
+                        type: string
+                      ДатаОкончДискв:
+                        type: string
+                    additionalProperties: true
+                  ИныеРуководители:
+                    type: array
+                    items: *id007
+                  Учредители:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        УчрЮЛ:
+                          type: object
+                          properties:
+                            ОГРН:
+                              type: string
+                            ИНН:
+                              type: string
+                            НаимСокрЮЛ:
+                              type: string
+                            Статус:
+                              type: string
+                          additionalProperties: true
+                        УчрИН:
+                          type: object
+                          properties: *id008
+                          additionalProperties: true
+                        УчрФЛ:
+                          type: object
+                          properties:
+                            ФИОПолн:
+                              type: string
+                            ИННФЛ:
+                              type: string
+                          additionalProperties: true
+                        УчрРФСубМО:
+                          type: string
+                        УчрПИФ:
+                          type: object
+                          properties: *id008
+                          additionalProperties: true
+                        СуммаУК:
+                          type: string
+                        Процент:
+                          type: string
+                        Дата:
+                          type: string
+                      additionalProperties: true
+                  Контакты:
+                    type: object
+                    properties: *id008
+                    additionalProperties: true
+                  ОснВидДеят:
+                    anyOf:
+                    - type: string
+                    - &id009
+                      type: object
+                      properties:
+                        Код:
+                          type: string
+                        Текст:
+                          type: string
+                      additionalProperties: true
+                  ДопВидДеят:
+                    type: array
+                    items: *id009
+                  СПВЗ:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        Дата:
+                          type: string
+                        Текст:
+                          type: string
+                      additionalProperties: true
+                  Филиалы:
+                    type: array
+                    items:
+                      type: object
+                      properties: *id008
+                      additionalProperties: true
+                  ОткрСведения:
+                    type: array
+                    items:
+                      type: object
+                      properties: *id008
+                      additionalProperties: true
+                  Лицензии:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        НомерЛиц:
+                          type: string
+                        ВидДеятельности:
+                          type: string
+                        ДатаНачала:
+                          type: string
+                        ДатаОконч:
+                          type: string
+                        МестоДейств:
+                          type: string
+                      additionalProperties: true
+                  Участия:
+                    type: array
+                    items:
+                      type: object
+                      properties: *id008
+                      additionalProperties: true
+                  История:
+                    type: object
+                    properties: *id008
+                    additionalProperties: true
+                  Позитив:
+                    type: object
+                    properties:
+                      Лицензии:
+                        type: string
+                      РеестрМСП:
+                        type: string
+                      ДатаВклМСП:
+                        type: string
+                      КатСубМСП:
+                        type: string
+                      ПризНовМСП:
+                        type: string
+                      СведСоцПред:
+                        type: string
+                      ССЧР:
+                        type: string
+                      ДатаСост:
+                        type: string
+                      АдресМСП:
+                        type: string
+                      Текст:
+                        type: string
+                      ПоддержкаМСП:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            ФормПод:
+                              type: string
+                            ВидПод:
+                              type: string
+                            РазмПодСум:
+                              type: string
+                            РазмПодСр:
+                              type: string
+                            СрокПодМакс:
+                              type: string
+                            НарушПоддержкаМСП:
+                              type: string
+                          additionalProperties: true
+                      Филиалы:
+                        type: string
+                      КапБолее50тыс:
+                        type: string
+                    additionalProperties: true
+                  Негатив:
+                    type: object
+                    properties:
+                      Статус:
+                        type: string
+                      Текст:
+                        type: string
+                      БлокСчета:
+                        type: string
+                      БлокСчетаИнфо:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            БИК:
+                              type: string
+                            Банк:
+                              type: string
+                            НомерРеш:
+                              type: string
+                            ДатаРеш:
+                              type: string
+                            ДатаНач:
+                              type: string
+                            КодНО:
+                              type: string
+                            ВремяИнф:
+                              type: string
+                            КодОснов:
+                              type: string
+                            СальдоЕНС:
+                              type: string
+                          additionalProperties: true
+                      ИсклИзРеестраМСП:
+                        type: string
+                      РегНедавно:
+                        type: string
+                      ДисквРук:
+                        type: string
+                      ДисквРукДр:
+                        type: string
+                      ДисквРукДрБезИНН:
+                        type: string
+                      РеестрМассАдрес:
+                        type: string
+                      МассАдрес:
+                        type: string
+                      РешИзмАдрес:
+                        type: string
+                      НедостоверАдрес:
+                        type: string
+                      СменаРег:
+                        type: string
+                      РеестрМассРук:
+                        type: string
+                      МассРук:
+                        type: string
+                      МассРукБезИНН:
+                        type: string
+                      РукЛиквКомп:
+                        type: string
+                      РукЛиквКомпБезИНН:
+                        type: string
+                      НедостоверРук:
+                        type: string
+                      РеестрМассУчр:
+                        type: string
+                      РеестрМассРукУчр:
+                        type: string
+                      ДисквУчрДр:
+                        type: string
+                      ДисквУчрДрБезИНН:
+                        type: string
+                      УчрЛиквКомп:
+                        type: string
+                      УчрЛиквКомпБезИНН:
+                        type: string
+                      ОдноврСменаРукУчр:
+                        type: string
+                      СменаРукГод:
+                        type: string
+                      РукУчр1Комп:
+                        type: string
+                      НедостоверУчр:
+                        type: string
+                      Обременения:
+                        type: string
+                      НеПредостОтч:
+                        type: string
+                      ЗадолжНалог:
+                        type: string
+                      РешУмКап:
+                        type: string
+                      КолРаб:
+                        type: string
+                      Банкрот:
+                        type: string
+                      БанкротНамерение:
+                        type: string
+                      РискНалогПроверки:
+                        type: string
+                      НедоимкаНалог:
+                        type: string
+                    additionalProperties: true
+                additionalProperties: true
+              НР:
+                type: object
+                properties:
+                  ИНН:
+                    type: string
+                  ИННФЛ:
+                    type: string
+                  КПП:
+                    type: string
+                  ОГРН:
+                    type: string
+                  ОГРНИП:
+                    type: string
+                  НаимСокрЮЛ:
+                    type: string
+                  НаимПолнЮЛ:
+                    type: string
+                  ФИОПолн:
+                    type: string
+                  ФИОПолнЗАГС:
+                    type: string
+                  ДатаОГРН:
+                    type: string
+                  ДатаРег:
+                    type: string
+                  ВидИП:
+                    type: string
+                  Пол:
+                    type: string
+                  ВидГражд:
+                    type: string
+                  ОКСМ:
+                    type: string
+                  Статус:
+                    type: string
+                  СтатусДата:
+                    type: string
+                  ДатаПрекр:
+                    type: string
+                  АдресПолн:
+                    type: string
+                  ГдеНайдено:
+                    type: string
+                  Адрес:
+                    type: object
+                    properties:
+                      КодРегион:
+                        type: string
+                      Индекс:
+                        type: string
+                      АдресПолн:
+                        type: string
+                      Дата:
+                        type: string
+                      E-mail:
+                        type: string
+                      ИдНомФИАС:
+                        type: string
+                      АдресДетали:
+                        type: object
+                        properties: &id011 {}
+                        additionalProperties: true
+                    additionalProperties: true
+                  НО:
+                    type: object
+                    properties:
+                      Аккр:
+                        type: string
+                      АккрДата:
+                        type: string
+                      ДатаПрекрАккр:
+                        type: string
+                      Учет:
+                        type: string
+                      УчетДата:
+                        type: string
+                    additionalProperties: true
+                  ПФ:
+                    type: object
+                    properties:
+                      РегНомПФ:
+                        type: string
+                      ДатаРегПФ:
+                        type: string
+                      КодПФ:
+                        type: string
+                    additionalProperties: true
+                  ФСС:
+                    type: object
+                    properties:
+                      РегНомФСС:
+                        type: string
+                      ДатаРегФСС:
+                        type: string
+                      КодФСС:
+                        type: string
+                    additionalProperties: true
+                  КодыСтат:
+                    type: object
+                    properties:
+                      ОКПО:
+                        type: string
+                      ОКТМО:
+                        type: string
+                      ОКФС:
+                        type: string
+                      ОКОГУ:
+                        type: string
+                    additionalProperties: true
+                  Капитал:
+                    type: object
+                    properties:
+                      ВидКап:
+                        type: string
+                      СумКап:
+                        type: string
+                    additionalProperties: true
+                  Руководитель: &id010
+                    type: object
+                    properties:
+                      Должн:
+                        type: string
+                      ФИОПолн:
+                        type: string
+                      ИННФЛ:
+                        type: string
+                      Дата:
+                        type: string
+                      ДатаНачДискв:
+                        type: string
+                      ДатаОкончДискв:
+                        type: string
+                    additionalProperties: true
+                  ИныеРуководители:
+                    type: array
+                    items: *id010
+                  Учредители:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        УчрЮЛ:
+                          type: object
+                          properties:
+                            ОГРН:
+                              type: string
+                            ИНН:
+                              type: string
+                            НаимСокрЮЛ:
+                              type: string
+                            Статус:
+                              type: string
+                          additionalProperties: true
+                        УчрИН:
+                          type: object
+                          properties: *id011
+                          additionalProperties: true
+                        УчрФЛ:
+                          type: object
+                          properties:
+                            ФИОПолн:
+                              type: string
+                            ИННФЛ:
+                              type: string
+                          additionalProperties: true
+                        УчрРФСубМО:
+                          type: string
+                        УчрПИФ:
+                          type: object
+                          properties: *id011
+                          additionalProperties: true
+                        СуммаУК:
+                          type: string
+                        Процент:
+                          type: string
+                        Дата:
+                          type: string
+                      additionalProperties: true
+                  Контакты:
+                    type: object
+                    properties: *id011
+                    additionalProperties: true
+                  ОснВидДеят:
+                    anyOf:
+                    - type: string
+                    - &id012
+                      type: object
+                      properties:
+                        Код:
+                          type: string
+                        Текст:
+                          type: string
+                      additionalProperties: true
+                  ДопВидДеят:
+                    type: array
+                    items: *id012
+                  СПВЗ:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        Дата:
+                          type: string
+                        Текст:
+                          type: string
+                      additionalProperties: true
+                  Филиалы:
+                    type: array
+                    items:
+                      type: object
+                      properties: *id011
+                      additionalProperties: true
+                  ОткрСведения:
+                    type: array
+                    items:
+                      type: object
+                      properties: *id011
+                      additionalProperties: true
+                  Лицензии:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        НомерЛиц:
+                          type: string
+                        ВидДеятельности:
+                          type: string
+                        ДатаНачала:
+                          type: string
+                        ДатаОконч:
+                          type: string
+                        МестоДейств:
+                          type: string
+                      additionalProperties: true
+                  Участия:
+                    type: array
+                    items:
+                      type: object
+                      properties: *id011
+                      additionalProperties: true
+                  История:
+                    type: object
+                    properties:
+                      СвИнРабАкт:
+                        type: array
+                        items: {}
+                      НаимПредПолн: {}
+                      НаимПредСокр: {}
+                      НаимЮЛПолн: {}
+                      Адрес: {}
+                      Руководитель: {}
+                    additionalProperties: true
+                  Позитив:
+                    type: object
+                    properties:
+                      Лицензии:
+                        type: string
+                      РеестрМСП:
+                        type: string
+                      ДатаВклМСП:
+                        type: string
+                      КатСубМСП:
+                        type: string
+                      ПризНовМСП:
+                        type: string
+                      СведСоцПред:
+                        type: string
+                      ССЧР:
+                        type: string
+                      ДатаСост:
+                        type: string
+                      АдресМСП:
+                        type: string
+                      Текст:
+                        type: string
+                      ПоддержкаМСП:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            ФормПод:
+                              type: string
+                            ВидПод:
+                              type: string
+                            РазмПодСум:
+                              type: string
+                            РазмПодСр:
+                              type: string
+                            СрокПодМакс:
+                              type: string
+                            НарушПоддержкаМСП:
+                              type: string
+                          additionalProperties: true
+                      Филиалы:
+                        type: string
+                      КапБолее50тыс:
+                        type: string
+                    additionalProperties: true
+                  Негатив:
+                    type: object
+                    properties:
+                      Статус:
+                        type: string
+                      Текст:
+                        type: string
+                      БлокСчета:
+                        type: string
+                      БлокСчетаИнфо:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            БИК:
+                              type: string
+                            Банк:
+                              type: string
+                            НомерРеш:
+                              type: string
+                            ДатаРеш:
+                              type: string
+                            ДатаНач:
+                              type: string
+                            КодНО:
+                              type: string
+                            ВремяИнф:
+                              type: string
+                            КодОснов:
+                              type: string
+                            СальдоЕНС:
+                              type: string
+                          additionalProperties: true
+                      ИсклИзРеестраМСП:
+                        type: string
+                      РегНедавно:
+                        type: string
+                      ДисквРук:
+                        type: string
+                      ДисквРукДр:
+                        type: string
+                      ДисквРукДрБезИНН:
+                        type: string
+                      РеестрМассАдрес:
+                        type: string
+                      МассАдрес:
+                        type: string
+                      РешИзмАдрес:
+                        type: string
+                      НедостоверАдрес:
+                        type: string
+                      СменаРег:
+                        type: string
+                      РеестрМассРук:
+                        type: string
+                      МассРук:
+                        type: string
+                      МассРукБезИНН:
+                        type: string
+                      РукЛиквКомп:
+                        type: string
+                      РукЛиквКомпБезИНН:
+                        type: string
+                      НедостоверРук:
+                        type: string
+                      РеестрМассУчр:
+                        type: string
+                      РеестрМассРукУчр:
+                        type: string
+                      ДисквУчрДр:
+                        type: string
+                      ДисквУчрДрБезИНН:
+                        type: string
+                      УчрЛиквКомп:
+                        type: string
+                      УчрЛиквКомпБезИНН:
+                        type: string
+                      ОдноврСменаРукУчр:
+                        type: string
+                      СменаРукГод:
+                        type: string
+                      РукУчр1Комп:
+                        type: string
+                      НедостоверУчр:
+                        type: string
+                      Обременения:
+                        type: string
+                      НеПредостОтч:
+                        type: string
+                      ЗадолжНалог:
+                        type: string
+                      РешУмКап:
+                        type: string
+                      КолРаб:
+                        type: string
+                      Банкрот:
+                        type: string
+                      БанкротНамерение:
+                        type: string
+                      РискНалогПроверки:
+                        type: string
+                      НедоимкаНалог:
+                        type: string
+                    additionalProperties: true
+                  НЗА:
+                    type: string
+                  ПризАк:
+                    type: string
+                  НаимПредПолн:
+                    type: string
+                  НаимПредСокр:
+                    type: string
+                  НаимЮЛПолн:
+                    type: string
+                  НаимЮЛСокр:
+                    type: string
+                  СвИнРабАкт:
+                    type: object
+                    properties: {}
+                    additionalProperties: true
+                additionalProperties: true
+              ИН:
+                type: object
+                properties:
+                  ИНН:
+                    type: string
+                  ИННФЛ:
+                    type: string
+                  КПП:
+                    type: string
+                  ОГРН:
+                    type: string
+                  ОГРНИП:
+                    type: string
+                  НаимСокрЮЛ:
+                    type: string
+                  НаимПолнЮЛ:
+                    type: string
+                  ФИОПолн:
+                    type: string
+                  ФИОПолнЗАГС:
+                    type: string
+                  ДатаОГРН:
+                    type: string
+                  ДатаРег:
+                    type: string
+                  ВидИП:
+                    type: string
+                  Пол:
+                    type: string
+                  ВидГражд:
+                    type: string
+                  ОКСМ:
+                    type: string
+                  Статус:
+                    type: string
+                  СтатусДата:
+                    type: string
+                  ДатаПрекр:
+                    type: string
+                  АдресПолн:
+                    type: string
+                  ГдеНайдено:
+                    type: string
+                  Адрес:
+                    type: object
+                    properties:
+                      КодРегион:
+                        type: string
+                      Индекс:
+                        type: string
+                      АдресПолн:
+                        type: string
+                      Дата:
+                        type: string
+                      E-mail:
+                        type: string
+                      ИдНомФИАС:
+                        type: string
+                      АдресДетали:
+                        type: object
+                        properties: &id014 {}
+                        additionalProperties: true
+                    additionalProperties: true
+                  НО:
+                    type: string
+                  ПФ:
+                    type: object
+                    properties:
+                      РегНомПФ:
+                        type: string
+                      ДатаРегПФ:
+                        type: string
+                      КодПФ:
+                        type: string
+                    additionalProperties: true
+                  ФСС:
+                    type: object
+                    properties:
+                      РегНомФСС:
+                        type: string
+                      ДатаРегФСС:
+                        type: string
+                      КодФСС:
+                        type: string
+                    additionalProperties: true
+                  КодыСтат:
+                    type: object
+                    properties:
+                      ОКПО:
+                        type: string
+                      ОКТМО:
+                        type: string
+                      ОКФС:
+                        type: string
+                      ОКОГУ:
+                        type: string
+                    additionalProperties: true
+                  Капитал:
+                    type: object
+                    properties:
+                      ВидКап:
+                        type: string
+                      СумКап:
+                        type: string
+                    additionalProperties: true
+                  Руководитель: &id013
+                    type: object
+                    properties:
+                      Должн:
+                        type: string
+                      ФИОПолн:
+                        type: string
+                      ИННФЛ:
+                        type: string
+                      Дата:
+                        type: string
+                      ДатаНачДискв:
+                        type: string
+                      ДатаОкончДискв:
+                        type: string
+                    additionalProperties: true
+                  ИныеРуководители:
+                    type: array
+                    items: *id013
+                  Учредители:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        УчрЮЛ:
+                          type: object
+                          properties:
+                            ОГРН:
+                              type: string
+                            ИНН:
+                              type: string
+                            НаимСокрЮЛ:
+                              type: string
+                            Статус:
+                              type: string
+                          additionalProperties: true
+                        УчрИН:
+                          type: object
+                          properties: *id014
+                          additionalProperties: true
+                        УчрФЛ:
+                          type: object
+                          properties:
+                            ФИОПолн:
+                              type: string
+                            ИННФЛ:
+                              type: string
+                          additionalProperties: true
+                        УчрРФСубМО:
+                          type: string
+                        УчрПИФ:
+                          type: object
+                          properties: *id014
+                          additionalProperties: true
+                        СуммаУК:
+                          type: string
+                        Процент:
+                          type: string
+                        Дата:
+                          type: string
+                      additionalProperties: true
+                  Контакты:
+                    type: object
+                    properties: *id014
+                    additionalProperties: true
+                  ОснВидДеят:
+                    anyOf:
+                    - type: string
+                    - &id015
+                      type: object
+                      properties:
+                        Код:
+                          type: string
+                        Текст:
+                          type: string
+                      additionalProperties: true
+                  ДопВидДеят:
+                    type: array
+                    items: *id015
+                  СПВЗ:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        Дата:
+                          type: string
+                        Текст:
+                          type: string
+                      additionalProperties: true
+                  Филиалы:
+                    type: array
+                    items:
+                      type: object
+                      properties: *id014
+                      additionalProperties: true
+                  ОткрСведения:
+                    type: array
+                    items:
+                      type: object
+                      properties: *id014
+                      additionalProperties: true
+                  Лицензии:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        НомерЛиц:
+                          type: string
+                        ВидДеятельности:
+                          type: string
+                        ДатаНачала:
+                          type: string
+                        ДатаОконч:
+                          type: string
+                        МестоДейств:
+                          type: string
+                      additionalProperties: true
+                  Участия:
+                    type: array
+                    items:
+                      type: object
+                      properties: *id014
+                      additionalProperties: true
+                  История:
+                    type: object
+                    properties: *id014
+                    additionalProperties: true
+                  Позитив:
+                    type: object
+                    properties:
+                      Лицензии:
+                        type: string
+                      РеестрМСП:
+                        type: string
+                      ДатаВклМСП:
+                        type: string
+                      КатСубМСП:
+                        type: string
+                      ПризНовМСП:
+                        type: string
+                      СведСоцПред:
+                        type: string
+                      ССЧР:
+                        type: string
+                      ДатаСост:
+                        type: string
+                      АдресМСП:
+                        type: string
+                      Текст:
+                        type: string
+                      ПоддержкаМСП:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            ФормПод:
+                              type: string
+                            ВидПод:
+                              type: string
+                            РазмПодСум:
+                              type: string
+                            РазмПодСр:
+                              type: string
+                            СрокПодМакс:
+                              type: string
+                            НарушПоддержкаМСП:
+                              type: string
+                          additionalProperties: true
+                      Филиалы:
+                        type: string
+                      КапБолее50тыс:
+                        type: string
+                    additionalProperties: true
+                  Негатив:
+                    type: object
+                    properties:
+                      Статус:
+                        type: string
+                      Текст:
+                        type: string
+                      БлокСчета:
+                        type: string
+                      БлокСчетаИнфо:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            БИК:
+                              type: string
+                            Банк:
+                              type: string
+                            НомерРеш:
+                              type: string
+                            ДатаРеш:
+                              type: string
+                            ДатаНач:
+                              type: string
+                            КодНО:
+                              type: string
+                            ВремяИнф:
+                              type: string
+                            КодОснов:
+                              type: string
+                            СальдоЕНС:
+                              type: string
+                          additionalProperties: true
+                      ИсклИзРеестраМСП:
+                        type: string
+                      РегНедавно:
+                        type: string
+                      ДисквРук:
+                        type: string
+                      ДисквРукДр:
+                        type: string
+                      ДисквРукДрБезИНН:
+                        type: string
+                      РеестрМассАдрес:
+                        type: string
+                      МассАдрес:
+                        type: string
+                      РешИзмАдрес:
+                        type: string
+                      НедостоверАдрес:
+                        type: string
+                      СменаРег:
+                        type: string
+                      РеестрМассРук:
+                        type: string
+                      МассРук:
+                        type: string
+                      МассРукБезИНН:
+                        type: string
+                      РукЛиквКомп:
+                        type: string
+                      РукЛиквКомпБезИНН:
+                        type: string
+                      НедостоверРук:
+                        type: string
+                      РеестрМассУчр:
+                        type: string
+                      РеестрМассРукУчр:
+                        type: string
+                      ДисквУчрДр:
+                        type: string
+                      ДисквУчрДрБезИНН:
+                        type: string
+                      УчрЛиквКомп:
+                        type: string
+                      УчрЛиквКомпБезИНН:
+                        type: string
+                      ОдноврСменаРукУчр:
+                        type: string
+                      СменаРукГод:
+                        type: string
+                      РукУчр1Комп:
+                        type: string
+                      НедостоверУчр:
+                        type: string
+                      Обременения:
+                        type: string
+                      НеПредостОтч:
+                        type: string
+                      ЗадолжНалог:
+                        type: string
+                      РешУмКап:
+                        type: string
+                      КолРаб:
+                        type: string
+                      Банкрот:
+                        type: string
+                      БанкротНамерение:
+                        type: string
+                      РискНалогПроверки:
+                        type: string
+                      НедоимкаНалог:
+                        type: string
+                    additionalProperties: true
+                  КИО:
+                    type: string
+                  НаимИНПолн:
+                    type: string
+                  НаимИНСокр:
+                    type: string
+                  НаимОППолн:
+                    type: string
+                  НаимОПСокр:
+                    type: string
+                  ДатаСнятия:
+                    type: string
+                additionalProperties: true
+            additionalProperties: true
+      additionalProperties: true
+    RiskDetails:
+      type: object
+      properties:
+        Код: {type: string}
+        Текст: {type: string}
+      additionalProperties: true
+    MultinfoAddress:
+      type: object
+      properties:
+        КодРегион: {type: string}
+        Индекс: {type: string}
+        АдресПолн:
+          description: Таблица называет объектом, пример — строкой; обе формы непроверены.
+          oneOf:
+          - type: string
+          - type: object
+            additionalProperties: true
+      additionalProperties: true
+    MultinfoCommon:
+      type: object
+      properties:
+        ДатаОГРН: {type: string}
+        ДатаРег: {type: string}
+        Статус: {type: string}
+        ДатаПрекр: {type: string}
+        РеестрМСП: {type: string}
+        КатСубМСП: {type: string}
+        ДатаСост: {type: string}
+        Адрес: {$ref: '#/components/schemas/MultinfoAddress'}
+        ОснВидДеят:
+          type: object
+          properties:
+            Код: {type: string}
+            Текст: {type: string}
+          additionalProperties: true
+        ДопВидДеят: {type: string, description: Коды через запятую.}
+        Контакты: {type: string, description: Контакты через запятую.}
+      additionalProperties: true
+    MultinfoUL:
+      allOf:
+      - $ref: '#/components/schemas/MultinfoCommon'
+      - type: object
+        properties:
+          ИНН: {type: string}
+          КПП: {type: string}
+          ОГРН: {type: string}
+          НаимСокрЮЛ: {type: string}
+          НаимПолнЮЛ: {type: string}
+          СтатусДата: {type: string}
+          Капитал:
+            type: object
+            properties:
+              СумКап: {type: string}
+            additionalProperties: true
+          Руководитель:
+            type: object
+            properties:
+              Должн: {type: string}
+              ФИОПолн: {type: string}
+              ИННФЛ: {type: string}
+            additionalProperties: true
+          ОткрСведения:
+            type: array
+            items:
+              type: object
+              properties:
+                КолРаб: {type: string}
+                ДатаСост: {type: string}
+              additionalProperties: true
+          Финансы:
+            type: array
+            items:
+              type: object
+              properties:
+                Выручка: {type: string}
+                Год: {type: string}
+              additionalProperties: true
+        additionalProperties: true
+    MultinfoIP:
+      allOf:
+      - $ref: '#/components/schemas/MultinfoCommon'
+      - type: object
+        properties:
+          ФИОПолн: {type: string}
+          ИННФЛ: {type: string}
+          ОГРНИП: {type: string}
+          ВидИП: {description: Тип не указан в таблице.}
+          Пол: {description: Тип не указан в таблице.}
+          ВидГражд: {description: Тип не указан в таблице.}
+        additionalProperties: true
+    MultcheckUL:
+      type: object
+      properties:
+        ИНН: {type: string, description: ИНН юридического лица.}
+        ОГРН: {type: string, description: ОГРН юридического лица.}
+        НаимСокрЮЛ: {type: string, description: 'Наименование ЮЛ; в источнике описания полного и сокращённого названий перепутаны.'}
+        НаимПолнЮЛ: {type: string, description: 'Наименование ЮЛ; в источнике описания полного и сокращённого названий перепутаны.'}
+        Статус: {type: string, description: Статус юридического лица.}
+        ДатаПрекр: {type: string, format: date, description: Дата прекращения деятельности.}
+        Адрес:
+          type: object
+          properties:
+            РеестрМассАдрес: {type: string}
+            ПризнНедАдресЮЛ: {$ref: '#/components/schemas/RiskDetails'}
+          additionalProperties: true
+        Руководитель:
+          type: object
+          properties:
+            ПризнНедДанДолжнФЛ: {$ref: '#/components/schemas/RiskDetails'}
+            ДатаОкончДискв:
+              description: Таблица называет объектом, пример — строкой.
+              oneOf:
+              - type: string
+              - type: object
+                additionalProperties: true
+          additionalProperties: true
+        Учредители:
+          type: array
+          items:
+            type: object
+            properties:
+              ПризнНедДанУчр:
+                description: Вложенность и тип поля предположены по таблице; пример помещает объект в корень ЮЛ.
+                allOf:
+                - $ref: '#/components/schemas/RiskDetails'
+            additionalProperties: true
+        ПризнНедДанУчр:
+          $ref: '#/components/schemas/RiskDetails'
+      additionalProperties: true
+    MultcheckIP:
+      type: object
+      properties:
+        ФИОПолн: {type: string, description: ФИО индивидуального предпринимателя.}
+        ИННФЛ: {type: string, description: ИНН физического лица.}
+        ОГРНИП: {type: string, description: ОГРН индивидуального предпринимателя.}
+        Статус: {type: string, description: Статус индивидуального предпринимателя.}
+        ДатаПрекр: {type: string, format: date, description: Дата прекращения деятельности.}
+      additionalProperties: true
+    multinfoResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              ЮЛ: {$ref: '#/components/schemas/MultinfoUL'}
+              ИП: {$ref: '#/components/schemas/MultinfoIP'}
+              НР:
+                type: object
+                additionalProperties: true
+            additionalProperties: true
+      additionalProperties: true
+    multcheckResponse:
+      description: Только проблемные компании; отсутствие результата не доказывает чистоту или завершение проверки.
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              ЮЛ: {$ref: '#/components/schemas/MultcheckUL'}
+              ИП: {$ref: '#/components/schemas/MultcheckIP'}
+            additionalProperties: true
+      additionalProperties: true
+    checkResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              ЮЛ: *id004
+              ИП: *id004
+            additionalProperties: true
+      additionalProperties: true
+    nalogbiResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              ЮЛ: *id004
+              ИП: *id004
+            additionalProperties: true
+      additionalProperties: true
+    changesResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              ЮЛ: &id018
+                type: object
+                properties:
+                  ИНН:
+                    type: string
+                  ИННФЛ:
+                    type: string
+                  ОГРН:
+                    type: string
+                  ОГРНИП:
+                    type: string
+                  Изменения:
+                    description: Таблица называет массивом, пример показывает объект с ключами-датами.
+                    anyOf:
+                    - type: object
+                      additionalProperties:
+                        type: object
+                        properties:
+                          Статус:
+                            type: string
+                          СПВЗ:
+                            type: string
+                          НО:
+                            type: object
+                            properties:
+                              Рег:
+                                type: string
+                              Учет:
+                                type: string
+                            additionalProperties: true
+                          ПФ:
+                            type: object
+                            properties:
+                              РегНомПФ:
+                                type: string
+                            additionalProperties: true
+                          ФСС:
+                            type: object
+                            properties:
+                              РегНомФСС:
+                                type: string
+                            additionalProperties: true
+                          Адрес:
+                            type: object
+                            properties:
+                              АдресПолн:
+                                type: string
+                            additionalProperties: true
+                          Руководитель:
+                            type: object
+                            properties:
+                              ФИОПолн:
+                                type: string
+                              ИННФЛ:
+                                type: string
+                            additionalProperties: true
+                          Учредители:
+                            description: Таблица называет строкой; пример показывает объект.
+                            anyOf:
+                            - type: string
+                            - type: object
+                              properties: *id016
+                              additionalProperties: true
+                          Капитал: *id017
+                          Заявление:
+                            type: object
+                            properties:
+                              Форма:
+                                type: string
+                              Вид:
+                                type: string
+                              Способ:
+                                type: string
+                              ОтветФНС:
+                                type: string
+                              ДатаРег:
+                                type: string
+                              ДатаГотовности:
+                                type: string
+                              НО:
+                                type: string
+                            additionalProperties: true
+                        additionalProperties: true
+                    - type: array
+                      items: {}
+                additionalProperties: true
+              ИП: *id018
+            additionalProperties: true
+      additionalProperties: true
+    monResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              ОГРН:
+                type: string
+              ОГРНИП:
+                type: string
+              ИНН:
+                type: string
+              ИННФЛ:
+                type: string
+              Результат:
+                type: string
+              АктДатаБО:
+                type: string
+              Тип:
+                type: string
+              Текст:
+                type: string
+            additionalProperties: true
+      additionalProperties: true
+    boResponse:
+      type: object
+      description: Идентификатор → год → код строки → сумма в тысячах рублей.
+      additionalProperties:
+        type: object
+        additionalProperties:
+          type: object
+          additionalProperties:
+            type: string
+    innflResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              ИНН:
+                type: string
+            additionalProperties: true
+        error:
+          type: string
+      additionalProperties: true
+    mvdpassResponse:
+      type: object
+      properties:
+        result:
+          type: string
+      additionalProperties: true
+    mvdinfoResponse:
+      type: object
+      properties:
+        docno:
+          type: string
+        result:
+          type: string
+      additionalProperties: true
+    fl_statusResponse:
+      type: object
+      properties:
+        Корректность:
+          type: object
+          properties:
+            12знаков: {}
+            КонтрСумма:
+              type: boolean
+            Недействительный:
+              type: boolean
+              nullable: true
+            НедейстДата:
+              type: string
+            Текст:
+              type: string
+          additionalProperties: true
+        Самозанятость: &id019
+          type: object
+          properties:
+            Статус:
+              type: boolean
+              nullable: true
+            Текст:
+              type: string
+            Ссылка:
+              type: string
+            Стадия:
+              type: string
+            Дело:
+              type: string
+            ДатаПослПубл:
+              type: string
+            ТипПослПубл:
+              type: string
+          additionalProperties: true
+        ИП: *id019
+        ДисквЛицо: *id019
+        Банкрот: *id019
+        ПоддержкаМСП:
+          type: array
+          items: *id020
+        ФИО:
+          type: string
+      additionalProperties: true
+    fsrarResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              ИНН:
+                type: string
+              КПП подразделения:
+                type: string
+              Адрес подразделения:
+                type: string
+              Номер лицензии:
+                type: string
+              Вид лицензии:
+                type: string
+              Дата выдачи:
+                type: string
+              Дата окончания:
+                type: string
+              Статус лицензии:
+                type: string
+              Дата изменения:
+                type: string
+              Основание изменения:
+                type: string
+              Орган выдавший лицензию:
+                type: string
+              История изменений сведений о действии лицензии:
+                type: string
+              e-mail:
+                type: string
+            additionalProperties: true
+        nextpage:
+          type: boolean
+      additionalProperties: true
+    zskResponse:
+      type: object
+      properties:
+        Состояние:
+          description: -1 очередь, -2 выполнение, 0 ошибка, 1 успех; таблица строка, пример число.
+          anyOf:
+          - type: string
+          - type: integer
+        Риск:
+          description: 0 или 2; таблица строка, пример число.
+          anyOf:
+          - type: string
+          - type: integer
+        Текст:
+          type: string
+      additionalProperties: true
+    romResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              Номер:
+                anyOf:
+                - type: string
+                - type: integer
+              ИНН:
+                type: string
+              Наименование:
+                type: string
+              ДатаРеш:
+                type: string
+              Имущество:
+                type: string
+              ВидОбесп:
+                type: object
+                properties:
+                  Код:
+                    type: string
+                  Наименование:
+                    type: string
+                additionalProperties: true
+              ОтменаОбесп:
+                type: object
+                properties:
+                  Дата:
+                    type: string
+                  Основание:
+                    type: string
+                additionalProperties: true
+              ПрекрОбесп:
+                type: object
+                properties:
+                  Дата:
+                    type: string
+                  Основание:
+                    type: string
+                additionalProperties: true
+            additionalProperties: true
+      additionalProperties: true
+    fias_infoResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              ИдНомФИАС16:
+                type: string
+              ИдНомФИАС_Вышест:
+                type: string
+              Индекс:
+                type: string
+              НО_ЮЛ:
+                type: string
+              НО_ФЛ:
+                type: string
+              ОКАТО:
+                type: string
+              ОКТМО:
+                type: string
+              КадастрНомер:
+                type: string
+              ИдНомФИАС:
+                anyOf:
+                - type: string
+                - type: integer
+              КодРегион:
+                anyOf:
+                - type: string
+                - type: integer
+              АдресПолн:
+                anyOf:
+                - type: string
+                - type: object
+                  properties: *id002
+                  additionalProperties: true
+              Активный:
+                anyOf:
+                - type: string
+                - type: boolean
+            additionalProperties: true
+      additionalProperties: true
+    fias_searchResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              ИдНомФИАС:
+                type: string
+              ИдНомФИАС_Вышест:
+                type: string
+              АдресПолн:
+                type: string
+              АдресПолн_html:
+                type: string
+            additionalProperties: true
+      additionalProperties: true
+    statResponse:
+      type: object
+      properties:
+        ДатаНач:
+          type: string
+        ДатаОконч:
+          type: string
+        Статус:
+          type: string
+        Методы:
+          description: Таблица называет массивом, пример показывает объект с именами методов.
+          anyOf:
+          - type: object
+            additionalProperties:
+              anyOf:
+              - type: object
+                properties:
+                  Лимит:
+                    type: string
+                  Истрачено:
+                    type: string
+                additionalProperties: true
+              - type: array
+                items: {}
+          - type: array
+            items: {}
+      additionalProperties: true

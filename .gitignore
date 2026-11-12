@@ -1,0 +1,60 @@
+# Python environments
+.venv*/
+venv/
+env/
+ENV/
+
+# Python bytecode, caches and test reports
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.pytype/
+.hypothesis/
+.tox/
+.nox/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.ipynb_checkpoints/
+
+# Python packaging and build output
+build/
+dist/
+.eggs/
+*.egg-info/
+*.egg
+*.whl
+pip-wheel-metadata/
+
+# Local dependencies and generated Pages output
+node_modules/
+/_site/
+
+# Temporary Swagger/OpenAPI artifacts; keep source specifications and reports
+docs/swagger/**/.cache/
+docs/swagger/**/.swagger-codegen/
+docs/swagger/**/.openapi-generator/
+docs/swagger/**/_generated/
+docs/swagger/**/tmp/
+docs/swagger/**/temp/
+docs/swagger/**/*.tmp
+docs/swagger/**/*.bak
+docs/swagger/**/*.swp
+docs/swagger/**/*~
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+
+# Agent run artifacts (project agent definitions remain versionable)
+.pi/subagents/
+
+# OS and log files
+.DS_Store
+*.log

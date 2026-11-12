@@ -1,0 +1,201 @@
+openapi: 3.0.3
+info:
+  title: API-Скоринг DaMIA
+  version: '1.0.0'
+  description: >-
+    Контракт по публичной документации, без проверки запросами. Форма JSON и
+    обязательность входных параметров не установлены. Схемы словаря полей в
+    components являются иллюстрациями, а не утверждением о структуре ответа.
+servers:
+  - url: https://api.damia.ru/scoring
+security:
+  - ApiKey: []
+paths:
+  /score:
+    get:
+      operationId: score
+      summary: Расчёт рисков контрагента
+      externalDocs:
+        url: https://damia.ru/apiscoring
+      description: >-
+        Скоринг по модели DaMIA или пользовательской модели. Необязательные
+        параметры баланса передаются отдельными ключами bNNNN, где NNNN — код
+        строки отчётности; значения на конец года, целые, в тысячах рублей,
+        допускаются отрицательные. Например, b1100=1000&b1300=-100. При их наличии
+        рассчитываются показатели как по отчётности Росстата, так и по
+        введённым данным. OpenAPI не описывает семейство произвольных имён
+        query-параметров; буквальный параметр bNNNN здесь не объявлен, поэтому
+        генераторам клиентов нужна дополнительная или ручная поддержка.
+        Пример источника содержит 1200 без префикса b, что противоречит
+        описанию и не подтверждает поддержку такого имени. Обязательность inn
+        и model не установлена. Документация описывает результат как JSON;
+        корневая форма и вложенность ответа неизвестны.
+      x-research-notes: 'Статусы, ошибки, nullable, пагинация и кратность результатов не документированы; примеры ответов пусты.'
+      parameters:
+        - $ref: '#/components/parameters/Inn'
+        - $ref: '#/components/parameters/Model'
+      responses:
+        '2XX':
+          description: 'Успешный результат в формате JSON; конкретный статус и HTTP Content-Type не подтверждены источником.'
+          x-research-notes: 'Диапазон успеха и application/json — интерпретация документации, не наблюдавшиеся статус и заголовок. Форма ответа неизвестна; иллюстративные модели ScoreFieldsIllustrative и IndicatorFieldsIllustrative описывают поля, но не являются схемой ответа.'
+          content:
+            application/json:
+              schema: {}
+        default:
+          description: 'Прочие ответы; коды, структура и медиатипы не установлены.'
+  /info:
+    get:
+      operationId: info
+      summary: Информация о скоринговой модели
+      externalDocs:
+        url: https://damia.ru/apiscoring
+      description: >-
+        Информация по идентификатору модели DaMIA или пользовательской модели.
+        Документация описывает результат как JSON. Обязательность model,
+        корневая форма и вложенность ответа не установлены. Пример запроса
+        без ключа: https://api.damia.ru/scoring/info?model=_bankrots2016.
+        Документация предусматривает отдельную передачу ключа.
+      x-research-notes: 'Пример ответа пуст; тип элементов массива Год, статусы, ошибки, nullable и пагинация не документированы.'
+      parameters:
+        - $ref: '#/components/parameters/Model'
+      responses:
+        '2XX':
+          description: 'Успешный результат в формате JSON; конкретный статус и HTTP Content-Type не подтверждены источником.'
+          x-research-notes: 'Диапазон успеха и application/json — интерпретация документации, не наблюдавшиеся статус и заголовок. Форма ответа неизвестна; иллюстративные модели ModelFieldsIllustrative и ModelMetricsIllustrative описывают поля, но не являются схемой ответа.'
+          content:
+            application/json:
+              schema: {}
+        default:
+          description: 'Прочие ответы; коды, структура и медиатипы не установлены.'
+  /fincoefs:
+    get:
+      operationId: fincoefs
+      summary: Финансовые коэффициенты компании
+      externalDocs:
+        url: https://damia.ru/apiscoring
+      description: >-
+        Коэффициенты и сравнение со средними по отрасли / региону.
+        Документация описывает результат как JSON. Обязательность inn,
+        корневая форма, кратность и вложенность ответа не установлены. Пример
+        запроса без ключа: https://api.damia.ru/scoring/fincoefs?inn=<ИНН>.
+        <ИНН> — заменяемый заполнитель, не реальный идентификатор; для
+        фактического обращения документация предусматривает отдельную передачу ключа.
+      x-research-notes: 'Пример ответа пуст; статусы, ошибки, nullable и пагинация не документированы. Комментарий в источнике закомментирован и не подтверждён.'
+      parameters:
+        - $ref: '#/components/parameters/Inn'
+        - name: okved
+          in: query
+          required: false
+          description: 'ОКВЭД для сравнения; при пропуске используется ОКВЭД компании, строка 0 означает все отрасли.'
+          schema:
+            type: string
+        - name: region
+          in: query
+          required: false
+          description: 'Код региона для сравнения; при пропуске используется регион компании, 0 означает все регионы.'
+          schema:
+            type: integer
+      responses:
+        '2XX':
+          description: 'Успешный результат в формате JSON; конкретный статус и HTTP Content-Type не подтверждены источником.'
+          x-research-notes: 'Диапазон успеха и application/json — интерпретация документации, не наблюдавшиеся статус и заголовок. Форма ответа неизвестна; иллюстративные модели FincoefFieldsIllustrative описывают поля, но не являются схемой ответа.'
+          content:
+            application/json:
+              schema: {}
+        default:
+          description: 'Прочие ответы; коды, структура и медиатипы не установлены.'
+components:
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      in: query
+      name: key
+      description: >-
+        Ключ доступа к API. Общий ли это ключ для разных сервисов, неизвестно;
+        security выражает документированный способ доступа, а не проверенную
+        сервером обязательность ключа. Не записывайте ключ в журналы и примеры.
+  parameters:
+    Inn:
+      name: inn
+      in: query
+      required: false
+      description: 'ИНН юридического лица; строка сохраняет ведущие нули. Формальная обязательность не указана.'
+      schema:
+        type: string
+    Model:
+      name: model
+      in: query
+      required: false
+      description: >-
+        Идентификатор модели DaMIA или пользовательской модели. Для score
+        перечислены _bankrots2016, _tech, _diskf, _problemCredit и _zsk;
+        пользовательские имена также допустимы. Формальная обязательность не указана.
+      schema:
+        type: string
+  schemas:
+    ScoreFieldsIllustrative:
+      type: object
+      description: 'Иллюстративный словарь полей, не проверенная форма ответа. Тип object для идентификаторов противоречит их смыслу, поэтому не ограничен.'
+      properties:
+        ИНН: {description: 'ИНН из запроса; источник указывает object.'}
+        Модель: {description: 'Идентификатор модели; источник указывает object.'}
+        Год: {description: 'Источник указывает object; по описанию YYYY или custom для введённых данных.'}
+        РискЗнач: {type: number, format: float, description: 'Вероятность принадлежности к скоринговой группе от 0 до 1.'}
+        РискЗона: {type: string, description: 'Низкий риск, Средний риск или Высокий риск.'}
+        БаллЗнач: {type: number, format: float, description: 'От 0 до 5; больше — выше риск.'}
+        БаллЗона: {type: string, description: 'Низкий балл, Средний балл или Высокий балл.'}
+        НадежностьЗнач: {type: number, format: float, description: 'Надёжность от 0 до 1.'}
+        НадежностьЗона: {type: string, description: 'Низкая надежность, Средняя надежность или Высокая надежность.'}
+        Показатели:
+          type: array
+          description: 'По убыванию значимости; структура элементов предполагается по таблице, но не показана в ответе.'
+          items:
+            $ref: '#/components/schemas/IndicatorFieldsIllustrative'
+    IndicatorFieldsIllustrative:
+      type: object
+      description: 'Предполагаемые поля элемента Показатели, без подтверждённой вложенности.'
+      properties:
+        Наименование: {type: string, description: 'Название показателя с номерами строк финансовой отчётности.'}
+        Значение: {type: number, format: float}
+        nWoE: {type: number, format: float, description: 'Высокое положительное значение указывает на положительный вклад в риск; отрицательное характеризует благоприятный признак.'}
+    ModelFieldsIllustrative:
+      type: object
+      description: 'Иллюстративный словарь полей; фактическая вложенность не установлена.'
+      properties:
+        Модель: {description: 'Идентификатор модели; источник указывает object.'}
+        Название: {type: string}
+        Тип: {type: string, description: 'В источнике перечислены bayes и logistic regresion; написание сохранено.'}
+        Описание: {type: string}
+        Год:
+          type: array
+          description: 'Годы отчётности для построения модели; тип элементов не указан.'
+          items: {}
+        Train:
+          allOf:
+            - $ref: '#/components/schemas/ModelMetricsIllustrative'
+          description: 'Метрики обучающей выборки; вложенность предполагается по таблице.'
+        Test:
+          allOf:
+            - $ref: '#/components/schemas/ModelMetricsIllustrative'
+          description: 'Метрики тестовой выборки; вложенность предполагается по таблице.'
+    ModelMetricsIllustrative:
+      type: object
+      properties:
+        FPR: {type: string, description: 'Вероятность ошибки первого рода.'}
+        FNR: {type: string, description: 'Вероятность ошибки второго рода.'}
+        J: {type: string, description: 'Индекс Юдена.'}
+        AUC: {type: string, description: 'AUC ROC.'}
+        Gini: {type: string, description: 'Коэффициент Gini.'}
+    FincoefFieldsIllustrative:
+      type: object
+      description: 'Иллюстративный словарь полей, не проверенная форма ответа.'
+      properties:
+        ИНН: {description: 'ИНН из запроса; источник указывает object.'}
+        Фин. коэффициент: {description: 'Идентификатор коэффициента; источник указывает object.'}
+        Год: {description: 'Год YYYY; источник указывает object.'}
+        Знач: {type: number, format: float, description: 'Значение коэффициента.'}
+        Норма: {type: number, format: float, description: 'Среднее по отрасли / региону.'}
+        НормаНижн: {type: number, format: float, description: 'Нижняя граница нормы.'}
+        НормаВерхн: {type: number, format: float, description: 'Верхняя граница нормы.'}
+        Балл: {type: integer, description: 'От 0 до 5; высокий балл означает отсутствие риска, в отличие от score.'}
+        НормаСравн: {type: string, description: 'Отрицательный, Много ниже нормы, Ниже нормы, В пределах нормы, Выше нормы или Много выше нормы.'}

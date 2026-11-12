@@ -1,0 +1,542 @@
+openapi: 3.0.3
+info:
+  title: DaMIA API-ФССП
+  version: 1.0.0
+  description: 'Документация сервиса DaMIA, не утверждение об API, управляемом ФССП. Источник: https://damia.ru/apifssp.
+    Реальные запросы не выполнялись. Схемы компонентов — необязательные справочные инвентари, а не подтверждённые
+    схемы корня.'
+servers:
+- url: https://api.damia.ru/fssp
+externalDocs:
+  url: https://damia.ru/apifssp
+x-research-notes:
+- Обязательность key не установлена; security с пустой альтернативой отражает эту неопределённость, не подтверждая
+  анонимный доступ.
+- Источник говорит JSON, но не указывает точный HTTP Content-Type или коды; 2XX и application/json —
+  представление успешного ответа в OpenAPI, а не подтверждённый код или заголовок. default не утверждает формат ошибки.
+- Пустые блоки примеров ответа в снимке не подтверждают структуру JSON, типы элементов и динамических ключей.
+- ТипПост присутствует только в следах комментариев и не включён.
+- Методы предназначены для получения данных; вызовы могут расходовать тарифные запросы. Иные побочные эффекты
+  источником не установлены.
+paths:
+  /isp:
+    get:
+      operationId: isp
+      summary: Исполнительное производство юридического лица
+      description: По индивидуальному или сводному номеру; включая историю. Ответ описан как JSON; HTTP-статусы
+        и точный Content-Type не указаны. Схемы компонентов IspFields, IspHistory — справочные инвентари, не доказанная
+        структура ответа.
+      externalDocs:
+        url: https://damia.ru/apifssp
+      security:
+      - ApiKey: []
+      - {}
+      parameters:
+      - &id001
+        name: regn
+        in: query
+        required: false
+        description: 'Регистрационный номер исполнительного производства; идентификатор следует передавать строкой.
+          Документация не устанавливает обязательность этого параметра; required: false не подтверждает возможность
+          его пропуска.'
+        schema:
+          type: string
+          example: TEST/00/00000-ИП
+      responses:
+        '2XX':
+          description: >-
+            Успешный ответ описан источником как JSON; точный код HTTP и заголовок Content-Type не подтверждены.
+            Диапазон 2XX и application/json используются для представления успеха в OpenAPI; структура ответа неизвестна.
+          content:
+            application/json:
+              schema: {}
+        default:
+          description: Прочие HTTP-статусы и формат ошибок не документированы.
+      x-request-example:
+        description: Синтетический пример параметров; заполнители не являются реальными данными или ключом.
+        query:
+          regn: <номер-производства>
+          key: <ключ>
+      x-documented-response-fields:
+        description: Неконтрактные справочные перечни полей; ссылки не задают структуру тела ответа, HTTP-статус
+          или медиа-тип.
+        schemas:
+        - $ref: '#/components/schemas/IspFields'
+        - $ref: '#/components/schemas/IspHistory'
+  /isps:
+    get:
+      operationId: isps
+      summary: Участие юридического лица в исполнительных производствах
+      description: Действующие и завершённые производства. Ответ описан как JSON; HTTP-статусы и точный Content-Type
+        не указаны. Схемы компонентов IspsGroupedFields, IspsFlatFields — справочные инвентари, не доказанная структура
+        ответа.
+      externalDocs:
+        url: https://damia.ru/apifssp
+      security:
+      - ApiKey: []
+      - {}
+      parameters:
+      - name: inn
+        in: query
+        required: false
+        description: 'ИНН организации; сохраняйте ведущие нули. Документация не устанавливает обязательность этого
+          параметра; required: false не подтверждает возможность его пропуска.'
+        schema:
+          type: string
+          example: '0000000000'
+      - name: from_date
+        in: query
+        required: false
+        description: 'Дата возбуждения, после которой искать, YYYY-MM-DD; включительность не указана. Документация
+          не устанавливает обязательность этого параметра; required: false не подтверждает возможность его пропуска.'
+        schema:
+          type: string
+      - name: to_date
+        in: query
+        required: false
+        description: 'Дата возбуждения, до которой искать, YYYY-MM-DD; включительность не указана. Документация
+          не устанавливает обязательность этого параметра; required: false не подтверждает возможность его пропуска.'
+        schema:
+          type: string
+      - &id002
+        name: format
+        in: query
+        required: false
+        description: '1 — группированный результат, 2 — негруппированный. По документации значение по умолчанию — 2;
+          фактическое поведение при пропуске не проверено.'
+        schema:
+          type: integer
+          enum:
+          - 1
+          - 2
+          default: 2
+      - name: page
+        in: query
+        required: false
+        description: 'Номер страницы; не более 100 производств на странице. Взаимодействие пагинации и группировки
+          не описано. По документации значение по умолчанию — 1; фактическое поведение при пропуске не проверено.'
+        schema:
+          type: integer
+          default: 1
+      responses:
+        '2XX':
+          description: >-
+            Успешный ответ описан источником как JSON; точный код HTTP и заголовок Content-Type не подтверждены.
+            Диапазон 2XX и application/json используются для представления успеха в OpenAPI; структура ответа неизвестна.
+          content:
+            application/json:
+              schema: {}
+        default:
+          description: Прочие HTTP-статусы и формат ошибок не документированы.
+      x-request-example:
+        description: Синтетический пример параметров; заполнители не являются реальными данными или ключом.
+        query:
+          inn: <инн-организации>
+          format: 1
+          page: 1
+          key: <ключ>
+      x-documented-response-fields:
+        description: Неконтрактные справочные перечни полей; ссылки не задают структуру тела ответа, HTTP-статус
+          или медиа-тип.
+        schemas:
+        - $ref: '#/components/schemas/IspsGroupedFields'
+        - $ref: '#/components/schemas/IspsFlatFields'
+  /ispfl:
+    get:
+      operationId: ispfl
+      summary: Исполнительное производство физического лица или ИП
+      description: Параметр regn описан как индивидуальный номер; описание РегНомерСД упоминает сводный номер в
+        запросе; поддержка сводного номера не подтверждена. Ответ описан как JSON; HTTP-статусы и точный Content-Type
+        не указаны. Схемы компонентов IspflFields — справочные инвентари, не доказанная структура ответа.
+      externalDocs:
+        url: https://damia.ru/apifssp
+      security:
+      - ApiKey: []
+      - {}
+      parameters:
+      - *id001
+      responses:
+        '2XX':
+          description: >-
+            Успешный ответ описан источником как JSON; точный код HTTP и заголовок Content-Type не подтверждены.
+            Диапазон 2XX и application/json используются для представления успеха в OpenAPI; структура ответа неизвестна.
+          content:
+            application/json:
+              schema: {}
+        default:
+          description: Прочие HTTP-статусы и формат ошибок не документированы.
+      x-request-example:
+        description: Синтетический пример параметров; заполнители не являются реальными данными или ключом.
+        query:
+          regn: <номер-производства>
+          key: <ключ>
+      x-documented-response-fields:
+        description: Неконтрактные справочные перечни полей; ссылки не задают структуру тела ответа, HTTP-статус
+          или медиа-тип.
+        schemas:
+        - $ref: '#/components/schemas/IspflFields'
+  /ispsfl:
+    get:
+      operationId: ispsfl
+      summary: Участие физического лица в исполнительных производствах
+      description: Поля объекта Год ссылаются на isps, поля объекта РегНомер — на ispfl; точная граница повторного
+        использования и вложенность не указаны. Ответ описан как JSON; HTTP-статусы и точный Content-Type не указаны.
+        Схемы компонентов IspsflGroupedFields, IspsflFlatFields — справочные инвентари, не доказанная структура
+        ответа.
+      externalDocs:
+        url: https://damia.ru/apifssp
+      security:
+      - ApiKey: []
+      - {}
+      parameters:
+      - name: region
+        in: query
+        required: false
+        description: Код региона отдела судебных приставов, ведущего исполнительное производство; необязательный
+          параметр. При отсутствии выполняется поиск по всем регионам.
+        schema:
+          type: integer
+      - name: fam
+        in: query
+        required: false
+        description: 'Фамилия должника; пример в таблице ошибочно подписан nam. Документация не устанавливает обязательность
+          этого параметра; required: false не подтверждает возможность его пропуска.'
+        schema:
+          type: string
+      - name: nam
+        in: query
+        required: false
+        description: 'Имя должника. Документация не устанавливает обязательность этого параметра; required: false
+          не подтверждает возможность его пропуска.'
+        schema:
+          type: string
+      - name: otch
+        in: query
+        required: false
+        description: Отчество должника; необязательный параметр. Пример в таблице ошибочно подписан nam.
+        schema:
+          type: string
+      - name: bdate
+        in: query
+        required: false
+        description: Дата рождения должника в формате DD.MM.YYYY; таблица прямо называет параметр необязательным,
+          несмотря на вводный текст.
+        schema:
+          type: string
+      - *id002
+      - name: page
+        in: query
+        required: false
+        description: 'Номер страницы; не более 20 производств на странице. Взаимодействие пагинации и группировки
+          не описано. По документации значение по умолчанию — 1; фактическое поведение при пропуске не проверено.'
+        schema:
+          type: integer
+          default: 1
+      responses:
+        '2XX':
+          description: >-
+            Успешный ответ описан источником как JSON; точный код HTTP и заголовок Content-Type не подтверждены.
+            Диапазон 2XX и application/json используются для представления успеха в OpenAPI; структура ответа неизвестна.
+          content:
+            application/json:
+              schema: {}
+        default:
+          description: Прочие HTTP-статусы и формат ошибок не документированы.
+      x-request-example:
+        description: Синтетический пример параметров; заполнители не являются реальными данными или ключом.
+        query:
+          region: 77
+          fam: <фамилия>
+          nam: <имя>
+          otch: <отчество>
+          bdate: <дата-DD.MM.YYYY>
+          format: 1
+          page: 1
+          key: <ключ>
+      x-documented-response-fields:
+        description: Неконтрактные справочные перечни полей; ссылки не задают структуру тела ответа, HTTP-статус
+          или медиа-тип.
+        schemas:
+        - $ref: '#/components/schemas/IspsflGroupedFields'
+        - $ref: '#/components/schemas/IspsflFlatFields'
+components:
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      in: query
+      name: key
+      description: Ключ доступа API; обязательность явно не установлена. Неизвестно, является ли ключ общим для
+        других сервисов DaMIA.
+  schemas:
+    IspFields:
+      type: object
+      description: Справочный перечень полей, НЕ схема корня или доказательство совместной вложенности. РегНомер
+        — массив, элементы неизвестны.
+      properties:
+        Дата: &id003
+          type: string
+          description: Дата возбуждения исполнительного производства.
+        РегНомерСД: &id004
+          type: string
+          description: Номер сводного исполнительного производства.
+        ВидИсп: &id005
+          type: string
+          description: Вид исполнительного документа.
+        ДатаИсп: &id006
+          type: string
+          description: Дата исполнительного документа.
+        НомерИсп: &id007
+          type: string
+          description: Номер исполнительного документа.
+        Предмет: &id008
+          type: string
+          description: Предмет исполнения исполнительного документа.
+        ДепНаим: &id009
+          type: string
+          description: Департамент ФССП.
+        ДепАдрес: &id010
+          type: string
+          description: Адрес департамента ФССП.
+        Статус: &id011
+          type: string
+          description: Статус исполнительного производства.
+        ДатаЗаверш: &id012
+          type: string
+          description: Дата завершения исполнительного производства.
+        ПричЗаверш: &id013
+          type: string
+          description: Причина завершения исполнительного производства.
+        РегНомерИП:
+          type: string
+          description: Номер индивидуального исполнительного производства; совпадает с номером в запросе, если он
+            индивидуальный.
+        ИННОргИсп:
+          type: string
+          description: ИНН взыскателя-организации.
+        РегНомер:
+          type: array
+          items: {}
+          description: Указанный номер; тип элементов и расположение неизвестны.
+        Должник:
+          $ref: '#/components/schemas/IspDebtorFields'
+        Сумма:
+          type: number
+          format: double
+          description: Общая задолженность, руб.
+        Остаток:
+          type: number
+          format: double
+          description: Оставшаяся задолженность, руб.
+        История:
+          $ref: '#/components/schemas/IspHistory'
+      additionalProperties: true
+    IspDebtorFields:
+      type: object
+      description: Справочный перечень полей, НЕ схема корня или доказательство совместной вложенности. Поля должника
+        ЮЛ по isp; идентификаторы строковые.
+      properties:
+        ОГРН:
+          type: string
+          description: ОГРН должника.
+        ИНН:
+          type: string
+          description: ИНН должника.
+        НаимПолн:
+          type: string
+          description: Наименование должника.
+        НаимСокр:
+          type: string
+          description: Сокращённое наименование должника.
+        АдресПолн:
+          type: string
+          description: Адрес должника.
+        РукФИО:
+          type: string
+          description: ФИО руководителя организации-должника.
+        РукИННФЛ:
+          type: string
+          description: ИНН руководителя организации-должника.
+        НаимФССП:
+          type: string
+          description: Наименование должника по картотеке ФССП.
+        АдресФССП:
+          type: string
+          description: Адрес должника по картотеке ФССП.
+      additionalProperties: true
+    IspHistory:
+      type: object
+      description: Справочный перечень полей, НЕ схема корня или доказательство совместной вложенности. Расположение
+        даты и поля не установлено.
+      properties:
+        Дата:
+          type: object
+          description: Дата изменения YYYY-MM-DD; таблица одновременно указывает тип object. Структура ключей неизвестна.
+          additionalProperties: true
+        Поле:
+          type: string
+          description: Прежнее значение произвольного поля; точное расположение неизвестно.
+      additionalProperties: true
+    IspsGroupedFields:
+      type: object
+      description: Справочный перечень полей, НЕ схема корня или доказательство совместной вложенности. Точный порядок
+        группировки неизвестен.
+      properties:
+        ИНН:
+          type: object
+          description: ИНН организации; возможно динамический ключ.
+          additionalProperties: true
+        Год:
+          type: object
+          description: Год возбуждения YYYY; возможно динамический ключ.
+          additionalProperties: true
+        Статус:
+          type: object
+          description: Статус производства; возможно динамический ключ.
+          additionalProperties: true
+        Предмет:
+          type: object
+          description: Предмет исполнения; возможно динамический ключ.
+          additionalProperties: true
+        Сумма:
+          type: number
+          format: float
+          description: Задолженность, руб.
+        Количество:
+          type: integer
+          description: Количество исполнительных производств.
+        ИП:
+          type: array
+          items: {}
+          description: Номера производств; тип элементов не указан.
+      additionalProperties: true
+    IspsFlatFields:
+      type: object
+      description: Справочный перечень полей, НЕ схема корня или доказательство совместной вложенности. Точная вложенность
+        неизвестна.
+      properties:
+        Дата: *id003
+        РегНомерСД: *id004
+        ВидИсп: *id005
+        ДатаИсп: *id006
+        НомерИсп: *id007
+        Предмет: *id008
+        ДепНаим: *id009
+        ДепАдрес: *id010
+        Статус: *id011
+        ДатаЗаверш: *id012
+        ПричЗаверш: *id013
+        ИННОргИсп:
+          type: string
+          description: ИНН взыскателя-организации.
+        ИНН:
+          type: object
+          description: ИНН организации; возможно динамический ключ.
+          additionalProperties: true
+        РегНомер:
+          type: object
+          description: Номер производства; возможно динамический ключ.
+          additionalProperties: true
+        Должник:
+          $ref: '#/components/schemas/IspsDebtorFields'
+        Сумма:
+          type: number
+          format: double
+          description: Общая задолженность, руб.
+        Остаток:
+          type: number
+          format: double
+          description: Оставшаяся задолженность, руб.
+      additionalProperties: true
+    IspsDebtorFields:
+      type: object
+      description: Справочный перечень полей, НЕ схема корня или доказательство совместной вложенности. Поля должника
+        ЮЛ по isps.
+      properties:
+        НаимФССП:
+          type: string
+          description: Наименование должника по картотеке ФССП.
+        АдресФССП:
+          type: string
+          description: Адрес должника по картотеке ФССП.
+      additionalProperties: true
+    IspflFields:
+      type: object
+      description: Справочный перечень полей, НЕ схема корня или доказательство совместной вложенности. Точная вложенность
+        неизвестна.
+      properties:
+        Дата: *id003
+        РегНомерСД: *id004
+        ВидИсп: *id005
+        ДатаИсп: *id006
+        НомерИсп: *id007
+        Предмет: *id008
+        ДепНаим: *id009
+        ДепАдрес: *id010
+        Статус: *id011
+        ДатаЗаверш: *id012
+        ПричЗаверш: *id013
+        result:
+          type: object
+          description: Информация об исполнительных производствах ФЛ; расположение и ключи объекта не установлены.
+          additionalProperties: true
+        РегНомер:
+          type: object
+          description: Номер производства; возможно динамический ключ.
+          additionalProperties: true
+        Должник:
+          $ref: '#/components/schemas/IspflDebtorFields'
+        Сумма:
+          type: number
+          format: double
+          description: Непогашенная задолженность, руб.
+        ИспСбор:
+          type: number
+          format: double
+          description: Исполнительский сбор, руб.
+        Пристав:
+          type: string
+          description: Судебный пристав-исполнитель.
+      additionalProperties: true
+    IspflDebtorFields:
+      type: object
+      description: Справочный перечень полей, НЕ схема корня или доказательство совместной вложенности. Поля должника
+        ФЛ по ispfl.
+      properties:
+        НаимФССП:
+          type: string
+          description: Наименование должника по картотеке ФССП.
+        МестоРождФССП:
+          type: string
+          description: Место рождения должника по картотеке ФССП.
+        ДатаРождФССП:
+          type: string
+          description: Дата рождения должника по картотеке ФССП.
+      additionalProperties: true
+    IspsflGroupedFields:
+      type: object
+      description: Справочный перечень полей, НЕ схема корня или доказательство совместной вложенности. Не подразумевает
+        корпоративную обёртку ИНН.
+      properties:
+        result:
+          type: object
+          description: Информация об исполнительных производствах ФЛ; расположение и ключи объекта не установлены.
+          additionalProperties: true
+        Год:
+          type: object
+          description: Год YYYY; поля объекта Год по ссылке на isps, граница повторного использования не установлена.
+          additionalProperties: true
+      additionalProperties: true
+    IspsflFlatFields:
+      type: object
+      description: Справочный перечень полей, НЕ схема корня или доказательство совместной вложенности. Точная вложенность
+        неизвестна.
+      properties:
+        result:
+          type: object
+          description: Информация об исполнительных производствах ФЛ; расположение и ключи объекта не установлены.
+          additionalProperties: true
+        РегНомер:
+          type: object
+          description: Поля объекта РегНомер по ссылке на ispfl; граница повторного использования не установлена.
+          additionalProperties: true
+      additionalProperties: true

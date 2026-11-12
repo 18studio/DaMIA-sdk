@@ -1,0 +1,579 @@
+openapi: 3.0.3
+info:
+  title: API-Арбитражи DaMIA
+  version: 1.0.0-research
+  description: Исследовательская спецификация по публичной документации; обязательность параметров и структура ответов
+    не подтверждены. Ключ доступа указан для каждого метода; фактическая проверка и общность ключей неизвестны.
+servers:
+- url: https://api.damia.ru
+security:
+- apiKey: []
+paths:
+  /arb/delo:
+    get:
+      operationId: delo
+      summary: Информация об арбитражном деле
+      description: 'Инвентарь успешного ответа: CaseDetails. Документирован JSON; HTTP-коды, ошибки и форма ответа
+        при ошибке не указаны. Схемы в components — исследовательские инвентари, а не проверенный контракт ответа;
+        предполагаемая вложенность и типы могут отклонять реальные ответы.'
+      externalDocs:
+        url: https://damia.ru/apiarb
+        description: Официальное описание метода
+      parameters:
+      - $ref: '#/components/parameters/Regn'
+      responses:
+        '2XX':
+          description: Предположительный диапазон успеха и application/json основаны на документированном JSON; HTTP-статус и Content-Type не проверены.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseDetails'
+        default:
+          description: Неизвестные ошибки и другие неописанные ответы; статус и форма не документированы.
+      x-research-notes: 'Инвентарь успешного ответа: CaseDetails.'
+      x-scrubbed-query-example: regn=<номер-дела>&key=<ключ>
+  /arb/delopro:
+    get:
+      operationId: delopro
+      summary: Отслеживание событий дела
+      description: При первом вызове указанное дело ставится на отслеживание. GET может изменять подписку. Обновление
+        обычно каждые 1–3 дня, возможны задержки; отслеживание прекращается после 10 дней без изменений после завершения
+        дела. Индивидуальный тариф. Для данных дела источник отсылает к CaseDetails; формы ответов действий и запроса
+        только с email неизвестны. Примеры list и email-only не содержат regn. Документирован JSON; HTTP-коды, ошибки
+        и форма ответа при ошибке не указаны. Схемы в components — исследовательские инвентари, а не проверенный
+        контракт ответа.
+      externalDocs:
+        url: https://damia.ru/apiarb
+        description: Официальное описание метода
+      parameters:
+      - $ref: '#/components/parameters/Regn'
+      - $ref: '#/components/parameters/Action'
+      - $ref: '#/components/parameters/Email'
+      responses:
+        '2XX':
+          description: Предположительный диапазон успеха и application/json основаны на документированном JSON; HTTP-статус и Content-Type не проверены.
+          content:
+            application/json:
+              schema:
+                description: Форма ответа не установлена; CaseDetails в components — только инвентарь полей дела, на который ссылается источник.
+        default:
+          description: Неизвестные ошибки и другие неописанные ответы; статус и форма не документированы.
+      x-research-notes: При первом вызове указанное дело ставится на отслеживание. GET может изменять подписку.
+        Обновление обычно каждые 1–3 дня, возможны задержки; отслеживание прекращается после 10 дней без изменений
+        после завершения дела. Индивидуальный тариф. Для данных дела источник отсылает к CaseDetails; формы ответов
+        действий и запроса только с email неизвестны. Примеры list и email-only не содержат regn.
+      x-scrubbed-query-example: a=list&key=<ключ>
+  /arb/dela:
+    get:
+      operationId: dela
+      summary: Участия в арбитражных делах
+      description: 'Инвентари успешного ответа: ParticipationGrouped для format=1 и ParticipationFlat для format=2;
+        структура группировки неизвестна. Документирован JSON; HTTP-коды, ошибки и форма ответа при ошибке не указаны.
+        Схемы в components — исследовательские инвентари, а не проверенный контракт ответа.'
+      externalDocs:
+        url: https://damia.ru/apiarb
+        description: Официальное описание метода
+      parameters:
+      - $ref: '#/components/parameters/Query'
+      - $ref: '#/components/parameters/Role'
+      - $ref: '#/components/parameters/Type'
+      - $ref: '#/components/parameters/Status'
+      - $ref: '#/components/parameters/FromDate'
+      - $ref: '#/components/parameters/ToDate'
+      - $ref: '#/components/parameters/Exact'
+      - $ref: '#/components/parameters/Format'
+      - $ref: '#/components/parameters/PageDela'
+      responses:
+        '2XX':
+          description: Предположительный диапазон успеха и application/json основаны на документированном JSON; HTTP-статус и Content-Type не проверены.
+          content:
+            application/json:
+              schema:
+                description: anyOf не связывает ответ с запрошенным format; модели могут пересекаться. Предполагаемая вложенность и типы могут отклонять реальные ответы.
+                anyOf:
+                - $ref: '#/components/schemas/ParticipationGrouped'
+                - $ref: '#/components/schemas/ParticipationFlat'
+        default:
+          description: Неизвестные ошибки и другие неописанные ответы; статус и форма не документированы.
+      x-research-notes: 'Инвентари успешного ответа: ParticipationGrouped для format=1 и ParticipationFlat для format=2;
+        структура группировки неизвестна.'
+      x-scrubbed-query-example: q=<идентификатор-или-наименование>&format=1&key=<ключ>
+  /arb/dsearch:
+    get:
+      operationId: dsearch
+      summary: Поиск арбитражных дел
+      description: 'Инвентарь успешного ответа: SearchResult и SearchCase. Форма result и тип count не подтверждены.
+        Документирован JSON; HTTP-коды, ошибки и форма ответа при ошибке не указаны. Схемы в components — исследовательские
+        инвентари, а не проверенный контракт ответа; предполагаемая вложенность и типы могут отклонять реальные ответы.'
+      externalDocs:
+        url: https://damia.ru/apiarb
+        description: Официальное описание метода
+      parameters:
+      - $ref: '#/components/parameters/Type'
+      - $ref: '#/components/parameters/Status'
+      - $ref: '#/components/parameters/Court'
+      - $ref: '#/components/parameters/Min'
+      - $ref: '#/components/parameters/Max'
+      - $ref: '#/components/parameters/FromDate'
+      - $ref: '#/components/parameters/ToDate'
+      - $ref: '#/components/parameters/PageSearch'
+      responses:
+        '2XX':
+          description: Предположительный диапазон успеха и application/json основаны на документированном JSON; HTTP-статус и Content-Type не проверены.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResult'
+        default:
+          description: Неизвестные ошибки и другие неописанные ответы; статус и форма не документированы.
+      x-research-notes: 'Инвентарь успешного ответа: SearchResult и SearchCase. Форма result и тип count не подтверждены.'
+      x-scrubbed-query-example: type=3&page=1&key=<ключ>
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: query
+      name: key
+      description: Ключ доступа API. Источник указывает ключ для всех методов, но не определяет формальную обязательность,
+        ошибки и возможность общего ключа с другими сервисами.
+  parameters:
+    Regn:
+      name: regn
+      in: query
+      description: Номер арбитражного дела. Формальная обязательность не указана.
+      required: false
+      schema:
+        type: string
+    Action:
+      name: a
+      in: query
+      description: email — подписка на извещения; noemail — отписка; list — список отслеживаемых дел. Обязательность
+        и значение по умолчанию не указаны.
+      required: false
+      schema:
+        type: string
+        enum:
+        - email
+        - noemail
+        - list
+    Email:
+      name: email
+      in: query
+      description: Необязательный адрес извещений; по умолчанию используется адрес регистрации аккаунта.
+      required: false
+      schema:
+        type: string
+    Query:
+      name: q
+      in: query
+      description: ИНН, ОГРН, название организации или ФИО ИП/физического лица; формальная обязательность не указана.
+      required: false
+      schema:
+        type: string
+    Role:
+      name: role
+      in: query
+      description: 1 истец, 2 ответчик, 3 третье лицо, 4 иное лицо; при отсутствии — все роли.
+      required: false
+      schema:
+        type: string
+        enum:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+    Type:
+      name: type
+      in: query
+      description: 1 административное, 2 гражданское, 3 банкротное; при отсутствии — все типы.
+      required: false
+      schema:
+        type: string
+        enum:
+        - '1'
+        - '2'
+        - '3'
+    Status:
+      name: status
+      in: query
+      description: 1 завершено, 2 первая инстанция, 3 апелляция/кассация/надзор; при отсутствии — все статусы.
+      required: false
+      schema:
+        type: string
+        enum:
+        - '1'
+        - '2'
+        - '3'
+    FromDate:
+      name: from_date
+      in: query
+      description: Дата регистрации, после которой искать, YYYY-MM-DD; включительность границы неизвестна.
+      required: false
+      schema:
+        type: string
+        format: date
+    ToDate:
+      name: to_date
+      in: query
+      description: Дата регистрации, до которой искать, YYYY-MM-DD; включительность границы неизвестна.
+      required: false
+      schema:
+        type: string
+        format: date
+    Exact:
+      name: exact
+      in: query
+      description: В источнике тип boolean, но на проводе показаны 0 и 1; 1 по умолчанию — точное совпадение по
+        ИНН/ОГРН, 0 также включает совпадения по названию/ФИО при отсутствии идентификатора. Сериализация и допустимые
+        типы не подтверждены.
+      required: false
+      schema:
+        x-research-notes: Схема намеренно не ограничивает тип из-за противоречия boolean и 0/1.
+    Format:
+      name: format
+      in: query
+      description: 1 — группировка по делам с 2015 года; 2 — негруппированный список.
+      required: false
+      schema:
+        type: integer
+        enum:
+        - 1
+        - 2
+        default: 2
+    PageDela:
+      name: page
+      in: query
+      description: Номер страницы; размер страницы не указан.
+      required: false
+      schema:
+        type: integer
+        default: 1
+    PageSearch:
+      name: page
+      in: query
+      description: Номер страницы; не более 100 дел на странице.
+      required: false
+      schema:
+        type: integer
+        default: 1
+    Court:
+      name: court
+      in: query
+      description: 'Код суда: 01АП–21АП, А01–А84, Ф01–Ф10, СИП; при отсутствии — все суды. В таблице пример А40
+        с кириллической А, в запросе A40 с латинской A.'
+      required: false
+      schema:
+        type: string
+    Min:
+      name: min_summa
+      in: query
+      description: Минимальная сумма иска в рублях; включительность границы неизвестна.
+      required: false
+      schema:
+        type: integer
+    Max:
+      name: max_summa
+      in: query
+      description: Максимальная сумма иска в рублях; включительность границы неизвестна.
+      required: false
+      schema:
+        type: integer
+  schemas:
+    Act:
+      type: object
+      description: Поля элемента массива по смыслу таблицы; вложенность не подтверждена примером.
+      properties:
+        Инстанция:
+          type: string
+          description: Инстанция
+        Суд:
+          type: string
+          description: Суд
+        РегНомер:
+          type: string
+          description: Номер дела в данной инстанции
+        АктВид:
+          type: string
+          description: Вид акта
+        АктНаим:
+          type: string
+          description: Наименование акта
+        Url:
+          type: string
+          description: Ссылка на документ
+        ДопИнфо:
+          type: string
+          description: Дополнительная информация
+        Дата:
+          type: string
+          description: Дата акта
+    ChronologyEntry:
+      type: object
+      properties:
+        Дата:
+          type: string
+          description: Дата документа
+        Субъект:
+          type: string
+          description: Инициатор или субъект
+        ДокВид:
+          type: string
+          description: Вид документа
+        ДокНаим:
+          type: string
+          description: Наименование документа
+        Url:
+          type: string
+          description: Ссылка на документ
+        ДопИнфо:
+          type: string
+          description: Дополнительная информация
+        ДатаПубл:
+          type: string
+          description: Дата публикации
+        Подписано:
+          type: boolean
+          description: Индикатор подписания
+    Participant:
+      type: object
+      properties:
+        ОГРН:
+          type: string
+          description: ОГРН или ОГРНИП
+        ИНН: &id001
+          type: string
+          description: ИНН или ИННФЛ
+        НаимПолн:
+          type: string
+          description: Полное наименование
+        НаимСокр:
+          type: string
+          description: Сокращенное наименование
+        АдресПолн:
+          type: string
+          description: Адрес
+        НаимКАД: &id002
+          type: string
+          description: Наименование в КАД
+        АдресКАД: &id003
+          type: string
+          description: Адрес в КАД
+        ИННКАД:
+          type: boolean
+          description: true — ИНН указан в КАД; false — восстановлен по названию/адресу.
+    SearchParticipant:
+      type: object
+      properties:
+        ИНН: *id001
+        НаимКАД: *id002
+        АдресКАД: *id003
+    Participants:
+      type: object
+      properties:
+        Истцы:
+          type: array
+          items:
+            $ref: '#/components/schemas/Participant'
+        Ответчики:
+          type: array
+          items:
+            $ref: '#/components/schemas/Participant'
+        ТретьиЛица:
+          type: array
+          items:
+            $ref: '#/components/schemas/Participant'
+        ИныеЛица:
+          type: array
+          items:
+            $ref: '#/components/schemas/Participant'
+    SearchParticipants:
+      type: object
+      properties:
+        Истцы:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchParticipant'
+        Ответчики:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchParticipant'
+        ТретьиЛица:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchParticipant'
+        ИныеЛица:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchParticipant'
+    CaseDetails:
+      type: object
+      description: Инвентарь полей из таблицы; точная вложенность и наличие полей не подтверждены примером.
+      properties:
+        РегНомер: &id004
+          type: object
+          additionalProperties: true
+          description: Тип object указан в источнике; содержимое неизвестно, несмотря на описание как номера дела.
+        Тип: &id005
+          type: string
+          description: Тип дела
+        Дата: &id006
+          type: string
+          description: Дата регистрации
+        Суд: &id007
+          type: string
+          description: Суд регистрации
+        Судья: &id008
+          type: string
+          description: ФИО судьи
+        Url: &id009
+          type: string
+          description: Ссылка на карточку КАД
+        Статус: &id010
+          type: string
+          description: Статус дела
+        СтатусДата: &id011
+          type: string
+          description: Дата статуса
+        Сумма: &id012
+          type: number
+          format: double
+          description: Сумма иска в рублях
+        Участники:
+          $ref: '#/components/schemas/Participants'
+        Акты:
+          type: array
+          items:
+            $ref: '#/components/schemas/Act'
+        Хронология:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChronologyEntry'
+        АктуалДата:
+          type: string
+          description: Дата актуальности информации
+    ParticipationCase:
+      type: object
+      description: Инвентарь полей из таблицы; точная вложенность и наличие полей не подтверждены примером.
+      properties:
+        РегНомер: *id004
+        Тип: *id005
+        Дата: *id006
+        Суд: *id007
+        Судья: *id008
+        Url: *id009
+        Статус: *id010
+        СтатусДата: *id011
+        Сумма: *id012
+        Акты:
+          type: array
+          items:
+            $ref: '#/components/schemas/Act'
+        Совпадение:
+          type: string
+          enum:
+          - по ИНН/ОГРН
+          - по названию/ФИО
+          description: Вид совпадения участника.
+    SearchCase:
+      type: object
+      description: Инвентарь полей из таблицы; точная вложенность и наличие полей не подтверждены примером.
+      properties:
+        РегНомер: *id004
+        Тип: *id005
+        Дата: *id006
+        Суд: *id007
+        Судья: *id008
+        Url: *id009
+        Статус: *id010
+        СтатусДата: *id011
+        Сумма: *id012
+        Участники:
+          $ref: '#/components/schemas/SearchParticipants'
+        Акты:
+          type: array
+          items:
+            $ref: '#/components/schemas/Act'
+        Хронология:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChronologyEntry'
+    ParticipationFlat:
+      type: object
+      description: Проекция format=2; вложенность элементов массивов восстановлена по смыслу таблицы и не подтверждена
+        ответом.
+      properties:
+        result:
+          type: object
+          properties:
+            Истец:
+              type: array
+              items:
+                $ref: '#/components/schemas/ParticipationCase'
+            Ответчик:
+              type: array
+              items:
+                $ref: '#/components/schemas/ParticipationCase'
+            ТретьеЛицо:
+              type: array
+              items:
+                $ref: '#/components/schemas/ParticipationCase'
+            ИноеЛицо:
+              type: array
+              items:
+                $ref: '#/components/schemas/ParticipationCase'
+        next_page:
+          type: boolean
+          description: Есть следующая страница
+        count:
+          type: integer
+          description: Общее количество дел
+    GroupedAggregateFields:
+      type: object
+      description: Инвентарь полей агрегата, не утверждение точной вложенности.
+      properties:
+        Сумма:
+          type: number
+          format: float
+          description: Сумма исков для решения
+        Количество:
+          type: integer
+          description: Количество дел для решения
+    ParticipationGrouped:
+      type: object
+      description: 'Проекция format=1; ключи и вложенность не подтверждены. Инстанции: РешенияПерв, РешенияАпп,
+        РешенияКасс, РешенияНадз. Поля агрегата описаны в GroupedAggregateFields.'
+      properties:
+        result:
+          type: object
+          properties:
+            Истец:
+              type: array
+              items: {}
+              description: 'Группировка: год YYYY, инстанция, решение, сумма и количество. Неизвестно, какие значения
+                являются динамическими ключами и как устроена вложенность.'
+            Ответчик:
+              type: array
+              items: {}
+              description: 'Группировка: год YYYY, инстанция, решение, сумма и количество. Неизвестно, какие значения
+                являются динамическими ключами и как устроена вложенность.'
+            ТретьеЛицо:
+              type: array
+              items: {}
+              description: 'Группировка: год YYYY, инстанция, решение, сумма и количество. Неизвестно, какие значения
+                являются динамическими ключами и как устроена вложенность.'
+            ИноеЛицо:
+              type: array
+              items: {}
+              description: 'Группировка: год YYYY, инстанция, решение, сумма и количество. Неизвестно, какие значения
+                являются динамическими ключами и как устроена вложенность.'
+    SearchResult:
+      type: object
+      properties:
+        result:
+          description: В таблице object, в описании список дел; форма и вложенность не установлены. Инвентарь полей
+            дела — SearchCase.
+        next_page:
+          type: boolean
+          description: Есть следующая страница
+        count:
+          description: Общее количество; в источнике тип буквально указан как count, фактический тип неизвестен.

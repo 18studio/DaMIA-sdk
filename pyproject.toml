@@ -1,0 +1,47 @@
+[project]
+name = "damia-sdk"
+version = "0.1.0"
+description = "Async Python SDK for DaMIA APIs"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "aiocache",
+    "httpx",
+    "loguru",
+    "pydantic",
+    "pydantic-settings>=2.16.2",
+    "tenacity",
+    "typer",
+]
+
+[project.optional-dependencies]
+sentry = ["sentry-sdk"]
+
+[project.scripts]
+damia = "damia_sdk.cli:app"
+
+[build-system]
+requires = ["uv_build>=0.11.0,<0.12.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "hypothesis",
+    "mypy",
+    "pytest",
+    "pytest-asyncio",
+    "pytest-cov",
+    "ruff",
+]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["src", "tests"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "prism: integration tests requiring the local Prism mock server",
+]

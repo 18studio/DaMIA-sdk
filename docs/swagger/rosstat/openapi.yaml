@@ -1,0 +1,279 @@
+openapi: 3.0.3
+info:
+  title: API-Росстат DaMIA
+  version: 1.0.0
+  description: >-
+    Документ по первичному снимку https://damia.ru/apirs. Источник описывает JSON-тело, но фактический
+    HTTP Content-Type, коды состояния и ошибки не указаны. Ответ 2XX с application/json — представление
+    документированного JSON в OpenAPI, а не подтверждение конкретного статуса или заголовка сервера.
+    Исполняемая схема ответа намеренно обобщённая; схемы полей в components отдельно представлены как
+    ориентиры по таблицам и не подтверждают вложенность. default не означает конкретный статус.
+    Параметры описаны без утверждения обязательности; глобальное требование security делает ключ обязательным
+    для инструментов OpenAPI как допущение модели, хотя формальная обязательность ключа источником не установлена.
+    Побочные эффекты запросов источником не описаны.
+servers:
+- url: https://api.damia.ru/rs
+security:
+- ApiKey: []
+paths:
+  /balance:
+    get:
+      operationId: balance
+      summary: Финансовая отчётность компании
+      description: 'Отчётность юридического лица с 2012 года, включая формы 1 и 2. Таблица описывает ИНН → год YYYY
+        → код строки и сумму в тысячах рублей; тип суммы неоднозначен. См. ориентировочную схему BalanceTable в
+        components. Источник: https://damia.ru/apirs. Формальная обязательность параметров и постраничная навигация
+        не описаны.'
+      externalDocs:
+        url: https://damia.ru/apirs
+        description: Официальная документация API-Росстат
+      parameters:
+      - name: inn
+        in: query
+        required: false
+        description: 'ИНН юридического лица; пример без реальных данных: {inn}.'
+        schema:
+          type: string
+      responses:
+        '2XX':
+          description: >-
+            Представление документированного JSON-ответа; точный успешный статус и фактический HTTP
+            Content-Type неизвестны. application/json — допущение OpenAPI, схема намеренно обобщённая.
+          content:
+            application/json:
+              schema: {}
+        default:
+          description: Статусы и форматы ошибок не документированы; содержимое не задано.
+  /multbalance:
+    get:
+      operationId: multbalance
+      summary: Финансовая отчётность группы компаний
+      description: 'Основные данные отчётности с 2012 года. Не более 100 юридических лиц: либо inn={inn1},{inn2},
+        либо inn[]={inn1}&inn[]={inn2}. Это альтернативные формы, не следует отправлять обе одновременно; OpenAPI
+        не выражает такое ограничение между параметрами. Коды: 1150 — основные средства, 1410 — долгосрочные заёмные
+        средства, 1510 — краткосрочные заёмные средства, 1600 — валюта баланса, 2110 — выручка, 2400 — чистая
+        прибыль/убыток; сумма в тысячах рублей, тип неясен. См. BalanceTable. Источник: https://damia.ru/apirs.
+        Формальная обязательность параметров и постраничная навигация не описаны.'
+      externalDocs:
+        url: https://damia.ru/apirs
+        description: Официальная документация API-Росстат
+      parameters:
+      - name: inn
+        in: query
+        required: false
+        description: ИНН через запятую; альтернатива параметру inn[].
+        schema:
+          type: string
+      - name: inn[]
+        in: query
+        required: false
+        description: Повторяемый параметр ИНН; альтернатива inn. Не более 100 компаний. Квадратные скобки могут
+          быть percent-encoded.
+        style: form
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+          maxItems: 100
+      responses:
+        '2XX':
+          description: >-
+            Представление документированного JSON-ответа; точный успешный статус и фактический HTTP
+            Content-Type неизвестны. application/json — допущение OpenAPI, схема намеренно обобщённая.
+          content:
+            application/json:
+              schema: {}
+        default:
+          description: Статусы и форматы ошибок не документированы; содержимое не задано.
+  /statcodes:
+    get:
+      operationId: statcodes
+      summary: Коды статистики
+      description: 'Коды юридических лиц, ИП и обособленных подразделений. Для фактического адреса ИП нужен платный
+        VIP-аккаунт. Табличные поля показаны в StatcodesRecordTable, ClassifierTable и FormTable; вложенность и
+        оболочка ответа не подтверждены. Источник: https://damia.ru/apirs. Формальная обязательность параметров
+        и постраничная навигация не описаны.'
+      externalDocs:
+        url: https://damia.ru/apirs
+        description: Официальная документация API-Росстат
+      parameters:
+      - name: req
+        in: query
+        required: false
+        description: 'ИНН или ОГРН организации либо ИП; пример: {identifier}.'
+        schema:
+          type: string
+      - name: forms
+        in: query
+        required: false
+        description: Флаг вывода форм юридического лица; по умолчанию 0, в таблице приведён пример 1. Полный набор
+          значений не указан.
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '2XX':
+          description: >-
+            Представление документированного JSON-ответа; точный успешный статус и фактический HTTP
+            Content-Type неизвестны. application/json — допущение OpenAPI, схема намеренно обобщённая.
+          content:
+            application/json:
+              schema: {}
+        default:
+          description: Статусы и форматы ошибок не документированы; содержимое не задано.
+components:
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      in: query
+      name: key
+      description: Ключ доступа API. Неизвестно, общий ли ключ с другими сервисами DaMIA. Не помещайте настоящий
+        ключ в логи или примеры.
+  schemas:
+    BalanceTable:
+      type: object
+      description: 'Ориентир по таблице, не подтверждённый примером: ключ ИНН → год → код. Тип значения кода неясен;
+        это не контракт проверенной вложенности.'
+      additionalProperties:
+        type: object
+        additionalProperties:
+          type: object
+          additionalProperties: {}
+    ClassifierTable:
+      type: object
+      description: Ориентировочная группировка строк таблицы; фактическая вложенность не подтверждена.
+      properties:
+        code:
+          type: string
+          description: Код классификатора.
+        name:
+          type: string
+          description: Название.
+      additionalProperties: true
+    FormTable:
+      type: object
+      description: Предполагаемая группировка строк после forms; структура элемента не подтверждена.
+      properties:
+        id:
+          type: string
+          description: Идентификатор формы в АС ГС ОФСН
+        name:
+          type: string
+          description: Наименование формы
+        okud:
+          type: string
+          description: ОКУД формы
+        form_period:
+          type: string
+          description: Периодичность формы
+        formatted_period:
+          type: string
+          description: Текущий период формы
+        reported_period:
+          type: string
+          description: Отчётный период
+        period:
+          type: string
+          description: Период формы
+        period_comment:
+          type: string
+          description: Комментарий к периоду
+        index:
+          type: string
+          description: Индекс формы
+        description:
+          type: string
+          description: Описание формы
+        act_num:
+          type: string
+          description: Номер акта
+        act_date:
+          type: string
+          description: Дата акта
+        end_time:
+          type: string
+          description: Срок сдачи
+        comment:
+          type: string
+          description: Комментарий
+        isValid:
+          type: boolean
+          description: Флаг валидности
+        periodicity:
+          type: integer
+          description: Периодичность
+        periodNum:
+          type: integer
+          description: Номер текущего периода
+        periodYear:
+          type: integer
+          description: Год формы
+      additionalProperties: true
+    StatcodesRecordTable:
+      type: object
+      description: 'Ориентировочная модель полей таблицы, НЕ подтверждённая вложенность и не схема ответа: оболочка
+        ИНН/ОГРН и представление подразделений неизвестны.'
+      properties:
+        name:
+          type: string
+          description: Полное название
+        short_name:
+          type: string
+          description: Краткое название
+        okpo:
+          type: string
+          description: ОКПО
+        date_reg:
+          type: string
+          description: Дата регистрации
+        tosp_id:
+          type: string
+          description: Идентификатор ТОСП
+        inn:
+          type: string
+          description: ИНН
+        ogrn:
+          type: string
+          description: ОГРН
+        address_fact:
+          type: string
+          description: Фактический адрес; для ИП только в платном VIP-аккаунте
+        okato_reg:
+          description: ОКАТО регистрации; группировка code/name предположительная.
+          allOf:
+          - $ref: '#/components/schemas/ClassifierTable'
+        oktmo_reg:
+          description: ОКТМО регистрации; группировка code/name предположительная.
+          allOf:
+          - $ref: '#/components/schemas/ClassifierTable'
+        okato_fact:
+          description: ОКАТО фактический; группировка code/name предположительная.
+          allOf:
+          - $ref: '#/components/schemas/ClassifierTable'
+        oktmo_fact:
+          description: ОКТМО фактический; группировка code/name предположительная.
+          allOf:
+          - $ref: '#/components/schemas/ClassifierTable'
+        okved2_fact:
+          description: Основной ОКВЭД; группировка code/name предположительная.
+          allOf:
+          - $ref: '#/components/schemas/ClassifierTable'
+        okopf:
+          description: ОКОПФ; группировка code/name предположительная.
+          allOf:
+          - $ref: '#/components/schemas/ClassifierTable'
+        okfs:
+          description: ОКФС; группировка code/name предположительная.
+          allOf:
+          - $ref: '#/components/schemas/ClassifierTable'
+        okogu:
+          description: ОКОГУ; группировка code/name предположительная.
+          allOf:
+          - $ref: '#/components/schemas/ClassifierTable'
+        forms:
+          type: array
+          description: Формы юридического лица; группировка элементов предположительная.
+          items:
+            $ref: '#/components/schemas/FormTable'
+      additionalProperties: true

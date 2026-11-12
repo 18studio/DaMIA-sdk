@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Исследовательская документация DaMIA API">
+  <title>DaMIA API — Swagger UI</title>
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css">
+  <style>
+    body { margin: 0; }
+    .notice {
+      box-sizing: border-box;
+      padding: 14px 20px;
+      color: #5b4000;
+      background: #fff5d6;
+      border-bottom: 1px solid #e8cc75;
+      font: 14px/1.5 system-ui, sans-serif;
+    }
+    .notice p { max-width: 1460px; margin: 0 auto; }
+    .notice p + p { margin-top: 4px; }
+    .notice a { color: #513800; }
+    .load-error { margin: 24px; color: #a40000; font: 16px system-ui, sans-serif; }
+  </style>
+</head>
+<body>
+  <aside class="notice" aria-label="Предупреждение">
+    <p><strong>Try it out отправляет реальные запросы:</strong> они могут расходовать лимиты и изменять состояние даже при использовании GET. Не используйте реальные персональные данные без необходимости.</p>
+  </aside>
+  <div id="swagger-ui"></div>
+  <div id="load-error" class="load-error" hidden>Не удалось загрузить Swagger UI с CDN. Проверьте подключение к интернету и обновите страницу.</div>
+  <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js"></script>
+  <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-standalone-preset.js"></script>
+  <script>
+    if (typeof SwaggerUIBundle === "undefined" || typeof SwaggerUIStandalonePreset === "undefined") {
+      document.getElementById("load-error").hidden = false;
+    } else {
+      window.ui = SwaggerUIBundle({
+        dom_id: "#swagger-ui",
+        urls: [
+          { name: "ФНС", url: "./fns/openapi.yaml" },
+          { name: "Росстат", url: "./rosstat/openapi.yaml" },
+          { name: "Банки", url: "./banks/openapi.yaml" },
+          { name: "Скоринг", url: "./scoring/openapi.yaml" },
+          { name: "Закупки", url: "./procurement/openapi.yaml" },
+          { name: "Арбитражи", url: "./arbitration/openapi.yaml" },
+          { name: "ФССП", url: "./fssp/openapi.yaml" },
+          { name: "СПК и проверки Генпрокуратуры", url: "./spk/openapi.yaml" }
+        ],
+        "urls.primaryName": "ФНС",
+        presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+        layout: "StandaloneLayout",
+        deepLinking: true,
+        docExpansion: "list",
+        defaultModelsExpandDepth: 1,
+        filter: true,
+        validatorUrl: null,
+        persistAuthorization: false
+      });
+    }
+  </script>
+</body>
+</html>

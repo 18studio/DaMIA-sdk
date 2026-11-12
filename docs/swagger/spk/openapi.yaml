@@ -1,0 +1,630 @@
+openapi: 3.0.3
+info:
+  title: API-СПК и API-Проверки
+  version: '1.0'
+  description: 'Документированы два метода API-СПК. API-Проверки описывает тот же метод
+
+    proverki. Обязательность параметров, HTTP-коды и точные Content-Type в
+
+    источниках не указаны. Вызовы могут расходовать квоту или быть платными в зависимости от тарифа; точная стоимость и побочные эффекты отдельных вызовов не установлены.
+
+    Каталоги полей в расширениях не задают иерархию JSON.
+
+    '
+servers:
+- url: https://api.damia.ru/spk
+paths:
+  /report:
+    get:
+      operationId: report
+      summary: Отчет о комплексной проверке контрагента
+      externalDocs:
+        url: https://damia.ru/apispk
+      description: 'Отчет для юридического лица или ИП. Формирование может занимать
+
+        продолжительное время. Источник описывает файл DOCX по умолчанию и
+
+        возможность JSON, но не приводит схему JSON или точные HTTP media types.
+        Вызов может расходовать квоту или быть платным в зависимости от тарифа.
+
+        По ранее найденной поисковой выдаче примеры на https://damia.ru/apicalls?id=1
+
+        используют inn вместо req; страница напрямую не проверена, alias не подтвержден.
+
+        '
+      security:
+      - {}
+      - queryKey: []
+      parameters:
+      - name: req
+        in: query
+        description: ИНН или ОГРН организации или ИП; обязательность не указана. Пример — заполнитель, не реальный
+          идентификатор.
+        example: <ИНН_ИЛИ_ОГРН>
+        schema:
+          type: string
+      - name: format
+        in: query
+        description: Формат отчета; docx — файл, json — JSON.
+        schema:
+          type: string
+          enum:
+          - docx
+          - json
+          default: docx
+      - name: sections
+        in: query
+        description: "Список разделов через запятую с необязательными номерами подразделов\nв квадратных скобках.\
+          \ Значение выбора раздела без скобок не уточнено.\nЮЛ — только юридические лица, оба — ЮЛ и ИП.\n\n* fns:\
+          \ 1 общая информация (оба); 2 действующие учредители,\n  3 бывшие учредители, 4 участие в УК, 5 зависимости,\
+          \ 6 филиалы\n  (ЮЛ); 7 регистрация в НО, ПФ, ФСС, 8 лицензии, 9 виды деятельности\n  (оба); 10 налоги\
+          \ (ЮЛ).\n* bals: 1 балансы, 2 финансовые результаты (ЮЛ).\n* checks: 1 результаты проверок (оба).\n* rels:\
+          \ 1 связи по руководителю (оба); 2 по учредителям, 3 по адресу,\n  4 по телефону, 5 по email (ЮЛ).\n*\
+          \ isps: 1 сводка, 2 список исполнительных производств (оба).\n* arbs: 1 сводка, 2 список арбитражных дел\
+          \ (оба).\n* zakupki: 1 сводка поставщика, 2 участия заказчика, 3 участия\n  поставщика, 4 реестр ЕИС,\
+          \ 5 жалобы и проверки ФАС, 6 наличие в ЕРУЗ,\n  7 сводка заказчика (оба).\n* scoring: 1 финансовые показатели,\
+          \ 2 скоринг, 3 финансовые проверки (ЮЛ).\n* rnp: 1 наличие в РНП (оба).\n"
+        schema:
+          type: string
+          default: fns[1,2,4,5,6,8,9,10],bals,checks,rels[1,2,3],isps[1],arbs[1],zakupki,scoring
+      responses:
+        2XX:
+          description: 'При format=docx (по умолчанию) документирован файл DOCX; при format=json — JSON неизвестной структуры. 2XX — условное обозначение успеха, а не установленный источником диапазон. Content-Type не указан; схема не различает варианты.'
+          content:
+            '*/*':
+              schema: {}
+        default:
+          description: 'Прочие ответы: коды ошибок, Content-Type и тела ошибок не документированы; наличие ошибок внутри 2XX неизвестно.'
+      x-response-formats:
+        docx:
+          description: Файл DOCX; используется по умолчанию. Точный Content-Type не документирован.
+          schema:
+            type: string
+            format: binary
+        json:
+          description: JSON неизвестной структуры; точный Content-Type не документирован.
+          schema: {}
+      x-research-notes:
+      - OpenAPI 3.0 не связывает автоматически вариант ответа с query-параметром format; x-response-formats сохраняет это соответствие для SDK.
+      - Обязательность ключа и параметров не указана; необязательная security-схема не доказывает возможность вызова
+        без ключа.
+      - По ранее найденной поисковой выдаче пример Python разбирает JSON без format; страница напрямую не проверена, документированный default — docx.
+  /proverki:
+    get:
+      operationId: proverki
+      summary: Проверки Генеральной прокуратуры РФ
+      externalDocs:
+        url: https://damia.ru/apiproverki
+      description: 'Данные ЕРП и ЕРКНМ для ЮЛ или ИП. Дополнительный источник:
+
+        https://damia.ru/apispk. Таблицы ответа обозначены format=1 и format=2,
+
+        однако format отсутствует в таблице запроса и способ выбора неизвестен.
+
+        В примерах используется regn вместо req; поддержка alias не подтверждена.
+        Вызов может расходовать квоту или быть платным в зависимости от тарифа.
+
+        '
+      security:
+      - {}
+      - queryKey: []
+      parameters:
+      - name: req
+        in: query
+        description: ИНН или ОГРН организации или ИП; обязательность не указана. Пример — заполнитель, не реальный
+          идентификатор.
+        example: <ИНН_ИЛИ_ОГРН>
+        schema:
+          type: string
+      - name: status
+        in: query
+        description: 'При отсутствии — любой статус: 1 ожидает завершения; 2 завершено;
+
+          3 не может быть проведено; 4 обжаловано; 5 новое; 6 отклонено;
+
+          7 ожидает проведения.
+
+          '
+        schema:
+          type: string
+          enum:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+          - '5'
+          - '6'
+          - '7'
+      - name: from_date
+        in: query
+        description: Искать проверки с датой начала после указанной; включительность границы не определена.
+        schema:
+          type: string
+          format: date
+      - name: to_date
+        in: query
+        description: Искать проверки с датой начала до указанной; включительность границы не определена.
+        schema:
+          type: string
+          format: date
+      - name: page
+        in: query
+        description: Номер страницы; не более 100 проверок на странице. Границы и метаданные страниц не указаны.
+        schema:
+          type: integer
+          default: 1
+      responses:
+        2XX:
+          description: 'Документирован JSON; таблицы описывают группированный и негруппированный варианты, но механизм выбора и фактическая структура не установлены. 2XX — условное обозначение успеха, а не установленный источником диапазон. Content-Type не указан; схема не различает варианты.'
+          content:
+            '*/*':
+              schema: {}
+        default:
+          description: 'Прочие ответы: коды ошибок, Content-Type и тела ошибок не документированы; наличие ошибок внутри 2XX неизвестно.'
+      x-research-notes:
+      - Ранее отмеченная иерархия строк HTML в текущей проверке не подтверждена; она не доказывает структуру JSON или типы элементов массивов.
+      - Схемы ProverkiGrouped и ProverkiUngrouped — исследовательские гипотезы, не валидируют ответ; дочерние поля массивов приведены в x-research-child-fields.
+      - Неизвестны обязательность и nullable полей, JSON-пример и выбор формата.
+      x-research-field-catalog:
+        grouped-format-1:
+        - name: result
+          type: object
+          description: Список КНМ в отношении лица
+        - name: Год
+          type: object
+          description: Год начала КНМ в формате YYYY
+        - name: Статус
+          type: object
+          description: Статус КНМ
+        - name: Проверок
+          type: integer
+          description: Количество проверок данного статуса
+        - name: Объектов
+          type: integer
+          description: Количество объектов проверок
+        - name: Нарушений
+          type: integer
+          description: Количество связанных нарушений
+        - name: РегНомера
+          type: array
+          description: Список учетных номеров КНМ в ЕРКНМ или ЕРП; тип элементов не указан
+        ungrouped-format-2:
+        - name: result
+          type: object
+          description: Список КНМ в отношении лица
+        - name: РегНомер
+          type: object
+          description: Учетный номер КНМ в ЕРКНМ; тип object указан источником
+        - name: Тип
+          type: string
+          description: Тип КНМ
+        - name: ФормаПровед
+          type: string
+          description: Форма проведения КНМ
+        - name: ФЗ
+          type: string
+          description: Федеральный закон
+        - name: ВидНадз
+          type: string
+          description: Вид государственного контроля или надзора
+        - name: Прокуратура
+          type: string
+          description: Наименование прокуратуры
+        - name: ДатаУвед
+          type: string
+          description: Дата уведомления проверяемого лица
+        - name: ДатаНач
+          type: string
+          description: Дата начала КНМ YYYY-MM-DD
+        - name: ДатаОконч
+          type: string
+          description: Дата окончания КНМ YYYY-MM-DD
+        - name: ОргНадз
+          type: object
+          description: Информация об органе контроля или надзора
+        - name: ОГРН
+          type: string
+          description: ОГРН органа надзора
+        - name: ИНН
+          type: string
+          description: ИНН органа надзора
+        - name: НаимПолн
+          type: string
+          description: Наименование органа надзора
+        - name: НаимСокр
+          type: string
+          description: Сокращенное наименование органа надзора
+        - name: АдресПолн
+          type: string
+          description: Адрес органа надзора
+        - name: НадзФункцияИдент
+          type: string
+          description: Идентификатор надзорной функции в ФРГУ
+        - name: НадзФункцияНаим
+          type: string
+          description: Наименование надзорной функции в ФРГУ
+        - name: Риск
+          type: string
+          description: Категория риска деятельности проверяемого лица
+        - name: ТолькоМесяц
+          type: boolean
+          description: Указан только месяц проведения планового КНМ
+        - name: ВклПлан
+          type: boolean
+          description: Включение плановой проверки в ежегодный сводный план
+        - name: Цели
+          type: string
+          description: Цели задачи и предмет КНМ
+        - name: ОснованиеНаим
+          type: string
+          description: Наименование правового основания
+        - name: ОснованиеТекст
+          type: string
+          description: Основание проведения КНМ
+        - name: Объекты
+          type: array
+          description: Объекты проверки
+        - name: Адрес
+          type: string
+          description: Адрес объекта КНМ
+        - name: АдресТип
+          type: string
+          description: Тип адреса места составления акта
+        - name: ОбъектТип
+          type: string
+          description: Тип объекта КНМ
+        - name: ДатаНачФакт
+          type: string
+          description: Фактическая дата начала КНМ
+        - name: ДатаАкт
+          type: string
+          description: Дата и время составления акта
+        - name: Дни
+          type: integer
+          description: Длительность КНМ в днях
+        - name: Часы
+          type: integer
+          description: Длительность КНМ в часах
+        - name: Инспекторы
+          type: array
+          description: Должностные лица проводившие КНМ
+        - name: ФИО
+          type: string
+          description: ФИО должностного лица
+        - name: Должность
+          type: string
+          description: Должность должностного лица
+        - name: Тип
+          type: string
+          description: Тип должностного лица
+        - name: Представители
+          type: array
+          description: Присутствовавшие представители ЮЛ или ИП
+        - name: ФИО
+          type: string
+          description: ФИО представителя
+        - name: Должность
+          type: string
+          description: Должность представителя
+        - name: Тип
+          type: string
+          description: Тип представителя
+        - name: Нарушения
+          type: array
+          description: Информация о нарушениях
+        - name: Текст
+          type: string
+          description: Сведения о выявленных нарушениях
+        - name: СудСведения
+          type: array
+          description: Судебные сведения о выявленных нарушениях
+        - name: Тип
+          type: string
+          description: Тип судебного сведения
+        - name: Текст
+          type: string
+          description: Формулировка судебного сведения
+        - name: Предписания
+          type: array
+          description: Сведения о выданных предписаниях
+        - name: Реквизиты
+          type: string
+          description: Реквизиты предписания
+        - name: Текст
+          type: string
+          description: Содержание предписания
+        - name: Дата
+          type: string
+          description: Дата вынесения предписания
+        - name: ДатаИсполн
+          type: string
+          description: Срок исполнения предписания
+        - name: Результаты
+          type: array
+          description: Сведения о результатах КНМ
+        - name: Тип
+          type: string
+          description: Тип сведений о результате
+        - name: Текст
+          type: string
+          description: Формулировка сведения о результате
+        - name: Статус
+          type: string
+          description: Статус КНМ
+      x-research-response-schemas:
+      - '#/components/schemas/ProverkiGrouped'
+      - '#/components/schemas/ProverkiUngrouped'
+components:
+  securitySchemes:
+    queryKey:
+      type: apiKey
+      in: query
+      name: key
+      description: Ключ доступа к API; обязательность и применимость одного ключа к обоим методам не уточнены.
+  schemas:
+    ProverkiGrouped:
+      type: object
+      description: Гипотетическая интерпретация таблицы, не подтвержденная примером JSON; вложенность и ключи словарей не установлены. Дочерние поля массивов приведены в x-research-child-fields без утверждения типа элементов.
+      properties:
+        result:
+          type: object
+          description: Список контрольно-надзорных мероприятий (КНМ) в отношении указанного в запросе лица; ключи
+            описаны как Год.
+          additionalProperties:
+            type: object
+            description: Год начала КНМ в формате YYYY; ключи описаны как Статус.
+            additionalProperties:
+              type: object
+              description: Статус КНМ (Завершено, Ожидает завершения, Обжаловано и пр.)
+              properties:
+                Проверок:
+                  type: integer
+                  description: Количество проверок с данным статусом
+                Объектов:
+                  type: integer
+                  description: Количество объектов проверок
+                Нарушений:
+                  type: integer
+                  description: Количество нарушений, связанных с результатами КНМ
+                РегНомера:
+                  type: array
+                  description: Список учетных номеров КНМ в ФГИС Единого реестра контрольных (надзорных) мероприятий
+                    или ФГИС Единого реестра проверок
+                  items: {}
+              additionalProperties: true
+      additionalProperties: true
+    ProverkiUngrouped:
+      type: object
+      description: Гипотетическая интерпретация таблицы, не подтвержденная примером JSON; вложенность и ключи словарей не установлены. Дочерние поля массивов приведены в x-research-child-fields без утверждения типа элементов.
+      properties:
+        result:
+          type: object
+          description: Список контрольно-надзорных мероприятий (КНМ) в отношении указанного в запросе лица; ключи
+            описаны как РегНомер.
+          additionalProperties:
+            type: object
+            description: Учетный номер КНМ в ФГИС Единого реестра контрольных (надзорных) мероприятий
+            properties:
+              Тип:
+                type: string
+                description: Тип КНМ
+              ФормаПровед:
+                type: string
+                description: Форма проведения КНМ (Документарная, Выездная, Документарная и выездная)
+              ФЗ:
+                type: string
+                description: Федеральный закон, в соответствии с которым проводится КНМ
+              ВидНадз:
+                type: string
+                description: Вид государственного контроля (надзора)
+              Прокуратура:
+                type: string
+                description: Наименование прокуратуры
+              ДатаУвед:
+                type: string
+                description: Дата уведомления проверяемого лица о проведении КНМ
+              ДатаНач:
+                type: string
+                description: Дата начала КНМ (в формате YYYY-MM-DD)
+              ДатаОконч:
+                type: string
+                description: Дата окончания КНМ (в формате YYYY-MM-DD)
+              ОргНадз:
+                type: object
+                description: Информация об органе государственного контроля (надзора)
+                properties:
+                  ОГРН:
+                    type: string
+                    description: ОГРН органа государственного контроля (надзора)
+                  ИНН:
+                    type: string
+                    description: ИНН органа государственного контроля (надзора)
+                  НаимПолн:
+                    type: string
+                    description: Наименование органа государственного контроля (надзора)
+                  НаимСокр:
+                    type: string
+                    description: Сокращенное наименование органа государственного контроля (надзора)
+                  АдресПолн:
+                    type: string
+                    description: Адрес органа государственного контроля (надзора)
+                additionalProperties: true
+              НадзФункцияИдент:
+                type: string
+                description: Идентификатор контрольно-надзорной функции из Федерального реестра государственных
+                  и муниципальных услуг (ФРГУ)
+              НадзФункцияНаим:
+                type: string
+                description: Наименование контрольно-надзорной функции из Федерального реестра государственных и
+                  муниципальных услуг (ФРГУ)
+              Риск:
+                type: string
+                description: Категория риска (класс опасности) деятельности проверяемого лица (юридического лица
+                  (ЮЛ) или индивидуального предпринимателя (ИП)
+              ТолькоМесяц:
+                type: boolean
+                description: Метка об указании только месяца проведения для плановых КНМ
+              ВклПлан:
+                type: boolean
+                description: Отметка о включении плановой проверки (КНМ) в ежегодный сводный план проведения плановых
+                  проверок
+              Цели:
+                type: string
+                description: Цели, задачи, предмет КНМ
+              ОснованиеНаим:
+                type: string
+                description: Наименование правового основания проведения КНМ
+              ОснованиеТекст:
+                type: string
+                description: Основание проведения КНМ
+              Объекты:
+                type: array
+                description: Объекты проверки
+                items: {}
+                x-research-child-fields:
+                  description: Дочерние строки HTML; тип элементов массива явно не указан.
+                  type: object
+                  properties:
+                    Адрес:
+                      type: string
+                      description: Адрес объекта проведения КНМ
+                    АдресТип:
+                      type: string
+                      description: Тип адреса места составления акта о проведении КНМ (Место нахождения юридического
+                        лица, Место фактического осуществления деятельности и пр.)
+                    ОбъектТип:
+                      type: string
+                      description: Тип объекта проведения КНМ
+                    ДатаНачФакт:
+                      type: string
+                      description: Дата начала проведения КНМ (фактическая)
+                    ДатаАкт:
+                      type: string
+                      description: Дата и время составления акта о проведении КНМ
+                    Дни:
+                      type: integer
+                      description: Длительность КНМ (в днях)
+                    Часы:
+                      type: integer
+                      description: Длительность КНМ (в часах)
+                    Инспекторы:
+                      type: array
+                      description: Информация о должностных лицах, проводивших КНМ
+                      items: {}
+                      x-research-child-fields:
+                        description: Дочерние строки HTML; тип элементов массива явно не указан.
+                        type: object
+                        properties:
+                          ФИО:
+                            type: string
+                            description: ФИО должностного лица, уполномоченного на проведение КНМ
+                          Должность:
+                            type: string
+                            description: Должность должностного лица, уполномоченного на проведение КНМ
+                          Тип:
+                            type: string
+                            description: Тип должностного лица, уполномоченного на проведение КНМ (Проверяющий,
+                              Эксперт и пр.)
+                        additionalProperties: true
+                    Представители:
+                      type: array
+                      description: Представители юридического лица или индивидуального предпринимателя, присутствовавшие
+                        при проведении КНМ
+                      items: {}
+                      x-research-child-fields:
+                        description: Дочерние строки HTML; тип элементов массива явно не указан.
+                        type: object
+                        properties:
+                          ФИО:
+                            type: string
+                            description: ФИО руководителя, иного должностного лица юридического лица, уполномоченного
+                              представителя юридического лица, уполномоченного представителя индивидуального предпринимателя,
+                              присутствовавших при проведении КНМ
+                          Должность:
+                            type: string
+                            description: Должность руководителя, иного должностного лица юридического лица, уполномоченного
+                              представителя юридического лица, уполномоченного представителя индивидуального предпринимателя,
+                              присутствовавших при проведении КНМ
+                          Тип:
+                            type: string
+                            description: Тип представителя должностного лица, уполномоченного представителя юридического
+                              лица, уполномоченного представителя индивидуального предпринимателя, присутствовавших
+                              при проведении КНМ
+                        additionalProperties: true
+                    Нарушения:
+                      type: array
+                      description: Информация о нарушениях, связанных с результатом КНМ
+                      items: {}
+                      x-research-child-fields:
+                        description: Дочерние строки HTML; тип элементов массива явно не указан.
+                        type: object
+                        properties:
+                          Текст:
+                            type: string
+                            description: Сведения о выявленных нарушениях обязательных требований и требований,
+                              установленных муниципальными правовыми актами, об их характере и о лицах, допустивших
+                              указанные нарушения (с указанием положений правовых актов)
+                          СудСведения:
+                            type: array
+                            description: Судебные сведения о выявленных нарушениях
+                            items: {}
+                            x-research-child-fields:
+                              description: Дочерние строки HTML; тип элементов массива явно не указан.
+                              type: object
+                              properties:
+                                Тип:
+                                  type: string
+                                  description: Тип судебного сведения о выявленных нарушениях в результате проведения
+                                    КНМ
+                                Текст:
+                                  type: string
+                                  description: Формулировка судебного сведения
+                              additionalProperties: true
+                          Предписания:
+                            type: array
+                            description: Сведения о выданных предписаниях об устранении выявленных нарушений и/или
+                              о проведении мероприятий по предотвращению причинения вреда
+                            items: {}
+                            x-research-child-fields:
+                              description: Дочерние строки HTML; тип элементов массива явно не указан.
+                              type: object
+                              properties:
+                                Реквизиты:
+                                  type: string
+                                  description: Реквизиты предписания об устранении выявленных нарушений в результате
+                                    проведения КНМ
+                                Текст:
+                                  type: string
+                                  description: Содержание предписания об устранении выявленных нарушений в результате
+                                    проведения КНМ
+                                Дата:
+                                  type: string
+                                  description: Дата вынесения предписания об устранении выявленных нарушений в результате
+                                    проведения КНМ
+                                ДатаИсполн:
+                                  type: string
+                                  description: Срок исполнения предписания об устранении выявленных нарушений в
+                                    результате проведения КНМ
+                              additionalProperties: true
+                        additionalProperties: true
+                    Результаты:
+                      type: array
+                      description: Сведения о результатах КНМ
+                      items: {}
+                      x-research-child-fields:
+                        description: Дочерние строки HTML; тип элементов массива явно не указан.
+                        type: object
+                        properties:
+                          Тип:
+                            type: string
+                            description: Тип сведений о результате
+                          Текст:
+                            type: string
+                            description: Формулировка сведения о результате
+                        additionalProperties: true
+                  additionalProperties: true
+              Статус:
+                type: string
+                description: Статус КНМ (Завершено, Ожидает завершения, Обжаловано и пр.)
+            additionalProperties: true
+      additionalProperties: true
