@@ -1,5 +1,6 @@
 """HTTP transport skeleton."""
 
+from collections.abc import Sequence
 from types import TracebackType
 from typing import NoReturn, Self
 
@@ -12,7 +13,14 @@ class HttpClient:
     def __init__(self, settings: DamiaSettings) -> None:
         self.settings = settings
 
-    async def request(self) -> NoReturn:
+    async def request(
+        self,
+        method: str,
+        url: str,
+        *,
+        params: Sequence[tuple[str, str]] | None = None,
+    ) -> NoReturn:
+        """Заготовка запроса; сериализация и сетевой вызов не реализованы."""
         raise NotImplementedError
 
     async def __aenter__(self) -> Self:

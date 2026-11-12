@@ -1,6 +1,7 @@
 """Асинхронная точка входа SDK без реализации сетевых запросов."""
 
 from types import TracebackType
+from typing import Self
 
 from damia_sdk.services.arbitration import ArbitrationService
 from damia_sdk.services.banks import BanksService
@@ -34,7 +35,7 @@ class DamiaClient:
         self.fssp = FsspService(self._transport)
         self.spk = SpkService(self._transport)
 
-    async def __aenter__(self) -> "DamiaClient":
+    async def __aenter__(self) -> Self:
         await self._transport.__aenter__()
         return self
 

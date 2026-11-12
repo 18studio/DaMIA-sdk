@@ -11,11 +11,11 @@ from pydantic import BaseModel, ConfigDict, Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 __all__ = [
-    "DamiaSettings",
-    "TimeoutSettings",
-    "CacheSettings",
-    "RetrySettings",
     "BaseURLSettings",
+    "CacheSettings",
+    "DamiaSettings",
+    "RetrySettings",
+    "TimeoutSettings",
 ]
 
 
@@ -91,7 +91,7 @@ class DamiaSettings(_FrozenSettings):
     @classmethod
     def from_env(cls) -> "DamiaSettings":
         """Load environment variables explicitly, with no dotenv file."""
-        loaded = _EnvironmentSettings(_env_file=None)
+        loaded = _EnvironmentSettings()
         return cls.model_validate(loaded.model_dump())
 
 
