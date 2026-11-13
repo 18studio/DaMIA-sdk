@@ -1,6 +1,7 @@
 """Результат HTTP-запроса без ссылки на URL и объект запроса."""
 
 import json
+import math
 from dataclasses import dataclass, field
 from typing import TypeAlias, cast
 
@@ -9,6 +10,17 @@ from damia_sdk.exceptions import DamiaResponseError
 JSONValue: TypeAlias = (
     None | bool | int | float | str | list["JSONValue"] | dict[str, "JSONValue"]
 )
+
+
+def _reject_json_constant(value: str) -> None:
+    raise ValueError("Недопустимая JSON-константа")
+
+
+def _finite_json_float(value: str) -> float:
+    number = float(value)
+    if not math.isfinite(number):
+        raise ValueError("Недопустимое JSON-число")
+    return number
 
 
 @dataclass(frozen=True, slots=True)
@@ -41,7 +53,11 @@ class HttpResponse:
     def json(self) -> JSONValue:
         """Разобрать JSON, не раскрывая тело в сообщении об ошибке."""
         try:
-            data = json.loads(self.body)
+            data = json.loads(
+                self.body,
+                parse_constant=_reject_json_constant,
+                parse_float=_finite_json_float,
+            )
         except (ValueError, UnicodeDecodeError):
             # Не связывать исключение с JSONDecodeError, содержащим исходный документ.
             pass

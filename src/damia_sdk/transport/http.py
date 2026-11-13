@@ -1,8 +1,9 @@
 """Общий асинхронный HTTP-транспорт DaMIA.
 
-Ключи передаются в query согласно документированному GET-транспорту. Поэтому
-настройки логирования HTTPX, прокси и Sentry на стороне приложения также должны
-исключать полные URL. SDK не настраивает сторонние обработчики журналов.
+Ключи передаются в query согласно документированному GET-транспорту и видны
+серверу, прокси и средствам перехвата трафика. Базовый URL считается доверенным.
+DEBUG-логи нижележащих библиотек и сбор локальных переменных traceback требуют
+отдельной настройки приложения. SDK не настраивает стороннее логирование.
 """
 
 import asyncio
@@ -135,6 +136,27 @@ _SAFE_PATH = re.compile(r"/[A-Za-z0-9_/-]+\Z")
 _RETRYABLE_STATUSES = frozenset({429, 500, 502, 503, 504})
 
 
+class _QueryTransport(httpx.AsyncBaseTransport):
+    """Добавить query после формирования безопасного запроса HTTPX."""
+
+    def __init__(self, transport: httpx.AsyncBaseTransport) -> None:
+        self._transport = transport
+
+    async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
+        query = request.extensions.pop("damia_query")
+        wire_request = httpx.Request(
+            request.method,
+            request.url.copy_merge_params(query),
+            headers=request.headers,
+            stream=request.stream,
+            extensions=request.extensions,
+        )
+        return await self._transport.handle_async_request(wire_request)
+
+    async def aclose(self) -> None:
+        await self._transport.aclose()
+
+
 @dataclass
 class _Flight:
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
@@ -156,6 +178,12 @@ class HttpClient:
         transport: httpx.AsyncBaseTransport | None = None,
     ) -> None:
         self.settings = settings
+        limits = httpx.Limits(max_connections=settings.max_connections)
+        self._transport = _QueryTransport(
+            transport
+            if transport is not None
+            else httpx.AsyncHTTPTransport(limits=limits, trust_env=False)
+        )
         self._http = httpx.AsyncClient(
             timeout=httpx.Timeout(
                 connect=settings.timeout.connect,
@@ -163,15 +191,17 @@ class HttpClient:
                 write=settings.timeout.write,
                 pool=settings.timeout.pool,
             ),
-            limits=httpx.Limits(max_connections=settings.max_connections),
+            limits=limits,
             follow_redirects=False,
             trust_env=False,
-            transport=transport,
+            transport=self._transport,
         )
         self._cache = ResponseCache(settings.cache)
         self._cache_secret = os.urandom(32)
         self._flights: dict[str, _Flight] = {}
         self._closed = False
+        self._close_task: asyncio.Task[None] | None = None
+        self._http_closed = False
 
     async def request(
         self,
@@ -189,7 +219,10 @@ class HttpClient:
 
         Для кеша нужен ``cache_validator``: он подтверждает, что успешный HTTP-
         ответ допустимо сохранить. Без проверки нельзя исключить ошибку внутри
-        2XX. Нельзя передавать ключ в ``params`` или URL.
+        2XX. Каждый получатель повторно проверяет общую запись своим валидатором;
+        несовместимые проверки могут вызвать дополнительные запросы и замену.
+        Single-flight не гарантирует один сетевой вызов. Нельзя передавать
+        ключ в ``params`` или URL.
         """
         if self._closed:
             raise DamiaClientClosedError("HTTP-клиент закрыт.")
@@ -225,15 +258,26 @@ class HttpClient:
         flight.users += 1
         try:
             async with flight.lock:
+                if self._closed:
+                    raise DamiaClientClosedError("HTTP-клиент закрыт.")
                 cached = await self._cache.get(digest)
                 if cached is not None and cache_validator(cached):
                     return cached
+                generation = await self._cache.generation()
+                if self._closed:
+                    raise DamiaClientClosedError("HTTP-клиент закрыт.")
                 response = await self._perform(full_url, query, allow_retry=allow_retry)
                 content_type = (
                     (response.content_type or "").split(";", 1)[0].strip().lower()
                 )
                 if content_type == "application/json" and cache_validator(response):
-                    await self._cache.set(digest, response, ttl=effective_ttl)
+                    await self._cache.set(
+                        digest,
+                        response,
+                        ttl=effective_ttl,
+                        generation=generation,
+                        permitted=lambda: not self._closed,
+                    )
                 return response
         finally:
             flight.users -= 1
@@ -370,7 +414,10 @@ class HttpClient:
     ) -> HttpResponse:
         failure: DamiaError | None = None
         try:
-            response = await self._http.get(url, params=list(params))
+            request = self._http.build_request(
+                "GET", url, extensions={"damia_query": list(params)}
+            )
+            response = await self._http.send(request)
         except httpx.TimeoutException:
             failure = DamiaTimeoutError("Превышено время ожидания API.")
         except httpx.RequestError:
@@ -406,22 +453,54 @@ class HttpClient:
             except (TypeError, ValueError, OverflowError):
                 return None
         if not math.isfinite(seconds):
+            if seconds == float("inf") and re.fullmatch(r"[0-9]+", value):
+                return seconds
             return None
         return max(0.0, seconds)
 
     async def clear_cache(self) -> None:
-        """Удалить записи локального кеша."""
+        """Инвалидировать кеш до удаления; ошибки удаления можно повторить."""
         await self._cache.clear()
 
-    async def aclose(self) -> None:
-        """Закрыть транспорт и локальный кеш; повторное закрытие безопасно."""
-        if self._closed:
-            return
-        self._closed = True
+    async def _close_resources(self) -> None:
+        failed = False
         try:
-            await self._cache.close()
+            try:
+                await self._cache.close()
+            except Exception:  # noqa: BLE001
+                failed = True
         finally:
-            await self._http.aclose()
+            if not self._http_closed:
+                try:
+                    if self._http.is_closed:
+                        await self._transport.aclose()
+                    else:
+                        await self._http.aclose()
+                except Exception:  # noqa: BLE001
+                    failed = True
+                else:
+                    self._http_closed = True
+        if failed:
+            raise RuntimeError("Не удалось освободить ресурсы транспорта.")
+
+    async def aclose(self) -> None:
+        """Отклонить новые запросы и совместно ожидать освобождения ресурсов.
+
+        Активные запросы могут завершиться ошибкой; после начала закрытия кеш
+        не пополняется. Отмена ожидающего не отменяет общее закрытие. После
+        ошибки повторный вызов повторяет незавершённое освобождение.
+        """
+        self._closed = True
+        if self._close_task is None or (
+            self._close_task.done()
+            and not self._close_task.cancelled()
+            and self._close_task.exception() is not None
+        ):
+            self._close_task = asyncio.create_task(self._close_resources())
+            self._close_task.add_done_callback(
+                lambda task: None if task.cancelled() else task.exception()
+            )
+        await asyncio.shield(self._close_task)
 
     async def __aenter__(self) -> Self:
         if self._closed:
