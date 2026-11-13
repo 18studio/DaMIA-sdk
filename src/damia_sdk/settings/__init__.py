@@ -39,6 +39,8 @@ class CacheSettings(_FrozenSettings):
 
     enabled: bool = False
     ttl: float = Field(default=300.0, gt=0)
+    max_entries: int = Field(default=256, gt=0)
+    max_entry_bytes: int = Field(default=1048576, gt=0)
 
 
 class RetrySettings(_FrozenSettings):
@@ -46,6 +48,9 @@ class RetrySettings(_FrozenSettings):
 
     enabled: bool = False
     max_attempts: int = Field(default=3, gt=0)
+    max_elapsed: float = Field(default=30.0, gt=0)
+    initial_delay: float = Field(default=0.25, ge=0)
+    max_delay: float = Field(default=5.0, gt=0)
 
 
 class BaseURLSettings(_FrozenSettings):

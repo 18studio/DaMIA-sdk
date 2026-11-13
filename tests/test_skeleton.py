@@ -26,8 +26,6 @@ async def test_client_services_share_settings_and_transport() -> None:
         ):
             service = getattr(client, name)
             assert service._transport is client._transport
-        with pytest.raises(NotImplementedError):
-            await client.fns.egr(req="0000000000")
 
 
 def test_every_documented_get_has_async_skeleton() -> None:
@@ -97,32 +95,6 @@ def test_every_documented_get_has_async_skeleton() -> None:
                 service_name,
                 name,
             )
-
-
-@pytest.mark.asyncio
-async def test_all_service_methods_are_unimplemented() -> None:
-    client = DamiaClient()
-    count = 0
-    for service_name in (
-        "fns",
-        "rosstat",
-        "banks",
-        "scoring",
-        "procurement",
-        "arbitration",
-        "fssp",
-        "spk",
-    ):
-        service = getattr(client, service_name)
-        for name, method in inspect.getmembers(service, inspect.iscoroutinefunction):
-            if name.startswith("_"):
-                continue
-            with pytest.raises(NotImplementedError):
-                await method()
-            count += 1
-    assert count == 61
-    with pytest.raises(NotImplementedError):
-        await client._transport.request("GET", "https://example.invalid")
 
 
 def test_explicit_settings_ignore_environment(monkeypatch: pytest.MonkeyPatch) -> None:

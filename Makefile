@@ -10,7 +10,7 @@ PRISM_FLAGS ?=
 
 SERVICES := fns rosstat banks scoring procurement arbitration fssp spk
 
-.PHONY: help prism $(addprefix prism-,$(SERVICES)) sync check test build push
+.PHONY: help prism $(addprefix prism-,$(SERVICES)) sync check test test-unit test-e2e test-e2e-sdk test-e2e-cli build push
 
 help:
 	@printf '%s\n' \
@@ -19,8 +19,12 @@ help:
 		'Services: $(SERVICES)' \
 		'Press Ctrl+C to stop the server.' \
 		'make sync  - install project and development dependencies' \
-		'make test  - run tests (Prism tests require RUN_PRISM_TESTS=1)' \
-		'make check - run lint, formatting, type checks and tests' \
+		'make test         - run all tests, including currently failing e2e' \
+		'make test-unit    - run tests except e2e' \
+		'make test-e2e     - run SDK and CLI end-to-end tests' \
+		'make test-e2e-sdk - run only SDK end-to-end tests' \
+		'make test-e2e-cli - run only CLI end-to-end tests' \
+		'make check        - run lint, formatting, type checks and all tests' \
 		'make build - build distributions in dist/' \
 		'make push  - check, build and publish the current version to PyPI'
 
@@ -42,6 +46,18 @@ sync:
 
 test:
 	uv run --locked pytest
+
+test-unit:
+	uv run --locked pytest -m 'not e2e'
+
+test-e2e:
+	uv run --locked pytest tests/e2e
+
+test-e2e-sdk:
+	uv run --locked pytest tests/e2e/test_sdk_prism.py
+
+test-e2e-cli:
+	uv run --locked pytest tests/e2e/test_cli_prism.py
 
 check:
 	uv run --locked ruff check src tests

@@ -31,7 +31,9 @@ dev = [
     "pytest",
     "pytest-asyncio",
     "pytest-cov",
+    "pyyaml>=6.0.3",
     "ruff",
+    "types-pyyaml>=6.0.12.20261111",
 ]
 
 [tool.mypy]
@@ -44,4 +46,5 @@ testpaths = ["tests"]
 asyncio_default_fixture_loop_scope = "function"
 markers = [
     "prism: integration tests requiring the local Prism mock server",
+    "e2e: SDK and CLI end-to-end tests against isolated local Prism servers",
 ]

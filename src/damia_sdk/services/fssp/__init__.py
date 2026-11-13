@@ -1,8 +1,11 @@
-"""Skeleton for the DaMIA FSSP service."""
-
-from typing import NoReturn
+"""DaMIA FSSP service operations."""
 
 from damia_sdk.transport.http import HttpClient
+from damia_sdk.transport.response import HttpResponse
+
+
+def _params(*values: tuple[str, str | int | None]) -> list[tuple[str, str]]:
+    return [(name, str(value)) for name, value in values if value is not None]
 
 
 class FsspService:
@@ -11,8 +14,10 @@ class FsspService:
     def __init__(self, transport: HttpClient) -> None:
         self._transport = transport
 
-    async def isp(self, *, regn: str | None = None) -> NoReturn:
-        raise NotImplementedError
+    async def isp(self, *, regn: str | None = None) -> HttpResponse:
+        return await self._transport.request(
+            "GET", "/isp", service="fssp", params=_params(("regn", regn))
+        )
 
     async def isps(
         self,
@@ -22,11 +27,24 @@ class FsspService:
         to_date: str | None = None,
         format: int | None = None,
         page: int | None = None,
-    ) -> NoReturn:
-        raise NotImplementedError
+    ) -> HttpResponse:
+        return await self._transport.request(
+            "GET",
+            "/isps",
+            service="fssp",
+            params=_params(
+                ("inn", inn),
+                ("from_date", from_date),
+                ("to_date", to_date),
+                ("format", format),
+                ("page", page),
+            ),
+        )
 
-    async def ispfl(self, *, regn: str | None = None) -> NoReturn:
-        raise NotImplementedError
+    async def ispfl(self, *, regn: str | None = None) -> HttpResponse:
+        return await self._transport.request(
+            "GET", "/ispfl", service="fssp", params=_params(("regn", regn))
+        )
 
     async def ispsfl(
         self,
@@ -38,5 +56,18 @@ class FsspService:
         bdate: str | None = None,
         format: int | None = None,
         page: int | None = None,
-    ) -> NoReturn:
-        raise NotImplementedError
+    ) -> HttpResponse:
+        return await self._transport.request(
+            "GET",
+            "/ispsfl",
+            service="fssp",
+            params=_params(
+                ("region", region),
+                ("fam", fam),
+                ("nam", nam),
+                ("otch", otch),
+                ("bdate", bdate),
+                ("format", format),
+                ("page", page),
+            ),
+        )
