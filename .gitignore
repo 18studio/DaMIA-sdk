@@ -20,6 +20,9 @@ __pycache__/
 .coverage.*
 coverage.xml
 htmlcov/
+.cache/
+*.cover
+*.py,cover
 .ipynb_checkpoints/
 
 # Python packaging and build output
@@ -30,6 +33,8 @@ dist/
 *.egg
 *.whl
 pip-wheel-metadata/
+*.egg-link
+MANIFEST
 
 # Local dependencies and generated Pages output
 node_modules/
@@ -55,6 +60,14 @@ docs/swagger/**/*~
 # Agent run artifacts (project agent definitions remain versionable)
 .pi/subagents/
 
-# OS and log files
+# Editor and OS files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
 .DS_Store
+Thumbs.db
+
+# Logs
 *.log

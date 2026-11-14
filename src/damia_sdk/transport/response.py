@@ -3,12 +3,22 @@
 import json
 import math
 from dataclasses import dataclass, field
+from decimal import Decimal, InvalidOperation
 from typing import TypeAlias, cast
 
 from damia_sdk.exceptions import DamiaResponseError
 
 JSONValue: TypeAlias = (
     None | bool | int | float | str | list["JSONValue"] | dict[str, "JSONValue"]
+)
+DecimalJSONValue: TypeAlias = (
+    None
+    | bool
+    | int
+    | Decimal
+    | str
+    | list["DecimalJSONValue"]
+    | dict[str, "DecimalJSONValue"]
 )
 
 
@@ -63,4 +73,18 @@ class HttpResponse:
             pass
         else:
             return cast(JSONValue, data)
+        raise DamiaResponseError("Ответ API не является корректным JSON.")
+
+    def json_decimal(self) -> DecimalJSONValue:
+        """Разобрать JSON локально, сохраняя точность дробных чисел."""
+        try:
+            data = json.loads(
+                self.body,
+                parse_constant=_reject_json_constant,
+                parse_float=Decimal,
+            )
+        except (ValueError, UnicodeDecodeError, InvalidOperation):
+            pass
+        else:
+            return cast(DecimalJSONValue, data)
         raise DamiaResponseError("Ответ API не является корректным JSON.")

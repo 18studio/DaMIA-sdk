@@ -1392,3 +1392,17 @@ async def test_httpx_info_logs_hide_query_without_affecting_other_clients(
     ) as other:
         await other.get("https://example.test/", params={"ordinary": "visible"})
     assert "ordinary=visible" in caplog.records[-1].getMessage()
+
+
+@pytest.mark.asyncio
+async def test_synthetic_business_error_payload_remains_opaque_on_2xx() -> None:
+    payload = {"synthetic_error": {"code": "example"}}
+    async with HttpClient(
+        settings(),
+        transport=httpx.MockTransport(
+            lambda request: httpx.Response(200, json=payload)
+        ),
+    ) as client:
+        response = await client.request("GET", "/egr", service="fns")
+    assert response.status_code == 200
+    assert response.data == payload

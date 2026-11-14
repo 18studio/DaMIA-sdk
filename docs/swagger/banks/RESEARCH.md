@@ -1,6 +1,6 @@
 # API-Банки research
 
-Source: [official API-Банки documentation](https://analizbankov.ru/api_help.php), captured in `/tmp/damia-bank-render.txt`; `/tmp/damia-banki.txt` is the supplied shorter overview. Findings are documentation analysis, not runtime observations. No live API requests, credentials, or personal data were used.
+Source: [official API-Банки documentation](https://analizbankov.ru/api_help.php), based on a rendered snapshot and a supplied shorter overview (both no longer available). Findings are documentation analysis, not runtime observations. No live API requests, credentials, or personal data were used.
 
 ## Scope and common behavior
 

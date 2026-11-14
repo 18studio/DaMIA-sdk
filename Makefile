@@ -19,7 +19,7 @@ help:
 		'Services: $(SERVICES)' \
 		'Press Ctrl+C to stop the server.' \
 		'make sync  - install project and development dependencies' \
-		'make test         - run all tests, including currently failing e2e' \
+		'make test         - run all tests, including e2e' \
 		'make test-unit    - run tests except e2e' \
 		'make test-e2e     - run SDK and CLI end-to-end tests' \
 		'make test-e2e-sdk - run only SDK end-to-end tests' \
@@ -74,4 +74,8 @@ push: check
 	build_dir=$$(mktemp -d); \
 	trap 'rm -rf "$$build_dir"' EXIT HUP INT TERM; \
 	uv build --out-dir "$$build_dir"; \
-	uv publish "$$build_dir"/*
+	if [ -n "$${POETRY_PYPI_TOKEN_PYPI:-}" ]; then \
+		UV_PUBLISH_TOKEN="$$POETRY_PYPI_TOKEN_PYPI" uv publish "$$build_dir"/*; \
+	else \
+		uv publish "$$build_dir"/*; \
+	fi

@@ -1,8 +1,10 @@
 """Изолированные тесты HTTP-транспорта без запросов к DaMIA."""
 
 import asyncio
+import logging
 import traceback
 from collections.abc import Callable
+from unittest.mock import patch
 
 import httpx
 import pytest
@@ -317,6 +319,51 @@ async def test_rejected_cache_response_is_not_stored() -> None:
             )
             assert not response.from_cache
     assert attempts == 2
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("method", ["POST", "post", "PoSt"])
+@pytest.mark.parametrize(("service", "path"), [("fns", "/egr"), ("banks", "/api/stat")])
+@pytest.mark.parametrize("allow_retry", [False, True])
+@pytest.mark.parametrize("allow_cache", [False, True])
+async def test_unconfirmed_post_is_rejected_before_preparation_or_network(
+    method: str,
+    service: ServiceName,
+    path: str,
+    allow_retry: bool,
+    allow_cache: bool,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    secret = "synthetic-post-param-secret"
+    network = httpx.MockTransport(lambda request: httpx.Response(200))
+    settings = configured(
+        retry=RetrySettings(enabled=True), cache=CacheSettings(enabled=True)
+    )
+    caplog.set_level(logging.DEBUG)
+    async with HttpClient(settings, transport=network) as client:
+        with (
+            patch.object(client, "_prepare") as prepare,
+            patch.object(client, "_perform") as perform,
+            patch.object(network, "handle_async_request") as send,
+            pytest.raises(DamiaConfigurationError) as exc,
+        ):
+            await client.request(
+                method,
+                path,
+                service=service,
+                params=[("req", secret)],
+                allow_retry=allow_retry,
+                allow_cache=allow_cache,
+                cache_validator=lambda response: True,
+            )
+        prepare.assert_not_called()
+        perform.assert_not_called()
+        send.assert_not_called()
+        assert not client._cache._keys
+        assert not client._flights
+    output = "".join(traceback.format_exception(exc.value)) + caplog.text
+    for sensitive in (secret, "synthetic-fns-key", "synthetic-banks-key"):
+        assert sensitive not in output
 
 
 @pytest.mark.asyncio

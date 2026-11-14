@@ -1,4 +1,4 @@
-"""Заготовки команд API-Банки."""
+"""Команды API-Банки."""
 
 from damia_sdk.cli.common import create_service_app
 from damia_sdk.services.banks import BanksService
@@ -17,5 +17,5 @@ app = create_service_app(
         "pokinfo",
         "stat",
     ),
-    help_text="API-Банки. Команды пока не выполняют запросы.",
+    help_text="API-Банки. Запросы могут тарифицироваться.",
 )

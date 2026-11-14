@@ -1,0 +1,4884 @@
+normalization: schema-graph-v2
+operations:
+- service: fns
+  http: GET
+  path: /ac
+  sdk_method: ac
+  sdk:
+    route:
+    - GET
+    - /ac
+    signature: '(self, *, q: str | None = None, filter: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      q: &id002
+        annotation: str | None
+        default: None
+      filter: &id001
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/fns/__init__.py#L35
+  parameters:
+  - wire: filter
+    in: query
+    python: filter
+    spec:
+      description: Фильтры active, onlyul, onlyip.
+      in: query
+      name: filter
+      required: false
+      schema:
+        type: string
+    sdk: *id001
+  - wire: q
+    in: query
+    python: q
+    spec:
+      description: Начало названия, полное название или ФИО ИП, либо цифры ИНН.
+      in: query
+      name: q
+      required: false
+      schema:
+        type: string
+    sdk: *id002
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: &id005
+      ApiKey:
+        type: apiKey
+        in: query
+        name: key
+        description: Размещение в query подтверждено GET-примерами; для POST транспорт
+          ключа не установлен.
+  responses:
+    2XX:
+      source:
+        description: Документированный успешный результат JSON; media type — допущение
+          для совместимости, фактический заголовок не документирован.
+        content:
+          application/json:
+            schema: &id003
+              $ref: '#/components/schemas/acResponse'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id003
+          graph_sha256: 8bd299c2622d512a8b2394b33f5549b4343ef7e8b89529b087aa2ece9c2e8931
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1ac/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: fns
+  http: GET
+  path: /bo
+  sdk_method: bo
+  sdk:
+    route:
+    - GET
+    - /bo
+    signature: '(self, *, req: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      req: &id004
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/fns/__init__.py#L145
+  parameters:
+  - wire: req
+    in: query
+    python: req
+    spec:
+      description: ИНН или ОГРН ЮЛ.
+      in: query
+      name: req
+      required: false
+      schema:
+        type: string
+    sdk: *id004
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: *id005
+  responses:
+    2XX:
+      source:
+        description: Документированный успешный результат JSON; media type — допущение
+          для совместимости, фактический заголовок не документирован.
+        content:
+          application/json:
+            schema: &id006
+              $ref: '#/components/schemas/boResponse'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id006
+          graph_sha256: 346f176f38764e7ec4d93b230e17c3043c584b65046584524f45fbc91341c022
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1bo/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: fns
+  http: GET
+  path: /bo_file
+  sdk_method: bo_file
+  sdk:
+    route:
+    - GET
+    - /bo_file
+    signature: '(self, *, req: str | None = None, year: int | None = None, xls: int
+      | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      req: &id007
+        annotation: str | None
+        default: None
+      year: &id009
+        annotation: int | None
+        default: None
+      xls: &id008
+        annotation: int | None
+        default: None
+    source: src/damia_sdk/services/fns/__init__.py#L150
+  parameters:
+  - wire: req
+    in: query
+    python: req
+    spec:
+      description: ИНН или ОГРН ЮЛ.
+      in: query
+      name: req
+      required: false
+      schema:
+        type: string
+    sdk: *id007
+  - wire: xls
+    in: query
+    python: xls
+    spec:
+      description: При наличии ZIP с XLS, иначе подписанный PDF; допустимые значения
+        не уточнены.
+      in: query
+      name: xls
+      required: false
+      schema:
+        type: integer
+    sdk: *id008
+  - wire: year
+    in: query
+    python: year
+    spec:
+      description: Год отчетности.
+      in: query
+      name: year
+      required: false
+      schema:
+        type: integer
+    sdk: *id009
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: *id005
+  responses:
+    2XX:
+      source:
+        description: Документ PDF либо ZIP с XLS и возможными приложениями PDF. Media
+          type — допущение для совместимости; фактический заголовок не документирован.
+        content:
+          application/octet-stream:
+            schema: &id010
+              type: string
+              format: binary
+      media:
+        application/octet-stream:
+          schema_present: true
+          schema: *id010
+          graph_sha256: 2db098654a77dbd75ff3dd3bda2aa4fec4c1bb261ed413634b61832152672d3e
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1bo_file/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: fns
+  http: GET
+  path: /changes
+  sdk_method: changes
+  sdk:
+    route:
+    - GET
+    - /changes
+    signature: '(self, *, req: str | None = None, dat: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      req: &id012
+        annotation: str | None
+        default: None
+      dat: &id011
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/fns/__init__.py#L93
+  parameters:
+  - wire: dat
+    in: query
+    python: dat
+    spec:
+      description: Дата YYYY-MM-DD; без нее все изменения.
+      in: query
+      name: dat
+      required: false
+      schema:
+        type: string
+    sdk: *id011
+  - wire: req
+    in: query
+    python: req
+    spec:
+      description: ИНН или ОГРН.
+      in: query
+      name: req
+      required: false
+      schema:
+        type: string
+    sdk: *id012
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: *id005
+  responses:
+    2XX:
+      source:
+        description: Документированный успешный результат JSON; media type — допущение
+          для совместимости, фактический заголовок не документирован.
+        content:
+          application/json:
+            schema: &id013
+              $ref: '#/components/schemas/changesResponse'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id013
+          graph_sha256: f161edf32410bc80ade6b6232e6f4e1b31b410c495c6094330ff4c303b455103
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1changes/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: fns
+  http: GET
+  path: /check
+  sdk_method: check
+  sdk:
+    route:
+    - GET
+    - /check
+    signature: '(self, *, req: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      req: &id014
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/fns/__init__.py#L73
+  parameters:
+  - wire: req
+    in: query
+    python: req
+    spec:
+      description: ИНН или ОГРН.
+      in: query
+      name: req
+      required: false
+      schema:
+        type: string
+    sdk: *id014
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: *id005
+  responses:
+    2XX:
+      source:
+        description: Документированный успешный результат JSON; media type — допущение
+          для совместимости, фактический заголовок не документирован.
+        content:
+          application/json:
+            schema: &id015
+              $ref: '#/components/schemas/checkResponse'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id015
+          graph_sha256: 8e997dcf1dbfef3d4b9f97cbf4e9648054c51652346abb44643626377e8d51b2
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1check/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: fns
+  http: GET
+  path: /egr
+  sdk_method: egr
+  sdk:
+    route:
+    - GET
+    - /egr
+    signature: '(self, *, req: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      req: &id016
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/fns/__init__.py#L42
+  parameters:
+  - wire: req
+    in: query
+    python: req
+    spec:
+      description: ИНН или ОГРН.
+      in: query
+      name: req
+      required: false
+      schema:
+        type: string
+    sdk: *id016
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: *id005
+  responses:
+    2XX:
+      source:
+        description: Документированный успешный результат JSON; media type — допущение
+          для совместимости, фактический заголовок не документирован.
+        content:
+          application/json:
+            schema: &id017
+              $ref: '#/components/schemas/egrResponse'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id017
+          graph_sha256: 584439a95f8790d70eaee7d9b4e61745df7df82e0e6e36e14a5aa681adfdb236
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1egr/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: fns
+  http: GET
+  path: /fias_info
+  sdk_method: fias_info
+  sdk:
+    route:
+    - GET
+    - /fias_info
+    signature: '(self, *, object_id: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      object_id: &id018
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/fns/__init__.py#L233
+  parameters:
+  - wire: object_id
+    in: query
+    python: object_id
+    spec:
+      description: Десятичный или шестнадцатеричный идентификатор.
+      in: query
+      name: object_id
+      required: false
+      schema:
+        type: string
+    sdk: *id018
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: *id005
+  responses:
+    2XX:
+      source:
+        description: Документированный успешный результат JSON; media type — допущение
+          для совместимости, фактический заголовок не документирован.
+        content:
+          application/json:
+            schema: &id019
+              $ref: '#/components/schemas/fias_infoResponse'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id019
+          graph_sha256: c55c8855311f1182ecdc60deb5232f14e4c46c41ff9cf951aed7ba51431218fe
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1fias_info/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: fns
+  http: GET
+  path: /fias_search
+  sdk_method: fias_search
+  sdk:
+    route:
+    - GET
+    - /fias_search
+    signature: '(self, *, q: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      q: &id020
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/fns/__init__.py#L241
+  parameters:
+  - wire: q
+    in: query
+    python: q
+    spec:
+      description: Строка адреса.
+      in: query
+      name: q
+      required: false
+      schema:
+        type: string
+    sdk: *id020
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: *id005
+  responses:
+    2XX:
+      source:
+        description: Документированный успешный результат JSON; media type — допущение
+          для совместимости, фактический заголовок не документирован.
+        content:
+          application/json:
+            schema: &id021
+              $ref: '#/components/schemas/fias_searchResponse'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id021
+          graph_sha256: 9d050684b92deae221af01107492a2fa87d4df7692a1281f755a273f70fd5335
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1fias_search/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: fns
+  http: GET
+  path: /fl_status
+  sdk_method: fl_status
+  sdk:
+    route:
+    - GET
+    - /fl_status
+    signature: '(self, *, inn: str | None = None, dat: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      inn: &id023
+        annotation: str | None
+        default: None
+      dat: &id022
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/fns/__init__.py#L196
+  parameters:
+  - wire: dat
+    in: query
+    python: dat
+    spec:
+      description: Дата проверки самозанятости; по умолчанию текущая дата.
+      in: query
+      name: dat
+      required: false
+      schema:
+        type: string
+    sdk: *id022
+  - wire: inn
+    in: query
+    python: inn
+    spec:
+      description: ИНН физического лица.
+      in: query
+      name: inn
+      required: false
+      schema:
+        type: string
+    sdk: *id023
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: *id005
+  responses:
+    2XX:
+      source:
+        description: Документированный успешный результат JSON; media type — допущение
+          для совместимости, фактический заголовок не документирован.
+        content:
+          application/json:
+            schema: &id024
+              $ref: '#/components/schemas/fl_statusResponse'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id024
+          graph_sha256: 7ca596692ba9c7d00eaa8f82bbb241d7339902215b65537da5354f98f5f8097d
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1fl_status/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: fns
+  http: GET
+  path: /fsrar
+  sdk_method: fsrar
+  sdk:
+    route:
+    - GET
+    - /fsrar
+    signature: '(self, *, inn: str | None = None, status: str | None = None, kpp:
+      str | None = None, page: int | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      inn: &id025
+        annotation: str | None
+        default: None
+      status: &id028
+        annotation: str | None
+        default: None
+      kpp: &id026
+        annotation: str | None
+        default: None
+      page: &id027
+        annotation: int | None
+        default: None
+    source: src/damia_sdk/services/fns/__init__.py#L206
+  parameters:
+  - wire: inn
+    in: query
+    python: inn
+    spec:
+      description: ИНН.
+      in: query
+      name: inn
+      required: false
+      schema:
+        type: string
+    sdk: *id025
+  - wire: kpp
+    in: query
+    python: kpp
+    spec:
+      description: КПП; необязательно.
+      in: query
+      name: kpp
+      required: false
+      schema:
+        type: string
+    sdk: *id026
+  - wire: page
+    in: query
+    python: page
+    spec:
+      description: Страница; 1000 записей.
+      in: query
+      name: page
+      required: false
+      schema:
+        type: integer
+    sdk: *id027
+  - wire: status
+    in: query
+    python: status
+    spec:
+      description: 'Необязательно: действующая, аннулирована, срок действия истек,
+        прекращена, переоформлена, приостановлена, истекла.'
+      in: query
+      name: status
+      required: false
+      schema:
+        type: string
+    sdk: *id028
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: *id005
+  responses:
+    2XX:
+      source:
+        description: Документированный успешный результат JSON; media type — допущение
+          для совместимости, фактический заголовок не документирован.
+        content:
+          application/json:
+            schema: &id029
+              $ref: '#/components/schemas/fsrarResponse'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id029
+          graph_sha256: 3d728c7ff2beeb2cdd0b0118c9976ae21490002cb8a44bec866195f55c2d2522
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1fsrar/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: fns
+  http: GET
+  path: /innfl
+  sdk_method: innfl
+  sdk:
+    route:
+    - GET
+    - /innfl
+    signature: '(self, *, fam: str | None = None, nam: str | None = None, otch: str
+      | None = None, bdate: str | None = None, doctype: str | None = None, docno:
+      str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      fam: &id033
+        annotation: str | None
+        default: None
+      nam: &id034
+        annotation: str | None
+        default: None
+      otch: &id035
+        annotation: str | None
+        default: None
+      bdate: &id030
+        annotation: str | None
+        default: None
+      doctype: &id032
+        annotation: str | None
+        default: None
+      docno: &id031
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/fns/__init__.py#L160
+  parameters:
+  - wire: bdate
+    in: query
+    python: bdate
+    spec:
+      description: Дата рождения DD.MM.YYYY.
+      in: query
+      name: bdate
+      required: false
+      schema:
+        type: string
+    sdk: *id030
+  - wire: docno
+    in: query
+    python: docno
+    spec:
+      description: Серия и номер документа с пробелами или без.
+      in: query
+      name: docno
+      required: false
+      schema:
+        type: string
+    sdk: *id031
+  - wire: doctype
+    in: query
+    python: doctype
+    spec:
+      description: Код документа; по умолчанию 21.
+      in: query
+      name: doctype
+      required: false
+      schema:
+        default: '21'
+        enum:
+        - '01'
+        - '03'
+        - '10'
+        - '12'
+        - '15'
+        - '19'
+        - '21'
+        - '23'
+        type: string
+    sdk: *id032
+  - wire: fam
+    in: query
+    python: fam
+    spec:
+      description: Фамилия.
+      in: query
+      name: fam
+      required: false
+      schema:
+        type: string
+    sdk: *id033
+  - wire: nam
+    in: query
+    python: nam
+    spec:
+      description: Имя.
+      in: query
+      name: nam
+      required: false
+      schema:
+        type: string
+    sdk: *id034
+  - wire: otch
+    in: query
+    python: otch
+    spec:
+      description: Отчество; при отсутствии укажите нет.
+      in: query
+      name: otch
+      required: false
+      schema:
+        type: string
+    sdk: *id035
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: *id005
+  responses:
+    2XX:
+      source:
+        description: Документированный успешный результат JSON; media type — допущение
+          для совместимости, фактический заголовок не документирован.
+        content:
+          application/json:
+            schema: &id036
+              $ref: '#/components/schemas/innflResponse'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id036
+          graph_sha256: 5670fe9d0483bcd7f6844f4c88e098edf14fd102d42b70ef6dd6efb06533afa1
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1innfl/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: fns
+  http: GET
+  path: /mon
+  sdk_method: mon
+  sdk:
+    route:
+    - GET
+    - /mon
+    signature: '(self, *, cmd: str | None = None, req: str | None = None, page: int
+      | None = None, year: int | None = None, dat: str | None = None, type: str |
+      None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      cmd: &id037
+        annotation: str | None
+        default: None
+      req: &id040
+        annotation: str | None
+        default: None
+      page: &id039
+        annotation: int | None
+        default: None
+      year: &id042
+        annotation: int | None
+        default: None
+      dat: &id038
+        annotation: str | None
+        default: None
+      type: &id041
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/fns/__init__.py#L103
+  parameters:
+  - wire: cmd
+    in: query
+    python: cmd
+    spec:
+      description: add, del, list, chbo или chd.
+      in: query
+      name: cmd
+      required: false
+      schema:
+        enum:
+        - add
+        - del
+        - list
+        - chbo
+        - chd
+        type: string
+    sdk: *id037
+  - wire: dat
+    in: query
+    python: dat
+    spec:
+      description: Для chd дата DD.MM.YYYY или YYYY-MM-DD, позже постановки на мониторинг.
+      in: query
+      name: dat
+      required: false
+      schema:
+        type: string
+    sdk: *id038
+  - wire: page
+    in: query
+    python: page
+    spec:
+      description: Для list; 1000 организаций на страницу.
+      in: query
+      name: page
+      required: false
+      schema:
+        type: integer
+    sdk: *id039
+  - wire: req
+    in: query
+    python: req
+    spec:
+      description: Для add/del ИНН или ОГРН через запятую.
+      in: query
+      name: req
+      required: false
+      schema:
+        type: string
+    sdk: *id040
+  - wire: type
+    in: query
+    python: type
+    spec:
+      description: 'Для chd фильтр типов изменений через запятую: Заявление, СвНаимЮЛ,
+        СвАдресЮЛ, СвРегОрг, СвУчетНО, СвРегПФ, СвРегФСС, СвУстКап, СведДолжнФЛ, СвНедДанДолжнФЛ,
+        СвУчредит, СвНедДанУчр, СвОКВЭДОсн, СвОКВЭДДоп, СвЗапЕГРЮЛ, СвЛицензия, СвФЛ,
+        СвАдрМЖ, СвЗапЕГРИП, СвСтатус.'
+      in: query
+      name: type
+      required: false
+      schema:
+        type: string
+    sdk: *id041
+  - wire: year
+    in: query
+    python: year
+    spec:
+      description: Для chbo год отчетности.
+      in: query
+      name: year
+      required: false
+      schema:
+        type: integer
+    sdk: *id042
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: *id005
+  responses:
+    2XX:
+      source:
+        description: Документированный успешный результат JSON; media type — допущение
+          для совместимости, фактический заголовок не документирован.
+        content:
+          application/json:
+            schema: &id043
+              $ref: '#/components/schemas/monResponse'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id043
+          graph_sha256: d7a60ab329b492079b25c1cad03b40b5f1434fb968728143b85d8246788ee6b7
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1mon/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: fns
+  http: GET
+  path: /mspinfo_file
+  sdk_method: mspinfo_file
+  sdk:
+    route:
+    - GET
+    - /mspinfo_file
+    signature: '(self, *, req: str | None = None, type: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      req: &id044
+        annotation: str | None
+        default: None
+      type: &id045
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/fns/__init__.py#L135
+  parameters:
+  - wire: req
+    in: query
+    python: req
+    spec:
+      description: ИНН или ОГРН.
+      in: query
+      name: req
+      required: false
+      schema:
+        type: string
+    sdk: *id044
+  - wire: type
+    in: query
+    python: type
+    spec:
+      description: report, periods, pp-report; по умолчанию report.
+      in: query
+      name: type
+      required: false
+      schema:
+        default: report
+        enum:
+        - report
+        - periods
+        - pp-report
+        type: string
+    sdk: *id045
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: *id005
+  responses:
+    2XX:
+      source:
+        description: Документ PDF. Media type — допущение для совместимости; фактический
+          заголовок не документирован.
+        content:
+          application/octet-stream:
+            schema: &id046
+              type: string
+              format: binary
+      media:
+        application/octet-stream:
+          schema_present: true
+          schema: *id046
+          graph_sha256: 2db098654a77dbd75ff3dd3bda2aa4fec4c1bb261ed413634b61832152672d3e
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1mspinfo_file/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: fns
+  http: GET
+  path: /multcheck
+  sdk_method: multcheck
+  sdk:
+    route:
+    - GET
+    - /multcheck
+    signature: '(self, *, req: str | None = None, req_list: list[str] | None = None)
+      -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      req: &id047
+        annotation: str | None
+        default: None
+      req_list: &id048
+        annotation: list[str] | None
+        default: None
+    source: src/damia_sdk/services/fns/__init__.py#L60
+  parameters:
+  - wire: req
+    in: query
+    python: req
+    spec:
+      description: ИНН или ОГРН через запятую, либо req[]; не более 100 компаний.
+      in: query
+      name: req
+      required: false
+      schema:
+        type: string
+    sdk: *id047
+  - wire: req[]
+    in: query
+    python: req_list
+    spec:
+      description: Повторяемый параметр, альтернатива req; не более 100 компаний.
+      explode: true
+      in: query
+      name: req[]
+      required: false
+      schema:
+        items:
+          type: string
+        maxItems: 100
+        type: array
+      style: form
+    sdk: *id048
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: *id005
+  responses:
+    2XX:
+      source:
+        description: Документированный успешный результат JSON; media type — допущение
+          для совместимости, фактический заголовок не документирован.
+        content:
+          application/json:
+            schema: &id049
+              $ref: '#/components/schemas/multcheckResponse'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id049
+          graph_sha256: b54ab9a6d775de8c48be2ab7753bfccbdd2d5b79ff3e96d0f7bc7b45990121bd
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1multcheck/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: fns
+  http: GET
+  path: /multinfo
+  sdk_method: multinfo
+  sdk:
+    route:
+    - GET
+    - /multinfo
+    signature: '(self, *, req: str | None = None, req_list: list[str] | None = None)
+      -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      req: &id050
+        annotation: str | None
+        default: None
+      req_list: &id051
+        annotation: list[str] | None
+        default: None
+    source: src/damia_sdk/services/fns/__init__.py#L47
+  parameters:
+  - wire: req
+    in: query
+    python: req
+    spec:
+      description: ИНН или ОГРН через запятую, либо req[]; не более 100 компаний.
+      in: query
+      name: req
+      required: false
+      schema:
+        type: string
+    sdk: *id050
+  - wire: req[]
+    in: query
+    python: req_list
+    spec:
+      description: Повторяемый параметр ИНН или ОГРН, альтернатива req; не более 100
+        компаний.
+      explode: true
+      in: query
+      name: req[]
+      required: false
+      schema:
+        items:
+          type: string
+        maxItems: 100
+        type: array
+      style: form
+    sdk: *id051
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: *id005
+  responses:
+    2XX:
+      source:
+        description: Документированный успешный результат JSON; media type — допущение
+          для совместимости, фактический заголовок не документирован.
+        content:
+          application/json:
+            schema: &id052
+              $ref: '#/components/schemas/multinfoResponse'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id052
+          graph_sha256: 47f4d746adea27855c6ce8bbec39fab3b8302134a85cc5340753840672f81683
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1multinfo/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: fns
+  http: GET
+  path: /mvdinfo
+  sdk_method: mvdinfo
+  sdk:
+    route:
+    - GET
+    - /mvdinfo
+    signature: '(self, *, docno: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      docno: &id053
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/fns/__init__.py#L191
+  parameters:
+  - wire: docno
+    in: query
+    python: docno
+    spec:
+      description: Серия и номер с пробелами или без.
+      in: query
+      name: docno
+      required: false
+      schema:
+        type: string
+    sdk: *id053
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: *id005
+  responses:
+    2XX:
+      source:
+        description: Документированный успешный результат JSON; media type — допущение
+          для совместимости, фактический заголовок не документирован.
+        content:
+          application/json:
+            schema: &id054
+              $ref: '#/components/schemas/mvdinfoResponse'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id054
+          graph_sha256: 47c1e05afc13184d7a41c22a247f14c7608fd9f6866599c52dcd65a5ac2555ee
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1mvdinfo/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: fns
+  http: GET
+  path: /mvdpass
+  sdk_method: mvdpass
+  sdk:
+    route:
+    - GET
+    - /mvdpass
+    signature: '(self, *, docno: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      docno: &id055
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/fns/__init__.py#L186
+  parameters:
+  - wire: docno
+    in: query
+    python: docno
+    spec:
+      description: Серия и номер с пробелами или без.
+      in: query
+      name: docno
+      required: false
+      schema:
+        type: string
+    sdk: *id055
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: *id005
+  responses:
+    2XX:
+      source:
+        description: Документированный успешный результат JSON; media type — допущение
+          для совместимости, фактический заголовок не документирован.
+        content:
+          application/json:
+            schema: &id056
+              $ref: '#/components/schemas/mvdpassResponse'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id056
+          graph_sha256: e5a31aa5ced5ad4053b8d362a99987393f4d0f9f99b95870f2c1e12aa54508a5
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1mvdpass/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: fns
+  http: GET
+  path: /nalogbi
+  sdk_method: nalogbi
+  sdk:
+    route:
+    - GET
+    - /nalogbi
+    signature: '(self, *, inn: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      inn: &id057
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/fns/__init__.py#L78
+  parameters:
+  - wire: inn
+    in: query
+    python: inn
+    spec:
+      description: ИНН ЮЛ, ИП или физлица.
+      in: query
+      name: inn
+      required: false
+      schema:
+        type: string
+    sdk: *id057
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: *id005
+  responses:
+    2XX:
+      source:
+        description: Документированный успешный результат JSON; media type — допущение
+          для совместимости, фактический заголовок не документирован.
+        content:
+          application/json:
+            schema: &id058
+              $ref: '#/components/schemas/nalogbiResponse'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id058
+          graph_sha256: fbef9eda8519c84ce9669744a7ff146363bb94f6fde72ff90c59fd91025288b4
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1nalogbi/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: fns
+  http: GET
+  path: /nalogbi_file
+  sdk_method: nalogbi_file
+  sdk:
+    route:
+    - GET
+    - /nalogbi_file
+    signature: '(self, *, inn: str | None = None, bik: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      inn: &id060
+        annotation: str | None
+        default: None
+      bik: &id059
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/fns/__init__.py#L83
+  parameters:
+  - wire: bik
+    in: query
+    python: bik
+    spec:
+      description: БИК; необязательно.
+      in: query
+      name: bik
+      required: false
+      schema:
+        type: string
+    sdk: *id059
+  - wire: inn
+    in: query
+    python: inn
+    spec:
+      description: ИНН.
+      in: query
+      name: inn
+      required: false
+      schema:
+        type: string
+    sdk: *id060
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: *id005
+  responses:
+    2XX:
+      source:
+        description: Документ ZIP с PDF и SIG. Media type — допущение для совместимости;
+          фактический заголовок не документирован.
+        content:
+          application/octet-stream:
+            schema: &id061
+              type: string
+              format: binary
+      media:
+        application/octet-stream:
+          schema_present: true
+          schema: *id061
+          graph_sha256: 2db098654a77dbd75ff3dd3bda2aa4fec4c1bb261ed413634b61832152672d3e
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1nalogbi_file/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: fns
+  http: GET
+  path: /rom
+  sdk_method: rom
+  sdk:
+    route:
+    - GET
+    - /rom
+    signature: '(self, *, inn: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      inn: &id062
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/fns/__init__.py#L228
+  parameters:
+  - wire: inn
+    in: query
+    python: inn
+    spec:
+      description: ИНН ЮЛ или физлица.
+      in: query
+      name: inn
+      required: false
+      schema:
+        type: string
+    sdk: *id062
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: *id005
+  responses:
+    2XX:
+      source:
+        description: Документированный успешный результат JSON; media type — допущение
+          для совместимости, фактический заголовок не документирован.
+        content:
+          application/json:
+            schema: &id063
+              $ref: '#/components/schemas/romResponse'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id063
+          graph_sha256: d704fed978fffc302d334940743f0985bcfecb2428bbd9a789fa43318cc74d2f
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1rom/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: fns
+  http: GET
+  path: /search
+  sdk_method: search
+  sdk:
+    route:
+    - GET
+    - /search
+    signature: '(self, *, q: str | None = None, page: int | None = None, filter: str
+      | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      q: &id066
+        annotation: str | None
+        default: None
+      page: &id065
+        annotation: int | None
+        default: None
+      filter: &id064
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/fns/__init__.py#L21
+  parameters:
+  - wire: filter
+    in: query
+    python: filter
+    spec:
+      description: 'Фильтры через +: active, onlyul, onlyip, okved, okvedgroup, region,
+        vyruchka, sotrudnikov, datereg, reestrmsp, reestrmsp1/2/3, withphone, withemail.
+        Для зарегистрированных сегодня нужны region и onlyul или onlyip.'
+      in: query
+      name: filter
+      required: false
+      schema:
+        type: string
+    sdk: *id064
+  - wire: page
+    in: query
+    python: page
+    spec:
+      description: Страница, обычно 100 результатов; зарегистрированные сегодня —
+        до 5.
+      in: query
+      name: page
+      required: false
+      schema:
+        type: integer
+    sdk: *id065
+  - wire: q
+    in: query
+    python: q
+    spec:
+      description: Поисковая строка; q=any — поиск по фильтру.
+      in: query
+      name: q
+      required: false
+      schema:
+        type: string
+    sdk: *id066
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: *id005
+  responses:
+    2XX:
+      source:
+        description: Документированный успешный результат JSON; media type — допущение
+          для совместимости, фактический заголовок не документирован.
+        content:
+          application/json:
+            schema: &id067
+              $ref: '#/components/schemas/searchResponse'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id067
+          graph_sha256: 68ba4dbe91ef6f240e33ed90ad709e03bf3e9a67dca7ed41bba42d0561bbeb69
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1search/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: fns
+  http: GET
+  path: /stat
+  sdk_method: stat
+  sdk:
+    route:
+    - GET
+    - /stat
+    signature: (self) -> damia_sdk.transport.response.HttpResponse
+    parameters: {}
+    source: src/damia_sdk/services/fns/__init__.py#L246
+  parameters: []
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: *id005
+  responses:
+    2XX:
+      source:
+        description: Документированный успешный результат JSON; media type — допущение
+          для совместимости, фактический заголовок не документирован.
+        content:
+          application/json:
+            schema: &id068
+              $ref: '#/components/schemas/statResponse'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id068
+          graph_sha256: d1ba1f74df070f6e55baceddda74bd53d5b00a7bdddef1ebe12d4cce07e61a5f
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1stat/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: fns
+  http: GET
+  path: /vyp
+  sdk_method: vyp
+  sdk:
+    route:
+    - GET
+    - /vyp
+    signature: '(self, *, req: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      req: &id069
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/fns/__init__.py#L130
+  parameters:
+  - wire: req
+    in: query
+    python: req
+    spec:
+      description: ИНН или ОГРН.
+      in: query
+      name: req
+      required: false
+      schema:
+        type: string
+    sdk: *id069
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: *id005
+  responses:
+    2XX:
+      source:
+        description: Документ PDF. Media type — допущение для совместимости; фактический
+          заголовок не документирован.
+        content:
+          application/octet-stream:
+            schema: &id070
+              type: string
+              format: binary
+      media:
+        application/octet-stream:
+          schema_present: true
+          schema: *id070
+          graph_sha256: 2db098654a77dbd75ff3dd3bda2aa4fec4c1bb261ed413634b61832152672d3e
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1vyp/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: fns
+  http: GET
+  path: /zsk
+  sdk_method: zsk
+  sdk:
+    route:
+    - GET
+    - /zsk
+    signature: '(self, *, inn: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      inn: &id071
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/fns/__init__.py#L223
+  parameters:
+  - wire: inn
+    in: query
+    python: inn
+    spec:
+      description: ИНН ЮЛ или ИП.
+      in: query
+      name: inn
+      required: false
+      schema:
+        type: string
+    sdk: *id071
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    schemes: *id005
+  responses:
+    2XX:
+      source:
+        description: Документированный успешный результат JSON; media type — допущение
+          для совместимости, фактический заголовок не документирован.
+        content:
+          application/json:
+            schema: &id072
+              $ref: '#/components/schemas/zskResponse'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id072
+          graph_sha256: caa950e468e74413669225e37353df224c2b0fedbcc2781324fe92c46365d85b
+  spec_source: docs/swagger/fns/openapi.yaml#/paths/~1zsk/get
+  research_source: docs/swagger/fns/RESEARCH.md
+- service: banks
+  http: GET
+  path: /api/bankaraits
+  sdk_method: bankaraits
+  sdk:
+    route:
+    - GET
+    - /api/bankaraits
+    signature: '(self, *, bankregn: str | None = None, date: str | None = None) ->
+      damia_sdk.transport.response.HttpResponse'
+    parameters:
+      bankregn: &id073
+        annotation: str | None
+        default: None
+      date: &id074
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/banks/__init__.py#L45
+  parameters:
+  - wire: bankregn
+    in: query
+    python: bankregn
+    spec:
+      description: Bank registration number. Requiredness is not explicitly specified.
+      in: query
+      name: bankregn
+      required: false
+      schema:
+        type: integer
+    sdk: *id073
+  - wire: date
+    in: query
+    python: date
+    spec:
+      description: Date; examples use YYYY-MM-DD, but accepted format is unspecified.
+        Requiredness is not explicitly specified.
+      in: query
+      name: date
+      required: false
+      schema:
+        type: string
+    sdk: *id074
+  unmatched_sdk_parameters: []
+  security:
+    requirements: &id077
+    - ApiKey: []
+    schemes: &id078
+      ApiKey:
+        type: apiKey
+        in: query
+        name: key
+        description: GET examples place the key in the query. POST key placement is
+          not documented and POST is not an executable operation in this specification.
+  responses:
+    2XX:
+      source:
+        description: Success (exact status code not documented).
+        content:
+          application/json:
+            schema: &id075
+              $ref: '#/components/schemas/Ratings'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id075
+          graph_sha256: 11605fe69ab9657fc1801f45c3e04be09f444bdbd3d42c37b538ff570e117592
+  spec_source: docs/swagger/banks/openapi.yaml#/paths/~1api~1bankaraits/get
+  research_source: docs/swagger/banks/RESEARCH.md
+- service: banks
+  http: GET
+  path: /api/bankbic
+  sdk_method: bankbic
+  sdk:
+    route:
+    - GET
+    - /api/bankbic
+    signature: '(self, *, bankbic: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      bankbic: &id076
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/banks/__init__.py#L60
+  parameters:
+  - wire: bankbic
+    in: query
+    python: bankbic
+    spec:
+      description: BIC, declared integer; example has leading zeroes. Preserve the
+        identifier as text when constructing requests. Requiredness is not explicitly
+        specified.
+      in: query
+      name: bankbic
+      required: false
+      schema:
+        type: string
+    sdk: *id076
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id077
+    schemes: *id078
+  responses:
+    2XX:
+      source:
+        description: Success (exact status code not documented).
+        content:
+          application/json:
+            schema: &id079
+              $ref: '#/components/schemas/BicInfo'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id079
+          graph_sha256: 68cf05801c911d7611b5793cd241b6df4e6496d9a61dbb55c1c6e50fd7d3ce69
+  spec_source: docs/swagger/banks/openapi.yaml#/paths/~1api~1bankbic/get
+  research_source: docs/swagger/banks/RESEARCH.md
+- service: banks
+  http: GET
+  path: /api/bankdata
+  sdk_method: bankdata
+  sdk:
+    route:
+    - GET
+    - /api/bankdata
+    signature: '(self, *, bankregn: str | None = None, pokid: str | None = None, pokname:
+      str | None = None, date: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      bankregn: &id080
+        annotation: str | None
+        default: None
+      pokid: &id082
+        annotation: str | None
+        default: None
+      pokname: &id083
+        annotation: str | None
+        default: None
+      date: &id081
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/banks/__init__.py#L11
+  parameters:
+  - wire: bankregn
+    in: query
+    python: bankregn
+    spec:
+      description: Bank registration number. Requiredness is not explicitly specified.
+      in: query
+      name: bankregn
+      required: false
+      schema:
+        type: integer
+    sdk: *id080
+  - wire: date
+    in: query
+    python: date
+    spec:
+      description: Date; examples use YYYY-MM-DD, but accepted format is unspecified.
+        Requiredness is not explicitly specified.
+      in: query
+      name: date
+      required: false
+      schema:
+        type: string
+    sdk: *id081
+  - wire: pokid
+    in: query
+    python: pokid
+    spec:
+      description: Indicator ID; documentation says pokid or pokname. Behavior when
+        both or neither are supplied is unknown. Requiredness is not explicitly specified.
+      in: query
+      name: pokid
+      required: false
+      schema:
+        type: integer
+    sdk: *id082
+  - wire: pokname
+    in: query
+    python: pokname
+    spec:
+      description: Indicator code; documentation says pokid or pokname. Behavior when
+        both or neither are supplied is unknown. Requiredness is not explicitly specified.
+      in: query
+      name: pokname
+      required: false
+      schema:
+        type: string
+    sdk: *id083
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id077
+    schemes: *id078
+  responses:
+    2XX:
+      source:
+        description: Success (exact status code not documented).
+        content:
+          application/json:
+            schema: &id084
+              $ref: '#/components/schemas/Amount'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id084
+          graph_sha256: 0b6da3c1257b7569b9e17a4b201696a66b83626e2505c26c976f4a90981a558a
+  spec_source: docs/swagger/banks/openapi.yaml#/paths/~1api~1bankdata/get
+  research_source: docs/swagger/banks/RESEARCH.md
+- service: banks
+  http: GET
+  path: /api/bankinfo
+  sdk_method: bankinfo
+  sdk:
+    route:
+    - GET
+    - /api/bankinfo
+    signature: '(self, *, bankregn: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      bankregn: &id085
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/banks/__init__.py#L33
+  parameters:
+  - wire: bankregn
+    in: query
+    python: bankregn
+    spec:
+      description: Bank registration number. Requiredness is not explicitly specified.
+      in: query
+      name: bankregn
+      required: false
+      schema:
+        type: integer
+    sdk: *id085
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id077
+    schemes: *id078
+  responses:
+    2XX:
+      source:
+        description: Success (exact status code not documented).
+        content:
+          application/json:
+            schema: &id086
+              $ref: '#/components/schemas/BankInfo'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id086
+          graph_sha256: 042c385028382ff23ccb4d2d8e8f04a225e3cfd299e21fb19b900f78fa7018d8
+  spec_source: docs/swagger/banks/openapi.yaml#/paths/~1api~1bankinfo/get
+  research_source: docs/swagger/banks/RESEARCH.md
+- service: banks
+  http: GET
+  path: /api/bankotch
+  sdk_method: bankotch
+  sdk:
+    route:
+    - GET
+    - /api/bankotch
+    signature: '(self, *, bankregn: str | None = None, poktype: str | None = None,
+      date: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      bankregn: &id087
+        annotation: str | None
+        default: None
+      poktype: &id089
+        annotation: str | None
+        default: None
+      date: &id088
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/banks/__init__.py#L72
+  parameters:
+  - wire: bankregn
+    in: query
+    python: bankregn
+    spec:
+      description: Bank registration number. Requiredness is not explicitly specified.
+      in: query
+      name: bankregn
+      required: false
+      schema:
+        type: integer
+    sdk: *id087
+  - wire: date
+    in: query
+    python: date
+    spec:
+      description: Date; examples use YYYY-MM-DD, but accepted format is unspecified.
+        Requiredness is not explicitly specified.
+      in: query
+      name: date
+      required: false
+      schema:
+        type: string
+    sdk: *id088
+  - wire: poktype
+    in: query
+    python: poktype
+    spec:
+      description: Indicator group code. Requiredness is not explicitly specified.
+      in: query
+      name: poktype
+      required: false
+      schema:
+        type: string
+    sdk: *id089
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id077
+    schemes: *id078
+  responses:
+    2XX:
+      source:
+        description: Success (exact status code not documented).
+        content:
+          application/json:
+            schema: &id090
+              $ref: '#/components/schemas/BankReport'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id090
+          graph_sha256: 44d7f139bbe1727512a2a5e2b0c914c531cae7f23f46a3203dfa7e64f09100e4
+  spec_source: docs/swagger/banks/openapi.yaml#/paths/~1api~1bankotch/get
+  research_source: docs/swagger/banks/RESEARCH.md
+- service: banks
+  http: GET
+  path: /api/banksrait
+  sdk_method: banksrait
+  sdk:
+    route:
+    - GET
+    - /api/banksrait
+    signature: '(self, *, pokid: str | None = None, pokname: str | None = None, date:
+      str | None = None, cond: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      pokid: &id093
+        annotation: str | None
+        default: None
+      pokname: &id094
+        annotation: str | None
+        default: None
+      date: &id092
+        annotation: str | None
+        default: None
+      cond: &id091
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/banks/__init__.py#L92
+  parameters:
+  - wire: cond
+    in: query
+    python: cond
+    spec:
+      description: 'Optional condition. List forms: in list (n1,n2,...) or not in
+        list (n1,n2,...). Optional according to the documentation.'
+      in: query
+      name: cond
+      required: false
+      schema:
+        type: string
+    sdk: *id091
+  - wire: date
+    in: query
+    python: date
+    spec:
+      description: Date; examples use YYYY-MM-DD, but accepted format is unspecified.
+        Requiredness is not explicitly specified.
+      in: query
+      name: date
+      required: false
+      schema:
+        type: string
+    sdk: *id092
+  - wire: pokid
+    in: query
+    python: pokid
+    spec:
+      description: Indicator ID; documentation says pokid or pokname. Behavior when
+        both or neither are supplied is unknown. Requiredness is not explicitly specified.
+      in: query
+      name: pokid
+      required: false
+      schema:
+        type: integer
+    sdk: *id093
+  - wire: pokname
+    in: query
+    python: pokname
+    spec:
+      description: Indicator code; documentation says pokid or pokname. Behavior when
+        both or neither are supplied is unknown. Requiredness is not explicitly specified.
+      in: query
+      name: pokname
+      required: false
+      schema:
+        type: string
+    sdk: *id094
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id077
+    schemes: *id078
+  responses:
+    2XX:
+      source:
+        description: Success (exact status code not documented).
+        content:
+          application/json:
+            schema: &id095
+              $ref: '#/components/schemas/BanksRating'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id095
+          graph_sha256: b927ee6a8f734689ef61d162604646e2da57eb1ccf65273674ae27b304e914f7
+  spec_source: docs/swagger/banks/openapi.yaml#/paths/~1api~1banksrait/get
+  research_source: docs/swagger/banks/RESEARCH.md
+- service: banks
+  http: GET
+  path: /api/listdata
+  sdk_method: listdata
+  sdk:
+    route:
+    - GET
+    - /api/listdata
+    signature: '(self, *, groupid: str | None = None, pokid: str | None = None, pokname:
+      str | None = None, date: str | None = None, type: str | None = None, cond: str
+      | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      groupid: &id098
+        annotation: str | None
+        default: None
+      pokid: &id099
+        annotation: str | None
+        default: None
+      pokname: &id100
+        annotation: str | None
+        default: None
+      date: &id097
+        annotation: str | None
+        default: None
+      type: &id101
+        annotation: str | None
+        default: None
+      cond: &id096
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/banks/__init__.py#L114
+  parameters:
+  - wire: cond
+    in: query
+    python: cond
+    spec:
+      description: 'Optional condition. List forms: in list (n1,n2,...) or not in
+        list (n1,n2,...). Optional according to the documentation. Positive and negative
+        examples both say sum>0; the negative expression is unknown.'
+      in: query
+      name: cond
+      required: false
+      schema:
+        type: string
+    sdk: *id096
+  - wire: date
+    in: query
+    python: date
+    spec:
+      description: Date; examples use YYYY-MM-DD, but accepted format is unspecified.
+        Requiredness is not explicitly specified.
+      in: query
+      name: date
+      required: false
+      schema:
+        type: string
+    sdk: *id097
+  - wire: groupid
+    in: query
+    python: groupid
+    spec:
+      description: User list ID. Requiredness is not explicitly specified.
+      in: query
+      name: groupid
+      required: false
+      schema:
+        type: integer
+    sdk: *id098
+  - wire: pokid
+    in: query
+    python: pokid
+    spec:
+      description: Indicator ID; documentation says pokid or pokname. Behavior when
+        both or neither are supplied is unknown. Requiredness is not explicitly specified.
+      in: query
+      name: pokid
+      required: false
+      schema:
+        type: integer
+    sdk: *id099
+  - wire: pokname
+    in: query
+    python: pokname
+    spec:
+      description: Indicator code; documentation says pokid or pokname. Behavior when
+        both or neither are supplied is unknown. Requiredness is not explicitly specified.
+      in: query
+      name: pokname
+      required: false
+      schema:
+        type: string
+    sdk: *id100
+  - wire: type
+    in: query
+    python: type
+    spec:
+      description: 'Optional aggregation: sum (documented default), avg, count. Optional
+        according to the documentation.'
+      in: query
+      name: type
+      required: false
+      schema:
+        default: sum
+        enum:
+        - sum
+        - avg
+        - count
+        type: string
+    sdk: *id101
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id077
+    schemes: *id078
+  responses:
+    2XX:
+      source:
+        description: Success (exact status code not documented).
+        content:
+          application/json:
+            schema: &id102
+              $ref: '#/components/schemas/Amount'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id102
+          graph_sha256: 0b6da3c1257b7569b9e17a4b201696a66b83626e2505c26c976f4a90981a558a
+  spec_source: docs/swagger/banks/openapi.yaml#/paths/~1api~1listdata/get
+  research_source: docs/swagger/banks/RESEARCH.md
+- service: banks
+  http: GET
+  path: /api/pokinfo
+  sdk_method: pokinfo
+  sdk:
+    route:
+    - GET
+    - /api/pokinfo
+    signature: '(self, *, pokid: str | None = None, pokname: str | None = None, date:
+      str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      pokid: &id104
+        annotation: str | None
+        default: None
+      pokname: &id105
+        annotation: str | None
+        default: None
+      date: &id103
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/banks/__init__.py#L140
+  parameters:
+  - wire: date
+    in: query
+    python: date
+    spec:
+      description: Date; examples use YYYY-MM-DD, but accepted format is unspecified.
+        Optional according to the documentation.
+      in: query
+      name: date
+      required: false
+      schema:
+        type: string
+    sdk: *id103
+  - wire: pokid
+    in: query
+    python: pokid
+    spec:
+      description: Indicator ID; documentation says pokid or pokname. Behavior when
+        both or neither are supplied is unknown. Requiredness is not explicitly specified.
+      in: query
+      name: pokid
+      required: false
+      schema:
+        type: integer
+    sdk: *id104
+  - wire: pokname
+    in: query
+    python: pokname
+    spec:
+      description: Indicator code; documentation says pokid or pokname. Behavior when
+        both or neither are supplied is unknown. Requiredness is not explicitly specified.
+      in: query
+      name: pokname
+      required: false
+      schema:
+        type: string
+    sdk: *id105
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id077
+    schemes: *id078
+  responses:
+    2XX:
+      source:
+        description: Success (exact status code not documented).
+        content:
+          application/json:
+            schema: &id106
+              $ref: '#/components/schemas/IndicatorInfo'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id106
+          graph_sha256: bf98828f8a2d8a8dbe481dd2f1cd3df0b5ea955430dc07bf11a89cc9feae2f83
+  spec_source: docs/swagger/banks/openapi.yaml#/paths/~1api~1pokinfo/get
+  research_source: docs/swagger/banks/RESEARCH.md
+- service: banks
+  http: GET
+  path: /api/stat
+  sdk_method: stat
+  sdk:
+    route:
+    - GET
+    - /api/stat
+    signature: (self) -> damia_sdk.transport.response.HttpResponse
+    parameters: {}
+    source: src/damia_sdk/services/banks/__init__.py#L160
+  parameters: []
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id077
+    schemes: *id078
+  responses:
+    2XX:
+      source:
+        description: Success (exact status code not documented).
+        content:
+          application/json:
+            schema: &id107
+              $ref: '#/components/schemas/Statistics'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id107
+          graph_sha256: fae1c70e2e9c56382a53b4aa1494acb57d8f8b160ce9864a417def22a4fd732a
+  spec_source: docs/swagger/banks/openapi.yaml#/paths/~1api~1stat/get
+  research_source: docs/swagger/banks/RESEARCH.md
+- service: procurement
+  http: GET
+  path: /contract
+  sdk_method: contract
+  sdk:
+    route:
+    - GET
+    - /contract
+    signature: '(self, *, regn: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      regn: &id108
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/procurement/__init__.py#L31
+  parameters:
+  - wire: regn
+    in: query
+    python: regn
+    spec:
+      description: Номер реестровой записи.
+      in: query
+      name: regn
+      schema:
+        type: string
+    sdk: *id108
+  unmatched_sdk_parameters: []
+  security:
+    requirements: &id117
+    - ApiKey: []
+    schemes: &id118
+      ApiKey:
+        type: apiKey
+        in: query
+        name: key
+        description: Ключ доступа; не публиковать и не включать в журналы.
+  responses:
+    2XX:
+      source:
+        description: Документированный содержательный ответ; 2XX — обобщённая группа
+          успеха, точный код и HTTP Content-Type не подтверждены. JSON описан источником;
+          application/json — обозначение формата, а не доказанный заголовок. Вложенность
+          предположительна.
+        content:
+          application/json:
+            schema: &id109 {}
+      media:
+        application/json:
+          schema_present: true
+          schema: *id109
+          graph_sha256: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+  spec_source: docs/swagger/procurement/openapi.yaml#/paths/~1contract/get
+  research_source: docs/swagger/procurement/RESEARCH.md
+- service: procurement
+  http: GET
+  path: /contracts
+  sdk_method: contracts
+  sdk:
+    route:
+    - GET
+    - /contracts
+    signature: '(self, *, inn: str | None = None, fz: str | None = None, role: str
+      | None = None, from_date: str | None = None, to_date: str | None = None, format:
+      int | None = None, page: int | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      inn: &id113
+        annotation: str | None
+        default: None
+      fz: &id112
+        annotation: str | None
+        default: None
+      role: &id115
+        annotation: str | None
+        default: None
+      from_date: &id111
+        annotation: str | None
+        default: None
+      to_date: &id116
+        annotation: str | None
+        default: None
+      format: &id110
+        annotation: int | None
+        default: None
+      page: &id114
+        annotation: int | None
+        default: None
+    source: src/damia_sdk/services/procurement/__init__.py#L58
+  parameters:
+  - wire: format
+    in: query
+    python: format
+    spec:
+      description: 1 — группировка, 2 — плоские записи.
+      in: query
+      name: format
+      schema:
+        default: 1
+        type: integer
+    sdk: *id110
+  - wire: from_date
+    in: query
+    python: from_date
+    spec:
+      description: Начало периода публикации, yyyy-mm-dd; включительность не указана.
+      in: query
+      name: from_date
+      schema:
+        type: string
+    sdk: *id111
+  - wire: fz
+    in: query
+    python: fz
+    spec:
+      description: 'Федеральный закон: 44, 223 или 615.'
+      in: query
+      name: fz
+      schema:
+        type: string
+    sdk: *id112
+  - wire: inn
+    in: query
+    python: inn
+    spec:
+      description: ИНН.
+      in: query
+      name: inn
+      schema:
+        type: string
+    sdk: *id113
+  - wire: page
+    in: query
+    python: page
+    spec:
+      description: Только format=2; до 100 записей на странице.
+      in: query
+      name: page
+      schema:
+        default: 1
+        type: integer
+    sdk: *id114
+  - wire: role
+    in: query
+    python: role
+    spec:
+      description: 0 — участник/поставщик, 1 — заказчик.
+      in: query
+      name: role
+      schema:
+        default: '0'
+        type: string
+    sdk: *id115
+  - wire: to_date
+    in: query
+    python: to_date
+    spec:
+      description: Конец периода публикации, yyyy-mm-dd; включительность не указана.
+      in: query
+      name: to_date
+      schema:
+        type: string
+    sdk: *id116
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id117
+    schemes: *id118
+  responses:
+    2XX:
+      source:
+        description: Документированный содержательный ответ; 2XX — обобщённая группа
+          успеха, точный код и HTTP Content-Type не подтверждены. JSON описан источником;
+          application/json — обозначение формата, а не доказанный заголовок. Вложенность
+          предположительна.
+        content:
+          application/json:
+            schema: &id119 {}
+      media:
+        application/json:
+          schema_present: true
+          schema: *id119
+          graph_sha256: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+  spec_source: docs/swagger/procurement/openapi.yaml#/paths/~1contracts/get
+  research_source: docs/swagger/procurement/RESEARCH.md
+- service: procurement
+  http: GET
+  path: /customer
+  sdk_method: customer
+  sdk:
+    route:
+    - GET
+    - /customer
+    signature: '(self, *, req: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      req: &id120
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/procurement/__init__.py#L118
+  parameters:
+  - wire: req
+    in: query
+    python: req
+    spec:
+      description: ИНН или ОГРН; для ЕРУЗ также ИП или физическое лицо.
+      in: query
+      name: req
+      schema:
+        type: string
+    sdk: *id120
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id117
+    schemes: *id118
+  responses:
+    2XX:
+      source:
+        description: Документированный содержательный ответ; 2XX — обобщённая группа
+          успеха, точный код и HTTP Content-Type не подтверждены. JSON описан источником;
+          application/json — обозначение формата, а не доказанный заголовок. Вложенность
+          предположительна.
+        content:
+          application/json:
+            schema: &id121 {}
+      media:
+        application/json:
+          schema_present: true
+          schema: *id121
+          graph_sha256: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+  spec_source: docs/swagger/procurement/openapi.yaml#/paths/~1customer/get
+  research_source: docs/swagger/procurement/RESEARCH.md
+- service: procurement
+  http: GET
+  path: /eruz
+  sdk_method: eruz
+  sdk:
+    route:
+    - GET
+    - /eruz
+    signature: '(self, *, req: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      req: &id122
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/procurement/__init__.py#L122
+  parameters:
+  - wire: req
+    in: query
+    python: req
+    spec:
+      description: ИНН или ОГРН; для ЕРУЗ также ИП или физическое лицо.
+      in: query
+      name: req
+      schema:
+        type: string
+    sdk: *id122
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id117
+    schemes: *id118
+  responses:
+    2XX:
+      source:
+        description: Документированный содержательный ответ; 2XX — обобщённая группа
+          успеха, точный код и HTTP Content-Type не подтверждены. JSON описан источником;
+          application/json — обозначение формата, а не доказанный заголовок. Вложенность
+          предположительна.
+        content:
+          application/json:
+            schema: &id123 {}
+      media:
+        application/json:
+          schema_present: true
+          schema: *id123
+          graph_sha256: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+  spec_source: docs/swagger/procurement/openapi.yaml#/paths/~1eruz/get
+  research_source: docs/swagger/procurement/RESEARCH.md
+- service: procurement
+  http: GET
+  path: /ktru
+  sdk_method: ktru
+  sdk:
+    route:
+    - GET
+    - /ktru
+    signature: '(self, *, q: str | None = None, ktru: str | None = None, okpd2: str
+      | None = None, nkmi: str | None = None, page: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      q: &id128
+        annotation: str | None
+        default: None
+      ktru: &id124
+        annotation: str | None
+        default: None
+      okpd2: &id126
+        annotation: str | None
+        default: None
+      nkmi: &id125
+        annotation: str | None
+        default: None
+      page: &id127
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/procurement/__init__.py#L148
+  parameters:
+  - wire: ktru
+    in: query
+    python: ktru
+    spec:
+      description: Код КТРУ.
+      in: query
+      name: ktru
+      schema:
+        type: string
+    sdk: *id124
+  - wire: nkmi
+    in: query
+    python: nkmi
+    spec:
+      description: Код НКМИ.
+      in: query
+      name: nkmi
+      schema:
+        type: string
+    sdk: *id125
+  - wire: okpd2
+    in: query
+    python: okpd2
+    spec:
+      description: Код ОКПД2.
+      in: query
+      name: okpd2
+      schema:
+        type: string
+    sdk: *id126
+  - wire: page
+    in: query
+    python: page
+    spec:
+      description: Строка по таблице; до 100 результатов на странице.
+      in: query
+      name: page
+      schema:
+        default: '1'
+        type: string
+    sdk: *id127
+  - wire: q
+    in: query
+    python: q
+    spec:
+      description: Слова через запятую.
+      in: query
+      name: q
+      schema:
+        type: string
+    sdk: *id128
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id117
+    schemes: *id118
+  responses:
+    2XX:
+      source:
+        description: Документированный содержательный ответ; 2XX — обобщённая группа
+          успеха, точный код и HTTP Content-Type не подтверждены. JSON описан источником;
+          application/json — обозначение формата, а не доказанный заголовок. Вложенность
+          предположительна.
+        content:
+          application/json:
+            schema: &id129 {}
+      media:
+        application/json:
+          schema_present: true
+          schema: *id129
+          graph_sha256: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+  spec_source: docs/swagger/procurement/openapi.yaml#/paths/~1ktru/get
+  research_source: docs/swagger/procurement/RESEARCH.md
+- service: procurement
+  http: GET
+  path: /rnp
+  sdk_method: rnp
+  sdk:
+    route:
+    - GET
+    - /rnp
+    signature: '(self, *, inn: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      inn: &id130
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/procurement/__init__.py#L140
+  parameters:
+  - wire: inn
+    in: query
+    python: inn
+    spec:
+      description: ИНН.
+      in: query
+      name: inn
+      schema:
+        type: string
+    sdk: *id130
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id117
+    schemes: *id118
+  responses:
+    2XX:
+      source:
+        description: Документированный содержательный ответ; 2XX — обобщённая группа
+          успеха, точный код и HTTP Content-Type не подтверждены. JSON описан источником;
+          application/json — обозначение формата, а не доказанный заголовок. Вложенность
+          предположительна.
+        content:
+          application/json:
+            schema: &id131 {}
+      media:
+        application/json:
+          schema_present: true
+          schema: *id131
+          graph_sha256: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+  spec_source: docs/swagger/procurement/openapi.yaml#/paths/~1rnp/get
+  research_source: docs/swagger/procurement/RESEARCH.md
+- service: procurement
+  http: GET
+  path: /sro
+  sdk_method: sro
+  sdk:
+    route:
+    - GET
+    - /sro
+    signature: '(self, *, req: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      req: &id132
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/procurement/__init__.py#L144
+  parameters:
+  - wire: req
+    in: query
+    python: req
+    spec:
+      description: ИНН/ОГРН юридического лица или ИННФЛ/ОГРНИП индивидуального предпринимателя.
+      in: query
+      name: req
+      schema:
+        type: string
+    sdk: *id132
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id117
+    schemes: *id118
+  responses:
+    2XX:
+      source:
+        description: Документированный содержательный ответ; 2XX — обобщённая группа
+          успеха, точный код и HTTP Content-Type не подтверждены. JSON описан источником;
+          application/json — обозначение формата, а не доказанный заголовок. Вложенность
+          предположительна.
+        content:
+          application/json:
+            schema: &id133 {}
+      media:
+        application/json:
+          schema_present: true
+          schema: *id133
+          graph_sha256: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+  spec_source: docs/swagger/procurement/openapi.yaml#/paths/~1sro/get
+  research_source: docs/swagger/procurement/RESEARCH.md
+- service: procurement
+  http: GET
+  path: /zakupka
+  sdk_method: zakupka
+  sdk:
+    route:
+    - GET
+    - /zakupka
+    signature: '(self, *, regn: str | None = None, actual: int | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      regn: &id135
+        annotation: str | None
+        default: None
+      actual: &id134
+        annotation: int | None
+        default: None
+    source: src/damia_sdk/services/procurement/__init__.py#L25
+  parameters:
+  - wire: actual
+    in: query
+    python: actual
+    spec:
+      description: 0 — данные предыдущего дня; 1 — актуальные данные.
+      in: query
+      name: actual
+      schema:
+        default: 0
+        type: integer
+    sdk: *id134
+  - wire: regn
+    in: query
+    python: regn
+    spec:
+      description: Номер реестровой записи.
+      in: query
+      name: regn
+      schema:
+        type: string
+    sdk: *id135
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id117
+    schemes: *id118
+  responses:
+    2XX:
+      source:
+        description: Документированный содержательный ответ; 2XX — обобщённая группа
+          успеха, точный код и HTTP Content-Type не подтверждены. JSON описан источником;
+          application/json — обозначение формата, а не доказанный заголовок. Вложенность
+          предположительна.
+        content:
+          application/json:
+            schema: &id136 {}
+      media:
+        application/json:
+          schema_present: true
+          schema: *id136
+          graph_sha256: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+  spec_source: docs/swagger/procurement/openapi.yaml#/paths/~1zakupka/get
+  research_source: docs/swagger/procurement/RESEARCH.md
+- service: procurement
+  http: GET
+  path: /zakupki
+  sdk_method: zakupki
+  sdk:
+    route:
+    - GET
+    - /zakupki
+    signature: '(self, *, inn: str | None = None, fz: str | None = None, role: str
+      | None = None, from_date: str | None = None, to_date: str | None = None, format:
+      int | None = None, page: int | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      inn: &id140
+        annotation: str | None
+        default: None
+      fz: &id139
+        annotation: str | None
+        default: None
+      role: &id142
+        annotation: str | None
+        default: None
+      from_date: &id138
+        annotation: str | None
+        default: None
+      to_date: &id143
+        annotation: str | None
+        default: None
+      format: &id137
+        annotation: int | None
+        default: None
+      page: &id141
+        annotation: int | None
+        default: None
+    source: src/damia_sdk/services/procurement/__init__.py#L35
+  parameters:
+  - wire: format
+    in: query
+    python: format
+    spec:
+      description: 1 — группировка, 2 — плоские записи.
+      in: query
+      name: format
+      schema:
+        default: 1
+        type: integer
+    sdk: *id137
+  - wire: from_date
+    in: query
+    python: from_date
+    spec:
+      description: Начало периода публикации, yyyy-mm-dd; включительность не указана.
+      in: query
+      name: from_date
+      schema:
+        type: string
+    sdk: *id138
+  - wire: fz
+    in: query
+    python: fz
+    spec:
+      description: 'Федеральный закон: 44, 223 или 615.'
+      in: query
+      name: fz
+      schema:
+        type: string
+    sdk: *id139
+  - wire: inn
+    in: query
+    python: inn
+    spec:
+      description: ИНН.
+      in: query
+      name: inn
+      schema:
+        type: string
+    sdk: *id140
+  - wire: page
+    in: query
+    python: page
+    spec:
+      description: Только format=2; до 100 записей на странице.
+      in: query
+      name: page
+      schema:
+        default: 1
+        type: integer
+    sdk: *id141
+  - wire: role
+    in: query
+    python: role
+    spec:
+      description: 0 — участник/поставщик, 1 — заказчик.
+      in: query
+      name: role
+      schema:
+        default: '0'
+        type: string
+    sdk: *id142
+  - wire: to_date
+    in: query
+    python: to_date
+    spec:
+      description: Конец периода публикации, yyyy-mm-dd; включительность не указана.
+      in: query
+      name: to_date
+      schema:
+        type: string
+    sdk: *id143
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id117
+    schemes: *id118
+  responses:
+    2XX:
+      source:
+        description: Документированный содержательный ответ; 2XX — обобщённая группа
+          успеха, точный код и HTTP Content-Type не подтверждены. JSON описан источником;
+          application/json — обозначение формата, а не доказанный заголовок. Вложенность
+          предположительна.
+        content:
+          application/json:
+            schema: &id144 {}
+      media:
+        application/json:
+          schema_present: true
+          schema: *id144
+          graph_sha256: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+  spec_source: docs/swagger/procurement/openapi.yaml#/paths/~1zakupki/get
+  research_source: docs/swagger/procurement/RESEARCH.md
+- service: procurement
+  http: GET
+  path: /zfas
+  sdk_method: zfas
+  sdk:
+    route:
+    - GET
+    - /zfas
+    signature: '(self, *, inn: str | None = None, page: int | None = None, req: str
+      | None = None, format: object = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      inn: &id146
+        annotation: str | None
+        default: None
+      page: &id147
+        annotation: int | None
+        default: None
+      req: &id148
+        annotation: str | None
+        default: None
+      format: &id145
+        annotation: <class 'object'>
+        default: None
+    source: src/damia_sdk/services/procurement/__init__.py#L126
+  parameters:
+  - wire: format
+    in: query
+    python: format
+    spec:
+      description: Встречается в примере как 2 и в описании форматов, отсутствует
+        в таблице запроса; тип и поддержка не подтверждены.
+      in: query
+      name: format
+      schema: {}
+    sdk: *id145
+  - wire: inn
+    in: query
+    python: inn
+    spec:
+      description: ИНН.
+      in: query
+      name: inn
+      schema:
+        type: string
+    sdk: *id146
+  - wire: page
+    in: query
+    python: page
+    spec:
+      description: Для format=2; по умолчанию 1.
+      in: query
+      name: page
+      schema:
+        default: 1
+        type: integer
+    sdk: *id147
+  - wire: req
+    in: query
+    python: req
+    spec:
+      description: Встречается только в примере вместо inn; поддержка не подтверждена.
+      in: query
+      name: req
+      schema:
+        type: string
+    sdk: *id148
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id117
+    schemes: *id118
+  responses:
+    2XX:
+      source:
+        description: Документированный содержательный ответ; 2XX — обобщённая группа
+          успеха, точный код и HTTP Content-Type не подтверждены. JSON описан источником;
+          application/json — обозначение формата, а не доказанный заголовок. Вложенность
+          предположительна.
+        content:
+          application/json:
+            schema: &id149 {}
+      media:
+        application/json:
+          schema_present: true
+          schema: *id149
+          graph_sha256: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+  spec_source: docs/swagger/procurement/openapi.yaml#/paths/~1zfas/get
+  research_source: docs/swagger/procurement/RESEARCH.md
+- service: procurement
+  http: GET
+  path: /zmon
+  sdk_method: zmon
+  sdk:
+    route:
+    - GET
+    - /zmon
+    signature: '(self, *, a: str | None = None, regn: str | None = None, email: str
+      | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      a: &id150
+        annotation: str | None
+        default: None
+      regn: &id152
+        annotation: str | None
+        default: None
+      email: &id151
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/procurement/__init__.py#L162
+  parameters:
+  - wire: a
+    in: query
+    python: a
+    spec:
+      description: subscrz, subscrc — подписка; unsubscrz, unsubscrc — отписка; list
+        — список.
+      in: query
+      name: a
+      schema:
+        type: string
+    sdk: *id150
+  - wire: email
+    in: query
+    python: email
+    spec:
+      description: Необязательно; по умолчанию зарегистрированный адрес.
+      in: query
+      name: email
+      schema:
+        type: string
+    sdk: *id151
+  - wire: regn
+    in: query
+    python: regn
+    spec:
+      description: Номер реестровой записи.
+      in: query
+      name: regn
+      schema:
+        type: string
+    sdk: *id152
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id117
+    schemes: *id118
+  responses:
+    2XX:
+      source:
+        description: Документированный содержательный ответ; 2XX — обобщённая группа
+          успеха, точный код и HTTP Content-Type не подтверждены. Текст успеха подписки/отписки;
+          ответ списка и смены email неизвестен. */* не подтверждает медиатип.
+        content:
+          text/plain:
+            schema: &id154
+              type: string
+              description: Текст успеха подписки или отписки; источник не подтверждает
+                HTTP Content-Type.
+          '*/*':
+            schema: &id153
+              description: Ответы списка и смены email не определены; для смены email
+                показан текст успеха.
+      media:
+        '*/*':
+          schema_present: true
+          schema: *id153
+          graph_sha256: 50c9bda1f8d738332ec5b4716dcca04ac08e8d51ee2c6213cd3fb397144d492d
+        text/plain:
+          schema_present: true
+          schema: *id154
+          graph_sha256: d4c797a6bef5b08accb63b31b4250b59c72a863ce44119395074ef2d343faeeb
+  spec_source: docs/swagger/procurement/openapi.yaml#/paths/~1zmon/get
+  research_source: docs/swagger/procurement/RESEARCH.md
+- service: procurement
+  http: GET
+  path: /zsearch
+  sdk_method: zsearch
+  sdk:
+    route:
+    - GET
+    - /zsearch
+    signature: '(self, *, q: str | None = None, from_date: str | None = None, to_date:
+      str | None = None, region: str | None = None, okpd: str | None = None, status:
+      str | None = None, cust_inn: str | None = None, placing: str | None = None,
+      etp: str | None = None, min_price: int | None = None, max_price: int | None
+      = None, smp: int | None = None, fz: int | None = None, page: int | None = None)
+      -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      q: &id164
+        annotation: str | None
+        default: None
+      from_date: &id157
+        annotation: str | None
+        default: None
+      to_date: &id168
+        annotation: str | None
+        default: None
+      region: &id165
+        annotation: str | None
+        default: None
+      okpd: &id161
+        annotation: str | None
+        default: None
+      status: &id167
+        annotation: str | None
+        default: None
+      cust_inn: &id155
+        annotation: str | None
+        default: None
+      placing: &id163
+        annotation: str | None
+        default: None
+      etp: &id156
+        annotation: str | None
+        default: None
+      min_price: &id160
+        annotation: int | None
+        default: None
+      max_price: &id159
+        annotation: int | None
+        default: None
+      smp: &id166
+        annotation: int | None
+        default: None
+      fz: &id158
+        annotation: int | None
+        default: None
+      page: &id162
+        annotation: int | None
+        default: None
+    source: src/damia_sdk/services/procurement/__init__.py#L81
+  parameters:
+  - wire: cust_inn
+    in: query
+    python: cust_inn
+    spec:
+      description: ИНН заказчика.
+      in: query
+      name: cust_inn
+      schema:
+        type: string
+    sdk: *id155
+  - wire: etp
+    in: query
+    python: etp
+    spec:
+      description: 'Коды через запятую: 1 Сбербанк-АСТ, 2 РТС-тендер, 3 ЕЭТП, 4 ZakazRF,
+        5 ЭТП НЭП, 6 РАД, 7 B2B-Center, 8 Фабрикант, 9 ЭТП ГПБ, 10 OTC.RU, 11 ТЭК-Торг,
+        12 ЭТПРФ, 13 Газнефтеторг, 14 Тендер.Про, 15 Аукционный Конкурсный Дом, 16
+        ПолюсГолд, 99 прочие.'
+      in: query
+      name: etp
+      schema:
+        type: string
+    sdk: *id156
+  - wire: from_date
+    in: query
+    python: from_date
+    spec:
+      description: Начало периода публикации, yyyy-mm-dd.
+      in: query
+      name: from_date
+      schema:
+        type: string
+    sdk: *id157
+  - wire: fz
+    in: query
+    python: fz
+    spec:
+      description: Федеральный закон 44, 223 или 615.
+      in: query
+      name: fz
+      schema:
+        type: integer
+    sdk: *id158
+  - wire: max_price
+    in: query
+    python: max_price
+    spec:
+      description: Максимальная начальная цена закупки в рублях.
+      in: query
+      name: max_price
+      schema:
+        type: integer
+    sdk: *id159
+  - wire: min_price
+    in: query
+    python: min_price
+    spec:
+      description: Минимальная начальная цена закупки в рублях.
+      in: query
+      name: min_price
+      schema:
+        type: integer
+    sdk: *id160
+  - wire: okpd
+    in: query
+    python: okpd
+    spec:
+      description: ОКПД2; для 223-ФЗ также ОКДП.
+      in: query
+      name: okpd
+      schema:
+        type: string
+    sdk: *id161
+  - wire: page
+    in: query
+    python: page
+    spec:
+      description: До 100 записей на закон на странице.
+      in: query
+      name: page
+      schema:
+        default: 1
+        type: integer
+    sdk: *id162
+  - wire: placing
+    in: query
+    python: placing
+    spec:
+      description: 'Через запятую: 1 аукцион, 2 котировки, 3 конкурс, 4 единственный
+        поставщик, 5 предложения, 99 прочие.'
+      in: query
+      name: placing
+      schema:
+        type: string
+    sdk: *id163
+  - wire: q
+    in: query
+    python: q
+    spec:
+      description: Слова и фразы через запятую.
+      in: query
+      name: q
+      schema:
+        type: string
+    sdk: *id164
+  - wire: region
+    in: query
+    python: region
+    spec:
+      description: Коды регионов поставки через запятую.
+      in: query
+      name: region
+      schema:
+        type: string
+    sdk: *id165
+  - wire: smp
+    in: query
+    python: smp
+    spec:
+      description: 1 СМП/СОНО; 2 остальные.
+      in: query
+      name: smp
+      schema:
+        type: integer
+    sdk: *id166
+  - wire: status
+    in: query
+    python: status
+    spec:
+      description: 1 — подача заявок, 2 — работа комиссии, 3 — завершено, 4 — отменено.
+      in: query
+      name: status
+      schema:
+        type: string
+    sdk: *id167
+  - wire: to_date
+    in: query
+    python: to_date
+    spec:
+      description: Конец периода публикации, yyyy-mm-dd.
+      in: query
+      name: to_date
+      schema:
+        type: string
+    sdk: *id168
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id117
+    schemes: *id118
+  responses:
+    2XX:
+      source:
+        description: Документированный содержательный ответ; 2XX — обобщённая группа
+          успеха, точный код и HTTP Content-Type не подтверждены. JSON описан источником;
+          application/json — обозначение формата, а не доказанный заголовок. Вложенность
+          предположительна.
+        content:
+          application/json:
+            schema: &id169 {}
+      media:
+        application/json:
+          schema_present: true
+          schema: *id169
+          graph_sha256: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+  spec_source: docs/swagger/procurement/openapi.yaml#/paths/~1zsearch/get
+  research_source: docs/swagger/procurement/RESEARCH.md
+- service: arbitration
+  http: GET
+  path: /arb/dela
+  sdk_method: dela
+  sdk:
+    route:
+    - GET
+    - /arb/dela
+    signature: '(self, *, q: str | None = None, role: str | None = None, type: str
+      | None = None, status: str | None = None, from_date: str | None = None, to_date:
+      str | None = None, exact: object = None, format: int | None = None, page: int
+      | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      q: &id174
+        annotation: str | None
+        default: None
+      role: &id175
+        annotation: str | None
+        default: None
+      type: &id178
+        annotation: str | None
+        default: None
+      status: &id176
+        annotation: str | None
+        default: None
+      from_date: &id172
+        annotation: str | None
+        default: None
+      to_date: &id177
+        annotation: str | None
+        default: None
+      exact: &id170
+        annotation: <class 'object'>
+        default: None
+      format: &id171
+        annotation: int | None
+        default: None
+      page: &id173
+        annotation: int | None
+        default: None
+    source: src/damia_sdk/services/arbitration/__init__.py#L38
+  parameters:
+  - wire: exact
+    in: query
+    python: exact
+    spec:
+      fields:
+        $ref: '#/components/parameters/Exact'
+      target:
+        value:
+          description: В источнике тип boolean, но на проводе показаны 0 и 1; 1 по
+            умолчанию — точное совпадение по ИНН/ОГРН, 0 также включает совпадения
+            по названию/ФИО при отсутствии идентификатора. Сериализация и допустимые
+            типы не подтверждены.
+          in: query
+          name: exact
+          required: false
+          schema:
+            x-research-notes: Схема намеренно не ограничивает тип из-за противоречия
+              boolean и 0/1.
+    sdk: *id170
+  - wire: format
+    in: query
+    python: format
+    spec:
+      fields:
+        $ref: '#/components/parameters/Format'
+      target:
+        value:
+          description: 1 — группировка по делам с 2015 года; 2 — негруппированный
+            список.
+          in: query
+          name: format
+          required: false
+          schema:
+            default: 2
+            enum:
+            - 1
+            - 2
+            type: integer
+    sdk: *id171
+  - wire: from_date
+    in: query
+    python: from_date
+    spec:
+      fields:
+        $ref: '#/components/parameters/FromDate'
+      target:
+        value:
+          description: Дата регистрации, после которой искать, YYYY-MM-DD; включительность
+            границы неизвестна.
+          in: query
+          name: from_date
+          required: false
+          schema:
+            format: date
+            type: string
+    sdk: *id172
+  - wire: page
+    in: query
+    python: page
+    spec:
+      fields:
+        $ref: '#/components/parameters/PageDela'
+      target:
+        value:
+          description: Номер страницы; размер страницы не указан.
+          in: query
+          name: page
+          required: false
+          schema:
+            default: 1
+            type: integer
+    sdk: *id173
+  - wire: q
+    in: query
+    python: q
+    spec:
+      fields:
+        $ref: '#/components/parameters/Query'
+      target:
+        value:
+          description: ИНН, ОГРН, название организации или ФИО ИП/физического лица;
+            формальная обязательность не указана.
+          in: query
+          name: q
+          required: false
+          schema:
+            type: string
+    sdk: *id174
+  - wire: role
+    in: query
+    python: role
+    spec:
+      fields:
+        $ref: '#/components/parameters/Role'
+      target:
+        value:
+          description: 1 истец, 2 ответчик, 3 третье лицо, 4 иное лицо; при отсутствии
+            — все роли.
+          in: query
+          name: role
+          required: false
+          schema:
+            enum:
+            - '1'
+            - '2'
+            - '3'
+            - '4'
+            type: string
+    sdk: *id175
+  - wire: status
+    in: query
+    python: status
+    spec:
+      fields:
+        $ref: '#/components/parameters/Status'
+      target:
+        value:
+          description: 1 завершено, 2 первая инстанция, 3 апелляция/кассация/надзор;
+            при отсутствии — все статусы.
+          in: query
+          name: status
+          required: false
+          schema:
+            enum:
+            - '1'
+            - '2'
+            - '3'
+            type: string
+    sdk: *id176
+  - wire: to_date
+    in: query
+    python: to_date
+    spec:
+      fields:
+        $ref: '#/components/parameters/ToDate'
+      target:
+        value:
+          description: Дата регистрации, до которой искать, YYYY-MM-DD; включительность
+            границы неизвестна.
+          in: query
+          name: to_date
+          required: false
+          schema:
+            format: date
+            type: string
+    sdk: *id177
+  - wire: type
+    in: query
+    python: type
+    spec:
+      fields:
+        $ref: '#/components/parameters/Type'
+      target:
+        value:
+          description: 1 административное, 2 гражданское, 3 банкротное; при отсутствии
+            — все типы.
+          in: query
+          name: type
+          required: false
+          schema:
+            enum:
+            - '1'
+            - '2'
+            - '3'
+            type: string
+    sdk: *id178
+  unmatched_sdk_parameters: []
+  security:
+    requirements: &id181
+    - apiKey: []
+    schemes: &id182
+      apiKey:
+        type: apiKey
+        in: query
+        name: key
+        description: Ключ доступа API. Источник указывает ключ для всех методов, но
+          не определяет формальную обязательность, ошибки и возможность общего ключа
+          с другими сервисами.
+  responses:
+    2XX:
+      source:
+        description: Предположительный диапазон успеха и application/json основаны
+          на документированном JSON; HTTP-статус и Content-Type не проверены.
+        content:
+          application/json:
+            schema: &id179
+              description: anyOf не связывает ответ с запрошенным format; модели могут
+                пересекаться. Предполагаемая вложенность и типы могут отклонять реальные
+                ответы.
+              anyOf:
+              - $ref: '#/components/schemas/ParticipationGrouped'
+              - $ref: '#/components/schemas/ParticipationFlat'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id179
+          graph_sha256: 6ff6288990d68825bb3d44ae8d9063e789b278c3c70ad559c3601a2776efc554
+    default:
+      source:
+        description: Неизвестные ошибки и другие неописанные ответы; статус и форма
+          не документированы.
+      media: {}
+  spec_source: docs/swagger/arbitration/openapi.yaml#/paths/~1arb~1dela/get
+  research_source: docs/swagger/arbitration/RESEARCH.md
+- service: arbitration
+  http: GET
+  path: /arb/delo
+  sdk_method: delo
+  sdk:
+    route:
+    - GET
+    - /arb/delo
+    signature: '(self, *, regn: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      regn: &id180
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/arbitration/__init__.py#L17
+  parameters:
+  - wire: regn
+    in: query
+    python: regn
+    spec:
+      fields:
+        $ref: '#/components/parameters/Regn'
+      target:
+        value:
+          description: Номер арбитражного дела. Формальная обязательность не указана.
+          in: query
+          name: regn
+          required: false
+          schema:
+            type: string
+    sdk: *id180
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id181
+    schemes: *id182
+  responses:
+    2XX:
+      source:
+        description: Предположительный диапазон успеха и application/json основаны
+          на документированном JSON; HTTP-статус и Content-Type не проверены.
+        content:
+          application/json:
+            schema: &id183
+              $ref: '#/components/schemas/CaseDetails'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id183
+          graph_sha256: 49c19ac80661ea21ab8461b09028618771190df6e2d5249cf8087b766ae3b623
+    default:
+      source:
+        description: Неизвестные ошибки и другие неописанные ответы; статус и форма
+          не документированы.
+      media: {}
+  spec_source: docs/swagger/arbitration/openapi.yaml#/paths/~1arb~1delo/get
+  research_source: docs/swagger/arbitration/RESEARCH.md
+- service: arbitration
+  http: GET
+  path: /arb/delopro
+  sdk_method: delopro
+  sdk:
+    route:
+    - GET
+    - /arb/delopro
+    signature: '(self, *, regn: str | None = None, a: str | None = None, email: str
+      | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      regn: &id186
+        annotation: str | None
+        default: None
+      a: &id184
+        annotation: str | None
+        default: None
+      email: &id185
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/arbitration/__init__.py#L23
+  parameters:
+  - wire: a
+    in: query
+    python: a
+    spec:
+      fields:
+        $ref: '#/components/parameters/Action'
+      target:
+        value:
+          description: email — подписка на извещения; noemail — отписка; list — список
+            отслеживаемых дел. Обязательность и значение по умолчанию не указаны.
+          in: query
+          name: a
+          required: false
+          schema:
+            enum:
+            - email
+            - noemail
+            - list
+            type: string
+    sdk: *id184
+  - wire: email
+    in: query
+    python: email
+    spec:
+      fields:
+        $ref: '#/components/parameters/Email'
+      target:
+        value:
+          description: Необязательный адрес извещений; по умолчанию используется адрес
+            регистрации аккаунта.
+          in: query
+          name: email
+          required: false
+          schema:
+            type: string
+    sdk: *id185
+  - wire: regn
+    in: query
+    python: regn
+    spec:
+      fields:
+        $ref: '#/components/parameters/Regn'
+      target:
+        value:
+          description: Номер арбитражного дела. Формальная обязательность не указана.
+          in: query
+          name: regn
+          required: false
+          schema:
+            type: string
+    sdk: *id186
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id181
+    schemes: *id182
+  responses:
+    2XX:
+      source:
+        description: Предположительный диапазон успеха и application/json основаны
+          на документированном JSON; HTTP-статус и Content-Type не проверены.
+        content:
+          application/json:
+            schema: &id187
+              description: Форма ответа не установлена; CaseDetails в components —
+                только инвентарь полей дела, на который ссылается источник.
+      media:
+        application/json:
+          schema_present: true
+          schema: *id187
+          graph_sha256: 43db82f2947b6f3596f308d8a156c228f84d46bf9f6a9316cebb61ff63faa7cc
+    default:
+      source:
+        description: Неизвестные ошибки и другие неописанные ответы; статус и форма
+          не документированы.
+      media: {}
+  spec_source: docs/swagger/arbitration/openapi.yaml#/paths/~1arb~1delopro/get
+  research_source: docs/swagger/arbitration/RESEARCH.md
+- service: arbitration
+  http: GET
+  path: /arb/dsearch
+  sdk_method: dsearch
+  sdk:
+    route:
+    - GET
+    - /arb/dsearch
+    signature: '(self, *, type: str | None = None, status: str | None = None, court:
+      str | None = None, min_summa: int | None = None, max_summa: int | None = None,
+      from_date: str | None = None, to_date: str | None = None, page: int | None =
+      None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      type: &id195
+        annotation: str | None
+        default: None
+      status: &id193
+        annotation: str | None
+        default: None
+      court: &id188
+        annotation: str | None
+        default: None
+      min_summa: &id191
+        annotation: int | None
+        default: None
+      max_summa: &id190
+        annotation: int | None
+        default: None
+      from_date: &id189
+        annotation: str | None
+        default: None
+      to_date: &id194
+        annotation: str | None
+        default: None
+      page: &id192
+        annotation: int | None
+        default: None
+    source: src/damia_sdk/services/arbitration/__init__.py#L72
+  parameters:
+  - wire: court
+    in: query
+    python: court
+    spec:
+      fields:
+        $ref: '#/components/parameters/Court'
+      target:
+        value:
+          description: 'Код суда: 01АП–21АП, А01–А84, Ф01–Ф10, СИП; при отсутствии
+            — все суды. В таблице пример А40 с кириллической А, в запросе A40 с латинской
+            A.'
+          in: query
+          name: court
+          required: false
+          schema:
+            type: string
+    sdk: *id188
+  - wire: from_date
+    in: query
+    python: from_date
+    spec:
+      fields:
+        $ref: '#/components/parameters/FromDate'
+      target:
+        value:
+          description: Дата регистрации, после которой искать, YYYY-MM-DD; включительность
+            границы неизвестна.
+          in: query
+          name: from_date
+          required: false
+          schema:
+            format: date
+            type: string
+    sdk: *id189
+  - wire: max_summa
+    in: query
+    python: max_summa
+    spec:
+      fields:
+        $ref: '#/components/parameters/Max'
+      target:
+        value:
+          description: Максимальная сумма иска в рублях; включительность границы неизвестна.
+          in: query
+          name: max_summa
+          required: false
+          schema:
+            type: integer
+    sdk: *id190
+  - wire: min_summa
+    in: query
+    python: min_summa
+    spec:
+      fields:
+        $ref: '#/components/parameters/Min'
+      target:
+        value:
+          description: Минимальная сумма иска в рублях; включительность границы неизвестна.
+          in: query
+          name: min_summa
+          required: false
+          schema:
+            type: integer
+    sdk: *id191
+  - wire: page
+    in: query
+    python: page
+    spec:
+      fields:
+        $ref: '#/components/parameters/PageSearch'
+      target:
+        value:
+          description: Номер страницы; не более 100 дел на странице.
+          in: query
+          name: page
+          required: false
+          schema:
+            default: 1
+            type: integer
+    sdk: *id192
+  - wire: status
+    in: query
+    python: status
+    spec:
+      fields:
+        $ref: '#/components/parameters/Status'
+      target:
+        value:
+          description: 1 завершено, 2 первая инстанция, 3 апелляция/кассация/надзор;
+            при отсутствии — все статусы.
+          in: query
+          name: status
+          required: false
+          schema:
+            enum:
+            - '1'
+            - '2'
+            - '3'
+            type: string
+    sdk: *id193
+  - wire: to_date
+    in: query
+    python: to_date
+    spec:
+      fields:
+        $ref: '#/components/parameters/ToDate'
+      target:
+        value:
+          description: Дата регистрации, до которой искать, YYYY-MM-DD; включительность
+            границы неизвестна.
+          in: query
+          name: to_date
+          required: false
+          schema:
+            format: date
+            type: string
+    sdk: *id194
+  - wire: type
+    in: query
+    python: type
+    spec:
+      fields:
+        $ref: '#/components/parameters/Type'
+      target:
+        value:
+          description: 1 административное, 2 гражданское, 3 банкротное; при отсутствии
+            — все типы.
+          in: query
+          name: type
+          required: false
+          schema:
+            enum:
+            - '1'
+            - '2'
+            - '3'
+            type: string
+    sdk: *id195
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id181
+    schemes: *id182
+  responses:
+    2XX:
+      source:
+        description: Предположительный диапазон успеха и application/json основаны
+          на документированном JSON; HTTP-статус и Content-Type не проверены.
+        content:
+          application/json:
+            schema: &id196
+              $ref: '#/components/schemas/SearchResult'
+      media:
+        application/json:
+          schema_present: true
+          schema: *id196
+          graph_sha256: ad962590dddbc23cd13f4b3f10156d3dede69537f07aac2d50462ed2a5cd5acc
+    default:
+      source:
+        description: Неизвестные ошибки и другие неописанные ответы; статус и форма
+          не документированы.
+      media: {}
+  spec_source: docs/swagger/arbitration/openapi.yaml#/paths/~1arb~1dsearch/get
+  research_source: docs/swagger/arbitration/RESEARCH.md
+- service: fssp
+  http: GET
+  path: /isp
+  sdk_method: isp
+  sdk:
+    route:
+    - GET
+    - /isp
+    signature: '(self, *, regn: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      regn: &id197
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/fssp/__init__.py#L17
+  parameters:
+  - wire: regn
+    in: query
+    python: regn
+    spec:
+      description: 'Регистрационный номер исполнительного производства; идентификатор
+        следует передавать строкой. Документация не устанавливает обязательность этого
+        параметра; required: false не подтверждает возможность его пропуска.'
+      in: query
+      name: regn
+      required: false
+      schema:
+        example: TEST/00/00000-ИП
+        type: string
+    sdk: *id197
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    - {}
+    schemes: &id200
+      ApiKey:
+        type: apiKey
+        in: query
+        name: key
+        description: Ключ доступа API; обязательность явно не установлена. Неизвестно,
+          является ли ключ общим для других сервисов DaMIA.
+  responses:
+    2XX:
+      source:
+        description: Успешный ответ описан источником как JSON; точный код HTTP и
+          заголовок Content-Type не подтверждены. Диапазон 2XX и application/json
+          используются для представления успеха в OpenAPI; структура ответа неизвестна.
+        content:
+          application/json:
+            schema: &id198 {}
+      media:
+        application/json:
+          schema_present: true
+          schema: *id198
+          graph_sha256: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+    default:
+      source:
+        description: Прочие HTTP-статусы и формат ошибок не документированы.
+      media: {}
+  spec_source: docs/swagger/fssp/openapi.yaml#/paths/~1isp/get
+  research_source: docs/swagger/fssp/RESEARCH.md
+- service: fssp
+  http: GET
+  path: /ispfl
+  sdk_method: ispfl
+  sdk:
+    route:
+    - GET
+    - /ispfl
+    signature: '(self, *, regn: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      regn: &id199
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/fssp/__init__.py#L44
+  parameters:
+  - wire: regn
+    in: query
+    python: regn
+    spec:
+      description: 'Регистрационный номер исполнительного производства; идентификатор
+        следует передавать строкой. Документация не устанавливает обязательность этого
+        параметра; required: false не подтверждает возможность его пропуска.'
+      in: query
+      name: regn
+      required: false
+      schema:
+        example: TEST/00/00000-ИП
+        type: string
+    sdk: *id199
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    - {}
+    schemes: *id200
+  responses:
+    2XX:
+      source:
+        description: Успешный ответ описан источником как JSON; точный код HTTP и
+          заголовок Content-Type не подтверждены. Диапазон 2XX и application/json
+          используются для представления успеха в OpenAPI; структура ответа неизвестна.
+        content:
+          application/json:
+            schema: &id201 {}
+      media:
+        application/json:
+          schema_present: true
+          schema: *id201
+          graph_sha256: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+    default:
+      source:
+        description: Прочие HTTP-статусы и формат ошибок не документированы.
+      media: {}
+  spec_source: docs/swagger/fssp/openapi.yaml#/paths/~1ispfl/get
+  research_source: docs/swagger/fssp/RESEARCH.md
+- service: fssp
+  http: GET
+  path: /isps
+  sdk_method: isps
+  sdk:
+    route:
+    - GET
+    - /isps
+    signature: '(self, *, inn: str | None = None, from_date: str | None = None, to_date:
+      str | None = None, format: int | None = None, page: int | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      inn: &id204
+        annotation: str | None
+        default: None
+      from_date: &id203
+        annotation: str | None
+        default: None
+      to_date: &id206
+        annotation: str | None
+        default: None
+      format: &id202
+        annotation: int | None
+        default: None
+      page: &id205
+        annotation: int | None
+        default: None
+    source: src/damia_sdk/services/fssp/__init__.py#L22
+  parameters:
+  - wire: format
+    in: query
+    python: format
+    spec:
+      description: 1 — группированный результат, 2 — негруппированный. По документации
+        значение по умолчанию — 2; фактическое поведение при пропуске не проверено.
+      in: query
+      name: format
+      required: false
+      schema:
+        default: 2
+        enum:
+        - 1
+        - 2
+        type: integer
+    sdk: *id202
+  - wire: from_date
+    in: query
+    python: from_date
+    spec:
+      description: 'Дата возбуждения, после которой искать, YYYY-MM-DD; включительность
+        не указана. Документация не устанавливает обязательность этого параметра;
+        required: false не подтверждает возможность его пропуска.'
+      in: query
+      name: from_date
+      required: false
+      schema:
+        type: string
+    sdk: *id203
+  - wire: inn
+    in: query
+    python: inn
+    spec:
+      description: 'ИНН организации; сохраняйте ведущие нули. Документация не устанавливает
+        обязательность этого параметра; required: false не подтверждает возможность
+        его пропуска.'
+      in: query
+      name: inn
+      required: false
+      schema:
+        example: '0000000000'
+        type: string
+    sdk: *id204
+  - wire: page
+    in: query
+    python: page
+    spec:
+      description: Номер страницы; не более 100 производств на странице. Взаимодействие
+        пагинации и группировки не описано. По документации значение по умолчанию
+        — 1; фактическое поведение при пропуске не проверено.
+      in: query
+      name: page
+      required: false
+      schema:
+        default: 1
+        type: integer
+    sdk: *id205
+  - wire: to_date
+    in: query
+    python: to_date
+    spec:
+      description: 'Дата возбуждения, до которой искать, YYYY-MM-DD; включительность
+        не указана. Документация не устанавливает обязательность этого параметра;
+        required: false не подтверждает возможность его пропуска.'
+      in: query
+      name: to_date
+      required: false
+      schema:
+        type: string
+    sdk: *id206
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    - {}
+    schemes: *id200
+  responses:
+    2XX:
+      source:
+        description: Успешный ответ описан источником как JSON; точный код HTTP и
+          заголовок Content-Type не подтверждены. Диапазон 2XX и application/json
+          используются для представления успеха в OpenAPI; структура ответа неизвестна.
+        content:
+          application/json:
+            schema: &id207 {}
+      media:
+        application/json:
+          schema_present: true
+          schema: *id207
+          graph_sha256: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+    default:
+      source:
+        description: Прочие HTTP-статусы и формат ошибок не документированы.
+      media: {}
+  spec_source: docs/swagger/fssp/openapi.yaml#/paths/~1isps/get
+  research_source: docs/swagger/fssp/RESEARCH.md
+- service: fssp
+  http: GET
+  path: /ispsfl
+  sdk_method: ispsfl
+  sdk:
+    route:
+    - GET
+    - /ispsfl
+    signature: '(self, *, region: int | None = None, fam: str | None = None, nam:
+      str | None = None, otch: str | None = None, bdate: str | None = None, format:
+      int | None = None, page: int | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      region: &id214
+        annotation: int | None
+        default: None
+      fam: &id209
+        annotation: str | None
+        default: None
+      nam: &id211
+        annotation: str | None
+        default: None
+      otch: &id212
+        annotation: str | None
+        default: None
+      bdate: &id208
+        annotation: str | None
+        default: None
+      format: &id210
+        annotation: int | None
+        default: None
+      page: &id213
+        annotation: int | None
+        default: None
+    source: src/damia_sdk/services/fssp/__init__.py#L49
+  parameters:
+  - wire: bdate
+    in: query
+    python: bdate
+    spec:
+      description: Дата рождения должника в формате DD.MM.YYYY; таблица прямо называет
+        параметр необязательным, несмотря на вводный текст.
+      in: query
+      name: bdate
+      required: false
+      schema:
+        type: string
+    sdk: *id208
+  - wire: fam
+    in: query
+    python: fam
+    spec:
+      description: 'Фамилия должника; пример в таблице ошибочно подписан nam. Документация
+        не устанавливает обязательность этого параметра; required: false не подтверждает
+        возможность его пропуска.'
+      in: query
+      name: fam
+      required: false
+      schema:
+        type: string
+    sdk: *id209
+  - wire: format
+    in: query
+    python: format
+    spec:
+      description: 1 — группированный результат, 2 — негруппированный. По документации
+        значение по умолчанию — 2; фактическое поведение при пропуске не проверено.
+      in: query
+      name: format
+      required: false
+      schema:
+        default: 2
+        enum:
+        - 1
+        - 2
+        type: integer
+    sdk: *id210
+  - wire: nam
+    in: query
+    python: nam
+    spec:
+      description: 'Имя должника. Документация не устанавливает обязательность этого
+        параметра; required: false не подтверждает возможность его пропуска.'
+      in: query
+      name: nam
+      required: false
+      schema:
+        type: string
+    sdk: *id211
+  - wire: otch
+    in: query
+    python: otch
+    spec:
+      description: Отчество должника; необязательный параметр. Пример в таблице ошибочно
+        подписан nam.
+      in: query
+      name: otch
+      required: false
+      schema:
+        type: string
+    sdk: *id212
+  - wire: page
+    in: query
+    python: page
+    spec:
+      description: Номер страницы; не более 20 производств на странице. Взаимодействие
+        пагинации и группировки не описано. По документации значение по умолчанию
+        — 1; фактическое поведение при пропуске не проверено.
+      in: query
+      name: page
+      required: false
+      schema:
+        default: 1
+        type: integer
+    sdk: *id213
+  - wire: region
+    in: query
+    python: region
+    spec:
+      description: Код региона отдела судебных приставов, ведущего исполнительное
+        производство; необязательный параметр. При отсутствии выполняется поиск по
+        всем регионам.
+      in: query
+      name: region
+      required: false
+      schema:
+        type: integer
+    sdk: *id214
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - ApiKey: []
+    - {}
+    schemes: *id200
+  responses:
+    2XX:
+      source:
+        description: Успешный ответ описан источником как JSON; точный код HTTP и
+          заголовок Content-Type не подтверждены. Диапазон 2XX и application/json
+          используются для представления успеха в OpenAPI; структура ответа неизвестна.
+        content:
+          application/json:
+            schema: &id215 {}
+      media:
+        application/json:
+          schema_present: true
+          schema: *id215
+          graph_sha256: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+    default:
+      source:
+        description: Прочие HTTP-статусы и формат ошибок не документированы.
+      media: {}
+  spec_source: docs/swagger/fssp/openapi.yaml#/paths/~1ispsfl/get
+  research_source: docs/swagger/fssp/RESEARCH.md
+- service: rosstat
+  http: GET
+  path: /balance
+  sdk_method: balance
+  sdk:
+    route:
+    - GET
+    - /balance
+    signature: '(self, *, inn: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      inn: &id216
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/rosstat/__init__.py#L13
+  parameters:
+  - wire: inn
+    in: query
+    python: inn
+    spec:
+      description: 'ИНН юридического лица; пример без реальных данных: {inn}.'
+      in: query
+      name: inn
+      required: false
+      schema:
+        type: string
+    sdk: *id216
+  unmatched_sdk_parameters: []
+  security:
+    requirements: &id220
+    - ApiKey: []
+    schemes: &id221
+      ApiKey:
+        type: apiKey
+        in: query
+        name: key
+        description: Ключ доступа API. Неизвестно, общий ли ключ с другими сервисами
+          DaMIA. Не помещайте настоящий ключ в логи или примеры.
+  responses:
+    2XX:
+      source:
+        description: Представление документированного JSON-ответа; точный успешный
+          статус и фактический HTTP Content-Type неизвестны. application/json — допущение
+          OpenAPI, схема намеренно обобщённая.
+        content:
+          application/json:
+            schema: &id217 {}
+      media:
+        application/json:
+          schema_present: true
+          schema: *id217
+          graph_sha256: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+    default:
+      source:
+        description: Статусы и форматы ошибок не документированы; содержимое не задано.
+      media: {}
+  spec_source: docs/swagger/rosstat/openapi.yaml#/paths/~1balance/get
+  research_source: docs/swagger/rosstat/RESEARCH.md
+- service: rosstat
+  http: GET
+  path: /multbalance
+  sdk_method: multbalance
+  sdk:
+    route:
+    - GET
+    - /multbalance
+    signature: '(self, *, inn: str | None = None, inn_list: list[str] | None = None)
+      -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      inn: &id218
+        annotation: str | None
+        default: None
+      inn_list: &id219
+        annotation: list[str] | None
+        default: None
+    source: src/damia_sdk/services/rosstat/__init__.py#L20
+  parameters:
+  - wire: inn
+    in: query
+    python: inn
+    spec:
+      description: ИНН через запятую; альтернатива параметру inn[].
+      in: query
+      name: inn
+      required: false
+      schema:
+        type: string
+    sdk: *id218
+  - wire: inn[]
+    in: query
+    python: inn_list
+    spec:
+      description: Повторяемый параметр ИНН; альтернатива inn. Не более 100 компаний.
+        Квадратные скобки могут быть percent-encoded.
+      explode: true
+      in: query
+      name: inn[]
+      required: false
+      schema:
+        items:
+          type: string
+        maxItems: 100
+        type: array
+      style: form
+    sdk: *id219
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id220
+    schemes: *id221
+  responses:
+    2XX:
+      source:
+        description: Представление документированного JSON-ответа; точный успешный
+          статус и фактический HTTP Content-Type неизвестны. application/json — допущение
+          OpenAPI, схема намеренно обобщённая.
+        content:
+          application/json:
+            schema: &id222 {}
+      media:
+        application/json:
+          schema_present: true
+          schema: *id222
+          graph_sha256: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+    default:
+      source:
+        description: Статусы и форматы ошибок не документированы; содержимое не задано.
+      media: {}
+  spec_source: docs/swagger/rosstat/openapi.yaml#/paths/~1multbalance/get
+  research_source: docs/swagger/rosstat/RESEARCH.md
+- service: rosstat
+  http: GET
+  path: /statcodes
+  sdk_method: statcodes
+  sdk:
+    route:
+    - GET
+    - /statcodes
+    signature: '(self, *, req: str | None = None, forms: int | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      req: &id224
+        annotation: str | None
+        default: None
+      forms: &id223
+        annotation: int | None
+        default: None
+    source: src/damia_sdk/services/rosstat/__init__.py#L35
+  parameters:
+  - wire: forms
+    in: query
+    python: forms
+    spec:
+      description: Флаг вывода форм юридического лица; по умолчанию 0, в таблице приведён
+        пример 1. Полный набор значений не указан.
+      in: query
+      name: forms
+      required: false
+      schema:
+        default: 0
+        type: integer
+    sdk: *id223
+  - wire: req
+    in: query
+    python: req
+    spec:
+      description: 'ИНН или ОГРН организации либо ИП; пример: {identifier}.'
+      in: query
+      name: req
+      required: false
+      schema:
+        type: string
+    sdk: *id224
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id220
+    schemes: *id221
+  responses:
+    2XX:
+      source:
+        description: Представление документированного JSON-ответа; точный успешный
+          статус и фактический HTTP Content-Type неизвестны. application/json — допущение
+          OpenAPI, схема намеренно обобщённая.
+        content:
+          application/json:
+            schema: &id225 {}
+      media:
+        application/json:
+          schema_present: true
+          schema: *id225
+          graph_sha256: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+    default:
+      source:
+        description: Статусы и форматы ошибок не документированы; содержимое не задано.
+      media: {}
+  spec_source: docs/swagger/rosstat/openapi.yaml#/paths/~1statcodes/get
+  research_source: docs/swagger/rosstat/RESEARCH.md
+- service: scoring
+  http: GET
+  path: /fincoefs
+  sdk_method: fincoefs
+  sdk:
+    route:
+    - GET
+    - /fincoefs
+    signature: '(self, *, inn: str | None = None, okved: str | None = None, region:
+      int | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      inn: &id226
+        annotation: str | None
+        default: None
+      okved: &id227
+        annotation: str | None
+        default: None
+      region: &id228
+        annotation: int | None
+        default: None
+    source: src/damia_sdk/services/scoring/__init__.py#L47
+  parameters:
+  - wire: inn
+    in: query
+    python: inn
+    spec:
+      fields:
+        $ref: '#/components/parameters/Inn'
+      target:
+        value:
+          description: ИНН юридического лица; строка сохраняет ведущие нули. Формальная
+            обязательность не указана.
+          in: query
+          name: inn
+          required: false
+          schema:
+            type: string
+    sdk: *id226
+  - wire: okved
+    in: query
+    python: okved
+    spec:
+      description: ОКВЭД для сравнения; при пропуске используется ОКВЭД компании,
+        строка 0 означает все отрасли.
+      in: query
+      name: okved
+      required: false
+      schema:
+        type: string
+    sdk: *id227
+  - wire: region
+    in: query
+    python: region
+    spec:
+      description: Код региона для сравнения; при пропуске используется регион компании,
+        0 означает все регионы.
+      in: query
+      name: region
+      required: false
+      schema:
+        type: integer
+    sdk: *id228
+  unmatched_sdk_parameters: []
+  security:
+    requirements: &id231
+    - ApiKey: []
+    schemes: &id232
+      ApiKey:
+        type: apiKey
+        in: query
+        name: key
+        description: Ключ доступа к API. Общий ли это ключ для разных сервисов, неизвестно;
+          security выражает документированный способ доступа, а не проверенную сервером
+          обязательность ключа. Не записывайте ключ в журналы и примеры.
+  responses:
+    2XX:
+      source:
+        description: Успешный результат в формате JSON; конкретный статус и HTTP Content-Type
+          не подтверждены источником.
+        x-research-notes: Диапазон успеха и application/json — интерпретация документации,
+          не наблюдавшиеся статус и заголовок. Форма ответа неизвестна; иллюстративные
+          модели FincoefFieldsIllustrative описывают поля, но не являются схемой ответа.
+        content:
+          application/json:
+            schema: &id229 {}
+      media:
+        application/json:
+          schema_present: true
+          schema: *id229
+          graph_sha256: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+    default:
+      source:
+        description: Прочие ответы; коды, структура и медиатипы не установлены.
+      media: {}
+  spec_source: docs/swagger/scoring/openapi.yaml#/paths/~1fincoefs/get
+  research_source: docs/swagger/scoring/RESEARCH.md
+- service: scoring
+  http: GET
+  path: /info
+  sdk_method: info
+  sdk:
+    route:
+    - GET
+    - /info
+    signature: '(self, *, model: str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      model: &id230
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/scoring/__init__.py#L40
+  parameters:
+  - wire: model
+    in: query
+    python: model
+    spec:
+      fields:
+        $ref: '#/components/parameters/Model'
+      target:
+        value:
+          description: Идентификатор модели DaMIA или пользовательской модели. Для
+            score перечислены _bankrots2016, _tech, _diskf, _problemCredit и _zsk;
+            пользовательские имена также допустимы. Формальная обязательность не указана.
+          in: query
+          name: model
+          required: false
+          schema:
+            type: string
+    sdk: *id230
+  unmatched_sdk_parameters: []
+  security:
+    requirements: *id231
+    schemes: *id232
+  responses:
+    2XX:
+      source:
+        description: Успешный результат в формате JSON; конкретный статус и HTTP Content-Type
+          не подтверждены источником.
+        x-research-notes: Диапазон успеха и application/json — интерпретация документации,
+          не наблюдавшиеся статус и заголовок. Форма ответа неизвестна; иллюстративные
+          модели ModelFieldsIllustrative и ModelMetricsIllustrative описывают поля,
+          но не являются схемой ответа.
+        content:
+          application/json:
+            schema: &id233 {}
+      media:
+        application/json:
+          schema_present: true
+          schema: *id233
+          graph_sha256: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+    default:
+      source:
+        description: Прочие ответы; коды, структура и медиатипы не установлены.
+      media: {}
+  spec_source: docs/swagger/scoring/openapi.yaml#/paths/~1info/get
+  research_source: docs/swagger/scoring/RESEARCH.md
+- service: scoring
+  http: GET
+  path: /score
+  sdk_method: score
+  sdk:
+    route:
+    - GET
+    - /score
+    signature: '(self, *, inn: str | None = None, model: str | None = None, balance_fields:
+      collections.abc.Mapping[str, int] | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      inn: &id234
+        annotation: str | None
+        default: None
+      model: &id235
+        annotation: str | None
+        default: None
+      balance_fields:
+        annotation: collections.abc.Mapping[str, int] | None
+        default: None
+    source: src/damia_sdk/services/scoring/__init__.py#L15
+  parameters:
+  - wire: inn
+    in: query
+    python: inn
+    spec:
+      fields:
+        $ref: '#/components/parameters/Inn'
+      target:
+        value:
+          description: ИНН юридического лица; строка сохраняет ведущие нули. Формальная
+            обязательность не указана.
+          in: query
+          name: inn
+          required: false
+          schema:
+            type: string
+    sdk: *id234
+  - wire: model
+    in: query
+    python: model
+    spec:
+      fields:
+        $ref: '#/components/parameters/Model'
+      target:
+        value:
+          description: Идентификатор модели DaMIA или пользовательской модели. Для
+            score перечислены _bankrots2016, _tech, _diskf, _problemCredit и _zsk;
+            пользовательские имена также допустимы. Формальная обязательность не указана.
+          in: query
+          name: model
+          required: false
+          schema:
+            type: string
+    sdk: *id235
+  unmatched_sdk_parameters:
+  - balance_fields
+  security:
+    requirements: *id231
+    schemes: *id232
+  responses:
+    2XX:
+      source:
+        description: Успешный результат в формате JSON; конкретный статус и HTTP Content-Type
+          не подтверждены источником.
+        x-research-notes: Диапазон успеха и application/json — интерпретация документации,
+          не наблюдавшиеся статус и заголовок. Форма ответа неизвестна; иллюстративные
+          модели ScoreFieldsIllustrative и IndicatorFieldsIllustrative описывают поля,
+          но не являются схемой ответа.
+        content:
+          application/json:
+            schema: &id236 {}
+      media:
+        application/json:
+          schema_present: true
+          schema: *id236
+          graph_sha256: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+    default:
+      source:
+        description: Прочие ответы; коды, структура и медиатипы не установлены.
+      media: {}
+  spec_source: docs/swagger/scoring/openapi.yaml#/paths/~1score/get
+  research_source: docs/swagger/scoring/RESEARCH.md
+- service: spk
+  http: GET
+  path: /proverki
+  sdk_method: proverki
+  sdk:
+    route:
+    - GET
+    - /proverki
+    signature: '(self, *, req: str | None = None, status: str | None = None, from_date:
+      str | None = None, to_date: str | None = None, page: int | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      req: &id239
+        annotation: str | None
+        default: None
+      status: &id240
+        annotation: str | None
+        default: None
+      from_date: &id237
+        annotation: str | None
+        default: None
+      to_date: &id241
+        annotation: str | None
+        default: None
+      page: &id238
+        annotation: int | None
+        default: None
+    source: src/damia_sdk/services/spk/__init__.py#L34
+  parameters:
+  - wire: from_date
+    in: query
+    python: from_date
+    spec:
+      description: Искать проверки с датой начала после указанной; включительность
+        границы не определена.
+      in: query
+      name: from_date
+      schema:
+        format: date
+        type: string
+    sdk: *id237
+  - wire: page
+    in: query
+    python: page
+    spec:
+      description: Номер страницы; не более 100 проверок на странице. Границы и метаданные
+        страниц не указаны.
+      in: query
+      name: page
+      schema:
+        default: 1
+        type: integer
+    sdk: *id238
+  - wire: req
+    in: query
+    python: req
+    spec:
+      description: ИНН или ОГРН организации или ИП; обязательность не указана. Пример
+        — заполнитель, не реальный идентификатор.
+      example: <ИНН_ИЛИ_ОГРН>
+      in: query
+      name: req
+      schema:
+        type: string
+    sdk: *id239
+  - wire: status
+    in: query
+    python: status
+    spec:
+      description: 'При отсутствии — любой статус: 1 ожидает завершения; 2 завершено;
+
+        3 не может быть проведено; 4 обжаловано; 5 новое; 6 отклонено;
+
+        7 ожидает проведения.
+
+        '
+      in: query
+      name: status
+      schema:
+        enum:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+        - '7'
+        type: string
+    sdk: *id240
+  - wire: to_date
+    in: query
+    python: to_date
+    spec:
+      description: Искать проверки с датой начала до указанной; включительность границы
+        не определена.
+      in: query
+      name: to_date
+      schema:
+        format: date
+        type: string
+    sdk: *id241
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - {}
+    - queryKey: []
+    schemes: &id246
+      queryKey:
+        type: apiKey
+        in: query
+        name: key
+        description: Ключ доступа к API; обязательность и применимость одного ключа
+          к обоим методам не уточнены.
+  responses:
+    2XX:
+      source:
+        description: Документирован JSON; таблицы описывают группированный и негруппированный
+          варианты, но механизм выбора и фактическая структура не установлены. 2XX
+          — условное обозначение успеха, а не установленный источником диапазон. Content-Type
+          не указан; схема не различает варианты.
+        content:
+          '*/*':
+            schema: &id242 {}
+      media:
+        '*/*':
+          schema_present: true
+          schema: *id242
+          graph_sha256: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+    default:
+      source:
+        description: 'Прочие ответы: коды ошибок, Content-Type и тела ошибок не документированы;
+          наличие ошибок внутри 2XX неизвестно.'
+      media: {}
+  spec_source: docs/swagger/spk/openapi.yaml#/paths/~1proverki/get
+  research_source: docs/swagger/spk/RESEARCH.md
+- service: spk
+  http: GET
+  path: /report
+  sdk_method: report
+  sdk:
+    route:
+    - GET
+    - /report
+    signature: '(self, *, req: str | None = None, format: str | None = None, sections:
+      str | None = None) -> damia_sdk.transport.response.HttpResponse'
+    parameters:
+      req: &id244
+        annotation: str | None
+        default: None
+      format: &id243
+        annotation: str | None
+        default: None
+      sections: &id245
+        annotation: str | None
+        default: None
+    source: src/damia_sdk/services/spk/__init__.py#L13
+  parameters:
+  - wire: format
+    in: query
+    python: format
+    spec:
+      description: Формат отчета; docx — файл, json — JSON.
+      in: query
+      name: format
+      schema:
+        default: docx
+        enum:
+        - docx
+        - json
+        type: string
+    sdk: *id243
+  - wire: req
+    in: query
+    python: req
+    spec:
+      description: ИНН или ОГРН организации или ИП; обязательность не указана. Пример
+        — заполнитель, не реальный идентификатор.
+      example: <ИНН_ИЛИ_ОГРН>
+      in: query
+      name: req
+      schema:
+        type: string
+    sdk: *id244
+  - wire: sections
+    in: query
+    python: sections
+    spec:
+      description: "Список разделов через запятую с необязательными номерами подразделов\n\
+        в квадратных скобках. Значение выбора раздела без скобок не уточнено.\nЮЛ\
+        \ — только юридические лица, оба — ЮЛ и ИП.\n\n* fns: 1 общая информация (оба);\
+        \ 2 действующие учредители,\n  3 бывшие учредители, 4 участие в УК, 5 зависимости,\
+        \ 6 филиалы\n  (ЮЛ); 7 регистрация в НО, ПФ, ФСС, 8 лицензии, 9 виды деятельности\n\
+        \  (оба); 10 налоги (ЮЛ).\n* bals: 1 балансы, 2 финансовые результаты (ЮЛ).\n\
+        * checks: 1 результаты проверок (оба).\n* rels: 1 связи по руководителю (оба);\
+        \ 2 по учредителям, 3 по адресу,\n  4 по телефону, 5 по email (ЮЛ).\n* isps:\
+        \ 1 сводка, 2 список исполнительных производств (оба).\n* arbs: 1 сводка,\
+        \ 2 список арбитражных дел (оба).\n* zakupki: 1 сводка поставщика, 2 участия\
+        \ заказчика, 3 участия\n  поставщика, 4 реестр ЕИС, 5 жалобы и проверки ФАС,\
+        \ 6 наличие в ЕРУЗ,\n  7 сводка заказчика (оба).\n* scoring: 1 финансовые\
+        \ показатели, 2 скоринг, 3 финансовые проверки (ЮЛ).\n* rnp: 1 наличие в РНП\
+        \ (оба).\n"
+      in: query
+      name: sections
+      schema:
+        default: fns[1,2,4,5,6,8,9,10],bals,checks,rels[1,2,3],isps[1],arbs[1],zakupki,scoring
+        type: string
+    sdk: *id245
+  unmatched_sdk_parameters: []
+  security:
+    requirements:
+    - {}
+    - queryKey: []
+    schemes: *id246
+  responses:
+    2XX:
+      source:
+        description: При format=docx (по умолчанию) документирован файл DOCX; при
+          format=json — JSON неизвестной структуры. 2XX — условное обозначение успеха,
+          а не установленный источником диапазон. Content-Type не указан; схема не
+          различает варианты.
+        content:
+          '*/*':
+            schema: &id247 {}
+      media:
+        '*/*':
+          schema_present: true
+          schema: *id247
+          graph_sha256: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+    default:
+      source:
+        description: 'Прочие ответы: коды ошибок, Content-Type и тела ошибок не документированы;
+          наличие ошибок внутри 2XX неизвестно.'
+      media: {}
+  spec_source: docs/swagger/spk/openapi.yaml#/paths/~1report/get
+  research_source: docs/swagger/spk/RESEARCH.md
+unmatched_sdk_methods:
+  fns: {}
+  banks: {}
+  procurement: {}
+  arbitration: {}
+  fssp: {}
+  rosstat: {}
+  scoring: {}
+  spk: {}

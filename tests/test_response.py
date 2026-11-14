@@ -62,3 +62,16 @@ def test_valid_json_values(body: bytes, expected: object, mime: str) -> None:
 )
 def test_non_json_mime_data(mime: str | None, expected: object) -> None:
     assert HttpResponse(200, mime, b'{"ok":true}').data == expected
+
+
+def test_invalid_json_does_not_leak_synthetic_body() -> None:
+    response = HttpResponse(200, "application/json", b'{"synthetic-marker":')
+    with pytest.raises(DamiaResponseError) as exc:
+        _ = response.data
+    assert "synthetic-marker" not in str(exc.value)
+    assert exc.value.__context__ is None
+
+
+def test_unknown_mime_returns_synthetic_bytes() -> None:
+    body = b"\x00\xffsynthetic-file"
+    assert HttpResponse(200, "application/x-synthetic", body).data == body

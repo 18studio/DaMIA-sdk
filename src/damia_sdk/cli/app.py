@@ -14,10 +14,12 @@ from damia_sdk.cli import (
     scoring,
     spk,
 )
+from damia_sdk.cli.common import SafeCommand, SafeGroup
 
 app = typer.Typer(
-    help="Командная строка DaMIA SDK. Команды API пока не реализованы.",
+    help="Командная строка DaMIA SDK. Команды API выполняют запросы и могут тарифицироваться.",
     no_args_is_help=True,
+    cls=SafeGroup,
 )
 
 app.add_typer(fns.app, name="fns")
@@ -35,7 +37,7 @@ def main() -> None:
     """Команды DaMIA SDK."""
 
 
-@app.command()
+@app.command(cls=SafeCommand)
 def version_info() -> None:
     """Показать версию установленного SDK."""
     typer.echo(version("damia-sdk"))

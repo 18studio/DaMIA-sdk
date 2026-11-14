@@ -1,4 +1,4 @@
-"""Заготовки команд API-Закупки."""
+"""Команды API-Закупки."""
 
 from damia_sdk.cli.common import create_service_app
 from damia_sdk.services.procurement import ProcurementService
@@ -20,5 +20,5 @@ app = create_service_app(
         "ktru",
         "zmon",
     ),
-    help_text="API-Закупки. Команды пока не выполняют запросы. zmon может менять подписки.",
+    help_text="API-Закупки. Запросы могут тарифицироваться. zmon может менять подписки.",
 )

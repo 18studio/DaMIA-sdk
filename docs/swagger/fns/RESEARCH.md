@@ -2,7 +2,7 @@
 
 ## Границы и источники
 
-Только публичные документы: [первичная справка](https://api-fns.ru/api_help), [обзор DaMIA](https://damia.ru/apifns), [каталог](https://damia.ru/damapi), [примеры](https://damia.ru/apicalls?id=1). Основное свидетельство — сохранённый рендер `/tmp/damia-fns-help.txt` (номера строк ниже); вторичный — `/tmp/damia-fns.txt`. Исходный список: search, ac, egr, check, changes, multinfo, vyp, mspinfo_file, bo, bo_file, innfl, fsrar, mvdpass, mon, nalogbi, nalogbi_file, multcheck, fl_status, zsk, rom, fias_info, fias_search, stat. Независимо найден mvdinfo: отдельный адрес и параметры (4060–4089), хотя его нет в обеих обзорных таблицах. mspinfo_file отсутствует в первичном обзоре, stat — во вторичном. Всего 24 раздела: 24 исполнимых GET и 24 документированных POST-контракта в расширениях, не готовых к генерации SDK.
+Только публичные документы: [первичная справка](https://api-fns.ru/api_help), [обзор DaMIA](https://damia.ru/apifns), [каталог](https://damia.ru/damapi), [примеры](https://damia.ru/apicalls?id=1). Основное свидетельство — сохранённый рендер (номера строк ниже относятся к ныне недоступному снимку); вторичный снимок также недоступен. Исходный список: search, ac, egr, check, changes, multinfo, vyp, mspinfo_file, bo, bo_file, innfl, fsrar, mvdpass, mon, nalogbi, nalogbi_file, multcheck, fl_status, zsk, rom, fias_info, fias_search, stat. Независимо найден mvdinfo: отдельный адрес и параметры (4060–4089), хотя его нет в обеих обзорных таблицах. mspinfo_file отсутствует в первичном обзоре, stat — во вторичном. Всего 24 раздела: 24 исполнимых GET и 24 документированных POST-контракта в расширениях, не готовых к генерации SDK.
 
 ## Покрытие и замечания по методам
 

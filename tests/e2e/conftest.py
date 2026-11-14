@@ -184,20 +184,30 @@ def _test_spec(service: str, directory: Path) -> Path:
 
 
 def _stop_process(process: subprocess.Popen[bytes]) -> None:
-    if process.poll() is not None:
-        return
     if os.name == "posix":
-        os.killpg(process.pid, signal.SIGTERM)
-    else:
+        try:
+            os.killpg(process.pid, signal.SIGTERM)
+        except ProcessLookupError:
+            pass
+    elif process.poll() is None:
         process.terminate()
     try:
         process.wait(timeout=10)
     except subprocess.TimeoutExpired:
-        if os.name == "posix":
-            os.killpg(process.pid, signal.SIGKILL)
-        else:
+        if os.name != "posix":
             process.kill()
+        else:
+            try:
+                os.killpg(process.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
         process.wait(timeout=10)
+    if os.name == "posix":
+        # npx may exit before its child; do not leave descendants behind.
+        try:
+            os.killpg(process.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
 
 
 @pytest.fixture(scope="session")
@@ -230,7 +240,7 @@ def prism_servers(
     """Запустить Prism только для выбранных тестов и завершить процессы."""
     npx = shutil.which("npx")
     if npx is None:
-        pytest.fail("Для e2e необходимы Node.js и npx; Prism не запущен.")
+        pytest.fail("E2E: npx не найден; установите Node.js и npm.")
     directory = tmp_path_factory.mktemp("prism-e2e")
     servers: dict[str, LocalPrism] = {}
     selected = {
@@ -248,25 +258,28 @@ def prism_servers(
                 sock.bind(("127.0.0.1", 0))
                 port = cast(int, sock.getsockname()[1])
             log = stack.enter_context((directory / f"{service}.log").open("w+b"))
-            process = subprocess.Popen(
-                [
-                    npx,
-                    "--yes",
-                    "@stoplight/prism-cli@5.5.0",
-                    "mock",
-                    str(spec),
-                    "--host",
-                    "127.0.0.1",
-                    "--port",
-                    str(port),
-                ],
-                cwd=ROOT,
-                stdout=log,
-                stderr=subprocess.STDOUT,
-                start_new_session=os.name == "posix",
-            )
+            try:
+                process = subprocess.Popen(
+                    [
+                        npx,
+                        "--yes",
+                        "@stoplight/prism-cli@5.5.0",
+                        "mock",
+                        str(spec),
+                        "--host",
+                        "127.0.0.1",
+                        "--port",
+                        str(port),
+                    ],
+                    cwd=ROOT,
+                    stdout=log,
+                    stderr=subprocess.STDOUT,
+                    start_new_session=os.name == "posix",
+                )
+            except OSError as exc:
+                pytest.fail(f"E2E: не удалось запустить npx для Prism {service}: {exc}")
             stack.callback(_stop_process, process)
-            deadline = time.monotonic() + 60
+            deadline = time.monotonic() + 120
             while True:
                 if process.poll() is not None:
                     log.flush()
@@ -279,7 +292,7 @@ def prism_servers(
                 except OSError:
                     if time.monotonic() >= deadline:
                         pytest.fail(
-                            f"Prism {service} не запустился за 60 секунд; см. {log.name}"
+                            f"Prism {service} не запустился за 120 секунд; см. {log.name}"
                         )
                     time.sleep(0.1)
             proxy = Proxy(port)

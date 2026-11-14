@@ -1,5 +1,6 @@
 """Инвентарь e2e-сценариев на основе исследовательских OpenAPI."""
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, cast
@@ -66,15 +67,44 @@ def load_spec(service: str) -> dict[str, Any]:
 def _resolve_parameter(
     spec: dict[str, Any], parameter: dict[str, Any]
 ) -> dict[str, Any]:
-    if "$ref" not in parameter:
-        return parameter
-    ref = cast(str, parameter["$ref"])
-    if not ref.startswith("#/"):
-        raise ValueError(f"External parameter reference is not supported: {ref}")
-    value: Any = spec
-    for part in ref[2:].split("/"):
-        value = value[part.replace("~1", "/").replace("~0", "~")]
-    return cast(dict[str, Any], value)
+    seen: set[str] = set()
+    while "$ref" in parameter:
+        ref = parameter["$ref"]
+        if (
+            not isinstance(ref, str)
+            or not ref.startswith("#/")
+            or re.search(r"~(?![01])", ref)
+        ):
+            raise ValueError(f"invalid or external $ref: {ref}")
+        if ref in seen:
+            raise ValueError(f"cyclic $ref: {ref}")
+        seen.add(ref)
+        value: Any = spec
+        try:
+            for part in ref[2:].split("/"):
+                part = part.replace("~1", "/").replace("~0", "~")
+                if isinstance(value, list):
+                    if not re.fullmatch(r"0|[1-9][0-9]*", part):
+                        raise ValueError(f"unresolved $ref: {ref}")
+                    value = value[int(part)]
+                else:
+                    value = value[part]
+        except (IndexError, KeyError, TypeError) as exc:
+            raise ValueError(f"unresolved $ref: {ref}") from exc
+        if not isinstance(value, dict):
+            raise TypeError(f"non-object $ref: {ref}")
+        parameter = value
+    return parameter
+
+
+def merged_parameters(
+    spec: dict[str, Any], item: dict[str, Any]
+) -> list[dict[str, Any]]:
+    merged = {}
+    for raw in item.get("parameters", []) + item["get"].get("parameters", []):
+        parameter = _resolve_parameter(spec, raw)
+        merged[(parameter["name"], parameter["in"])] = parameter
+    return list(merged.values())
 
 
 def operations() -> list[Operation]:
@@ -86,9 +116,7 @@ def operations() -> list[Operation]:
             if "get" not in item:
                 continue
             method = path.rsplit("/", 1)[-1]
-            parameters = [
-                _resolve_parameter(spec, p) for p in item["get"].get("parameters", [])
-            ]
+            parameters = merged_parameters(spec, item)
             candidates = {
                 p["name"]
                 for p in parameters

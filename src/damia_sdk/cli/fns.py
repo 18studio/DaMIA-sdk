@@ -1,4 +1,4 @@
-"""Заготовки команд API-ФНС."""
+"""Команды API-ФНС."""
 
 from damia_sdk.cli.common import create_service_app
 from damia_sdk.services.fns import FNSService
@@ -32,5 +32,5 @@ app = create_service_app(
         "fias_search",
         "stat",
     ),
-    help_text="API-ФНС. Команды пока не выполняют запросы. mon может менять мониторинг.",
+    help_text="API-ФНС. Запросы могут тарифицироваться. mon может менять мониторинг.",
 )
